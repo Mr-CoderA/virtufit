@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ['bull', 'ioredis'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.replicate.delivery', pathname: '/**' },

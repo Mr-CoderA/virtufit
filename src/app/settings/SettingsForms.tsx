@@ -14,7 +14,7 @@ export const RESOLUTION_OPTIONS = [
   { value: '4K', label: '4K', credits: 3 },
 ] as const;
 
-export function SettingsForms({ initialResolution = '1K' }: { initialResolution?: string }) {
+export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { initialResolution?: string; userEmail?: string }) {
   const router = useRouter();
   const toast = useToast();
   const [resolution, setResolution] = useState(initialResolution);
@@ -31,10 +31,9 @@ export function SettingsForms({ initialResolution = '1K' }: { initialResolution?
   const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  const [deletePassword, setDeletePassword] = useState('');
-  const [deleteConfirm, setDeleteConfirm] = useState('');
-  const [deleteMessage, setDeleteMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteRequestLoading, setDeleteRequestLoading] = useState(false);
+  const [deleteRequestSent, setDeleteRequestSent] = useState(false);
 
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
@@ -101,37 +100,22 @@ export function SettingsForms({ initialResolution = '1K' }: { initialResolution?
     }
   }
 
-  async function handleDeleteAccount(e: React.FormEvent) {
-    e.preventDefault();
-    setDeleteMessage(null);
-    if (deleteConfirm !== 'delete my account') {
-      const msg = 'Please type "delete my account" to confirm.';
-      setDeleteMessage({ type: 'error', text: msg });
-      toast.warning(msg);
-      return;
-    }
-    setDeleteLoading(true);
+  async function handleRequestDeletion() {
+    setDeleteRequestLoading(true);
     try {
-      const res = await brandFetch('/api/settings/delete-account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: deletePassword }),
-      });
+      const res = await brandFetch('/api/dashboard/account', { method: 'DELETE' });
       const data = await res.json();
       if (!res.ok) {
-        const msg = data.error || 'Failed to delete account';
-        setDeleteMessage({ type: 'error', text: msg });
-        toast.error(msg, { title: 'Could not delete account' });
+        toast.error(data.error || 'Failed to send confirmation email');
         return;
       }
-      toast.info('Account deleted. Redirecting...', { duration: 1500 });
-      router.push('/');
-      router.refresh();
+      setDeleteRequestSent(true);
+      setDeleteModalOpen(false);
+      toast.success('Check your email to confirm deletion.', { title: 'Confirmation email sent' });
     } catch {
-      setDeleteMessage({ type: 'error', text: 'Something went wrong' });
       toast.error('Something went wrong.');
     } finally {
-      setDeleteLoading(false);
+      setDeleteRequestLoading(false);
     }
   }
 
@@ -296,59 +280,53 @@ export function SettingsForms({ initialResolution = '1K' }: { initialResolution?
       <GlassCardInner className="pr-14 border-[rgba(240,239,232,0.14)]" cardNumber="03">
         <h3 className="eyebrow mb-3 flex items-center gap-2 text-[#D9714A]">
           <Trash2 className="h-3.5 w-3.5" />
-          Danger zone
+          Delete account
         </h3>
         <p className="text-[15px] leading-[1.75] text-[#A09E97] mb-6">
-          Deleting your account will permanently remove your data. This cannot be undone.
+          Permanently delete your VirtuFit account. You will receive a confirmation email. This action can be reversed within 90 days by contacting support.
         </p>
-        <form onSubmit={handleDeleteAccount} className="space-y-5">
-          {deleteMessage && deleteMessage.type === 'error' && (
-            <div
-              role="alert"
-              className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]"
+        {deleteRequestSent ? (
+          <p className="text-[15px] text-[#A09E97]">
+            Check your email to confirm deletion. The link expires in 1 hour.
+          </p>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              size="md"
+              className="border border-[rgba(226,75,74,0.4)] text-[#e24b4a] hover:bg-[rgba(226,75,74,0.08)]"
+              onClick={() => setDeleteModalOpen(true)}
             >
-              {deleteMessage.text}
-            </div>
-          )}
-          <div className="space-y-2">
-            <label htmlFor="delete-password" className="block text-[13px] font-normal text-[#A09E97]">
-              Your password
-            </label>
-            <input
-              id="delete-password"
-              type="password"
-              value={deletePassword}
-              onChange={(e) => setDeletePassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              className="input-glass"
-              placeholder="Enter your password to confirm"
-            />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="delete-confirm" className="block text-[13px] font-normal text-[#A09E97]">
-              Type <span className="font-mono text-[#D9714A]">&quot;delete my account&quot;</span> to confirm
-            </label>
-            <input
-              id="delete-confirm"
-              type="text"
-              value={deleteConfirm}
-              onChange={(e) => setDeleteConfirm(e.target.value)}
-              required
-              className="input-glass"
-              placeholder="delete my account"
-            />
-          </div>
-          <Button
-            type="submit"
-            variant="danger"
-            size="md"
-            loading={deleteLoading}
-            disabled={deleteLoading}
-          >
-            Delete my account
-          </Button>
-        </form>
+              Request account deletion
+            </Button>
+            {deleteModalOpen && (
+              <>
+                <div className="fixed inset-0 z-50 bg-black/60" aria-hidden onClick={() => setDeleteModalOpen(false)} />
+                <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6 shadow-xl">
+                  <h4 className="text-[18px] font-medium text-[#F0EFE8]">Are you sure?</h4>
+                  <p className="mt-3 text-[15px] text-[#A09E97]">
+                    We will send a confirmation email to <strong className="text-[#F0EFE8]">{userEmail}</strong>. You must click the link in that email to complete deletion.
+                  </p>
+                  <div className="mt-6 flex gap-3 justify-end">
+                    <Button type="button" variant="ghost" onClick={() => setDeleteModalOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="primary"
+                      loading={deleteRequestLoading}
+                      disabled={deleteRequestLoading}
+                      onClick={handleRequestDeletion}
+                    >
+                      Send confirmation email
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
       </GlassCardInner>
 
       <ButtonLink href="/dashboard" variant="ghost" size="sm" leftIcon={<ArrowLeft className="h-4 w-4" />}>

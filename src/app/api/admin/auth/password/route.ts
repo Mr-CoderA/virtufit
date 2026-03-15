@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { requireAdmin } from '@/lib/require-admin';
 import { prisma } from '@/lib/db';
+import { sendEmailSafe } from '@/lib/email';
+import { passwordChangedTemplate } from '@/lib/email-templates';
+import { getContactSettings } from '@/lib/app-settings';
 
 const MIN_LENGTH = 12;
 
@@ -34,7 +37,7 @@ export async function PATCH(request: Request) {
     }, { status: 400 });
   }
 
-  const adminRow = await prisma.admin.findUnique({ where: { id: admin.adminId }, select: { passwordHash: true } });
+  const adminRow = await prisma.admin.findUnique({ where: { id: admin.adminId }, select: { passwordHash: true, name: true, email: true } });
   if (!adminRow) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const valid = await bcrypt.compare(current, adminRow.passwordHash);
@@ -42,11 +45,15 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Current password is incorrect' }, { status: 400 });
   }
 
-  const passwordHash = await bcrypt.hash(newPass, 10);
+  const passwordHash = await bcrypt.hash(newPass, 12);
   await prisma.admin.update({
     where: { id: admin.adminId },
     data: { passwordHash },
   });
+
+  const contact = await getContactSettings();
+  const tpl = passwordChangedTemplate({ name: adminRow.name ?? adminRow.email, contact });
+  sendEmailSafe({ to: adminRow.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
 
   return NextResponse.json({ success: true, message: 'Password changed. Please sign in again.' });
 }

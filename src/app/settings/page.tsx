@@ -51,7 +51,7 @@ export default async function SettingsPage() {
             </div>
           </div>
 
-          <SettingsForms initialResolution={user.preferredResolution ?? '1K'} />
+          <SettingsForms initialResolution={user.preferredResolution ?? '1K'} userEmail={user.email} />
         </GlassCard>
       </main>
     </div>

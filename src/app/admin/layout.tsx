@@ -11,6 +11,7 @@ const TITLES: Record<string, string> = {
   '/admin/credits': 'Credits',
   '/admin/plans': 'Plans & Pricing',
   '/admin/api-settings': 'API Settings',
+  '/admin/queues': 'Queue monitor',
   '/admin/appearance': 'Appearance',
   '/admin/profile': 'Profile',
 };

@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getSessionAndValidate, ACCOUNT_DELETED_RESPONSE } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { changePasswordSchema } from '@/lib/schemas/auth';
+import { validatePasswordStrength } from '@/lib/password-strength';
+import { logger } from '@/lib/logger';
+import { sendEmailSafe } from '@/lib/email';
+import { passwordChangedTemplate } from '@/lib/email-templates';
+import { getContactSettings } from '@/lib/app-settings';
 
 export async function POST(request: Request) {
   const validation = await getSessionAndValidate();
@@ -11,26 +17,24 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = await request.json();
-    const { currentPassword, newPassword } = body;
-
-    if (!currentPassword || !newPassword) {
+    const body = await request.json().catch(() => ({}));
+    const parsed = changePasswordSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Current password and new password are required' },
+        { error: parsed.error.issues[0]?.message ?? 'Current password and new password are required' },
         { status: 400 }
       );
     }
+    const { currentPassword, newPassword } = parsed.data;
 
-    if (newPassword.length < 6) {
-      return NextResponse.json(
-        { error: 'New password must be at least 6 characters' },
-        { status: 400 }
-      );
+    const pwCheck = validatePasswordStrength(newPassword);
+    if (!pwCheck.valid) {
+      return NextResponse.json({ error: pwCheck.message }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({
       where: { id: validation.session.userId },
-      select: { password: true },
+      select: { id: true, password: true, email: true, name: true },
     });
 
     if (!user) {
@@ -51,9 +55,13 @@ export async function POST(request: Request) {
       data: { password: hashedPassword },
     });
 
+    const contact = await getContactSettings();
+    const tpl = passwordChangedTemplate({ name: user.name, contact });
+    sendEmailSafe({ to: user.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
+
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error('Change password error:', e);
+    logger.error('Change password error', { err: String(e) });
     return NextResponse.json(
       { error: 'Something went wrong' },
       { status: 500 }

@@ -5,7 +5,7 @@ function hashKey(key: string): string {
   return crypto.createHash('sha256').update(key).digest('hex');
 }
 
-export type ApiKeyUser = { id: string; credits: number; name: string | null; suspended: boolean };
+export type ApiKeyUser = { id: string; credits: number; name: string | null; suspended: boolean; emailVerified: boolean };
 
 /**
  * Validates X-API-Key header and returns the owning user (and updates lastUsedAt).
@@ -21,7 +21,7 @@ export async function getUserIdFromApiKey(apiKeyRaw: string | null): Promise<Api
 
   const apiKey = await prisma.apiKey.findFirst({
     where: { keyHash },
-    select: { id: true, userId: true, user: { select: { id: true, credits: true, name: true, suspended: true, isDeleted: true } } },
+    select: { id: true, userId: true, user: { select: { id: true, credits: true, name: true, suspended: true, isDeleted: true, emailVerified: true } } },
   });
 
   if (!apiKey) return null;
@@ -37,5 +37,6 @@ export async function getUserIdFromApiKey(apiKeyRaw: string | null): Promise<Api
     credits: apiKey.user.credits,
     name: apiKey.user.name ?? null,
     suspended: apiKey.user.suspended,
+    emailVerified: apiKey.user.emailVerified,
   };
 }

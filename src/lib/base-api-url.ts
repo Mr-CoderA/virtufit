@@ -12,7 +12,8 @@ export async function getBaseApiUrl(): Promise<string> {
     where: { key: KEY },
     select: { value: true },
   });
-  const raw = (row?.value ?? process.env.NEXT_PUBLIC_APP_URL ?? '').trim();
-  if (!raw) return 'https://api.virtufit.com';
+  const raw = (row?.value ?? process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_API_URL ?? process.env.BACKEND_URL ?? '').trim();
+  const fallback = process.env.NEXT_PUBLIC_API_URL ?? process.env.BACKEND_URL ?? 'https://virtufit-seven.vercel.app';
+  if (!raw) return fallback.replace(/\/+$/, '');
   return raw.replace(/\/+$/, '');
 }

@@ -1,16 +1,35 @@
 import { NextResponse } from 'next/server';
 import { getSessionAndValidate, ACCOUNT_DELETED_RESPONSE } from '@/lib/auth';
 import { getBaseApiUrl } from '@/lib/base-api-url';
+import { checkGlobalRateLimit, checkTopupRateLimit } from '@/lib/rate-limit';
+import { getIp } from '@/lib/admin-audit';
 
 const LEMONSQUEEZY_API = 'https://api.lemonsqueezy.com/v1/checkouts';
 
 export async function POST(request: Request) {
+  const ip = getIp(request);
+  const globalLimit = checkGlobalRateLimit(ip);
+  if (!globalLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests', retryAfter: globalLimit.retryAfter },
+      { status: 429, headers: globalLimit.retryAfter ? { 'Retry-After': String(globalLimit.retryAfter) } : undefined }
+    );
+  }
+
   const validation = await getSessionAndValidate();
   if (!validation.valid) {
     if (validation.deleted) return NextResponse.json(ACCOUNT_DELETED_RESPONSE, { status: 401 });
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const session = validation.session;
+
+  const topupLimit = checkTopupRateLimit(session.userId);
+  if (!topupLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many payment attempts. Try again in 1 hour.', retryAfter: topupLimit.retryAfter },
+      { status: 429, headers: topupLimit.retryAfter ? { 'Retry-After': String(topupLimit.retryAfter) } : undefined }
+    );
+  }
 
   const apiKey = process.env.LEMONSQUEEZY_API_KEY;
   const storeId = process.env.LEMONSQUEEZY_STORE_ID;

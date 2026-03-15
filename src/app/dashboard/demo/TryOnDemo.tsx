@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Upload, ImageIcon, Loader2 } from 'lucide-react';
 
 // eslint-disable-next-line @next/next/no-img-element -- blob previews
@@ -43,6 +43,11 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
     processing_time_ms: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [jobStatus, setJobStatus] = useState<'queued' | 'processing' | 'completed' | 'failed' | null>(null);
+  const [queuePosition, setQueuePosition] = useState<number>(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const personInputRef = useRef<HTMLInputElement>(null);
   const garmentInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
@@ -113,6 +118,7 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
+        setLoading(false);
         if (res.status === 402) {
           setError(`Insufficient credits. Need ${data.required ?? cost}, you have ${data.balance ?? credits}.`);
         } else if (res.status === 504) {
@@ -120,6 +126,48 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
         } else {
           setError(data.error || data.details || `Request failed (${res.status})`);
         }
+        return;
+      }
+
+      if (res.status === 202 && data.accepted && data.job_id) {
+        setJobId(data.job_id);
+        setJobStatus('queued');
+        setQueuePosition(data.position ?? 0);
+        setElapsedSeconds(0);
+        toast.success('Job queued. Waiting for result…');
+        const poll = () => {
+          brandFetch(`/api/v1/jobs/${data.job_id}`, { credentials: 'include' })
+            .then((r) => r.json().catch(() => ({})))
+            .then((job: { status: string; position?: number; elapsed_seconds?: number; output_url?: string; output_urls?: string[]; credits_used?: number; credits_remaining?: number; processing_ms?: number; error?: string }) => {
+              setJobStatus(job.status as 'queued' | 'processing' | 'completed' | 'failed');
+              if (job.position != null) setQueuePosition(job.position);
+              if (job.elapsed_seconds != null) setElapsedSeconds(job.elapsed_seconds);
+              if (job.status === 'completed') {
+                if (pollRef.current) clearInterval(pollRef.current);
+                pollRef.current = null;
+                setResult({
+                  output_url: job.output_url ?? job.output_urls?.[0] ?? '',
+                  output_urls: job.output_urls ?? [job.output_url ?? ''],
+                  credits_used: job.credits_used ?? cost,
+                  credits_remaining: job.credits_remaining ?? credits - cost,
+                  processing_time_ms: job.processing_ms ?? 0,
+                });
+                setJobId(null);
+                setJobStatus(null);
+                setLoading(false);
+                toast.success(`Try-on complete. ${job.credits_used} credit(s) used.`);
+              } else if (job.status === 'failed') {
+                if (pollRef.current) clearInterval(pollRef.current);
+                pollRef.current = null;
+                setError(job.error ?? 'Generation failed. No credits were charged.');
+                setJobId(null);
+                setJobStatus(null);
+                setLoading(false);
+              }
+            });
+        };
+        poll();
+        pollRef.current = setInterval(poll, 3000);
         return;
       }
 
@@ -142,6 +190,12 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -307,6 +361,22 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
             </div>
           )}
 
+          {(jobStatus === 'queued' || jobStatus === 'processing') && (
+            <div className="mb-4 p-4 rounded-xl bg-[#2C2C27] border border-[rgba(240,239,232,0.08)]">
+              {jobStatus === 'queued' && (
+                <p className="text-[13px] text-[#A09E97]">
+                  Job queued — position {queuePosition > 0 ? queuePosition : '…'} in queue. Polling for result…
+                </p>
+              )}
+              {jobStatus === 'processing' && (
+                <p className="text-[13px] text-[#A09E97]">
+                  <Loader2 className="inline h-4 w-4 animate-spin mr-2 align-middle" />
+                  Generating your try-on… {elapsedSeconds > 0 && `${elapsedSeconds}s`}
+                </p>
+              )}
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading || !personFile || garmentFiles.length === 0}
@@ -315,7 +385,7 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Generating…
+                {jobStatus ? (jobStatus === 'queued' ? 'Queued…' : 'Generating…') : 'Uploading…'}
               </>
             ) : (
               'Generate try-on'

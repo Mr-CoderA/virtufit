@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#1A1915] border border-[rgba(240,239,232,0.12)] rounded-lg pl-10 pr-3 py-2.5 text-[14px] text-[#F0EFE8] placeholder:text-[#65635D] focus:outline-none focus:border-[#D9714A]"
-                  placeholder="admin@virtufit.com"
+                  placeholder="asadalinawaz700@gmail.com"
                   required
                   autoComplete="email"
                 />

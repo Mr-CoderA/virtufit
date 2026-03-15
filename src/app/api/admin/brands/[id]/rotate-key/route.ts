@@ -3,6 +3,9 @@ import crypto from 'node:crypto';
 import { requireAdmin } from '@/lib/require-admin';
 import { prisma } from '@/lib/db';
 import { logAdminAction, getIp } from '@/lib/admin-audit';
+import { sendEmailSafe } from '@/lib/email';
+import { apiKeyRotatedTemplate } from '@/lib/email-templates';
+import { getContactSettings } from '@/lib/app-settings';
 
 function generateApiKey(): string {
   const prefix = 'vf_';
@@ -20,7 +23,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { admin } = auth;
   const { id } = await params;
 
-  const user = await prisma.user.findUnique({ where: { id }, select: { id: true } });
+  const user = await prisma.user.findUnique({ where: { id }, select: { id: true, email: true, name: true } });
   if (!user) return NextResponse.json({ error: 'Brand not found' }, { status: 404 });
 
   const newKey = generateApiKey();
@@ -43,6 +46,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     details: null,
     ip: getIp(request),
   });
+
+  const contact = await getContactSettings();
+  const tpl = apiKeyRotatedTemplate({ name: user.name, keyPrefix, contact });
+  sendEmailSafe({ to: user.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
 
   return NextResponse.json({ success: true, apiKey: newKey, message: 'Show this key once; it will not be shown again.' });
 }

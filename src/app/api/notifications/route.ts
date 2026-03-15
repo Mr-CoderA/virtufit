@@ -20,7 +20,7 @@ export async function GET() {
       data: {
         userId: validation.session.userId,
         title: 'Welcome',
-        body: 'Your account is ready. You start with 10 credits — top up anytime from the dashboard.',
+        body: 'Your account is ready. You start with 5 credits — top up anytime from the dashboard.',
         read: false,
       },
     });

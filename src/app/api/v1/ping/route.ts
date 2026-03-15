@@ -10,19 +10,19 @@ import { prisma } from '@/lib/db';
  */
 export async function GET(request: Request) {
   const apiKey = request.headers.get('X-API-Key');
-  let user: { name: string | null; credits: number; suspended?: boolean } | null = await getUserIdFromApiKey(apiKey);
+  let user: { name: string | null; credits: number; suspended?: boolean; emailVerified?: boolean } | null = await getUserIdFromApiKey(apiKey);
 
   if (!user) {
     const validation = await getSessionAndValidate();
     if (validation.valid) {
       const u = await prisma.user.findUnique({
         where: { id: validation.user.id },
-        select: { name: true, credits: true, suspended: true },
+        select: { name: true, credits: true, suspended: true, emailVerified: true },
       });
-      if (u) user = { ...u, suspended: u.suspended };
+      if (u) user = { ...u, suspended: u.suspended, emailVerified: u.emailVerified };
     } else if (validation.deleted) {
       return NextResponse.json(
-        { success: false, error: 'Account deleted', message: 'Your account has been closed. If you believe this is a mistake, contact support@virtufit.com', code: 'ACCOUNT_DELETED' },
+        { success: false, error: 'Account deleted', message: 'Your account has been closed. If you believe this is a mistake, contact asadalinawaz700@gmail.com', code: 'ACCOUNT_DELETED' },
         { status: 401 }
       );
     }
@@ -35,9 +35,16 @@ export async function GET(request: Request) {
     );
   }
 
+  if (!user.emailVerified) {
+    return NextResponse.json(
+      { success: false, error: 'Account not activated', message: 'Please verify your email address to use the API.' },
+      { status: 401 }
+    );
+  }
+
   if (user.suspended) {
     return NextResponse.json(
-      { success: false, error: 'Account suspended', message: 'Your VirtuFit account has been suspended. Contact support at support@virtufit.com' },
+      { success: false, error: 'Account suspended', message: 'Your VirtuFit account has been suspended. Contact support at asadalinawaz700@gmail.com' },
       { status: 401 }
     );
   }

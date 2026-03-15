@@ -14,7 +14,7 @@ export interface SessionPayload {
   tokenVersion?: number;
 }
 
-export async function createSession(payload: Omit<SessionPayload, 'expiresAt'> & { tokenVersion?: number }) {
+export async function createSession(payload: Omit<SessionPayload, 'expiresAt'> & { tokenVersion?: number }): Promise<string> {
   const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
   const token = await new SignJWT({ ...payload, expiresAt })
     .setProtectedHeader({ alg: 'HS256' })
@@ -29,6 +29,7 @@ export async function createSession(payload: Omit<SessionPayload, 'expiresAt'> &
     maxAge: 7 * 24 * 60 * 60,
     path: '/',
   });
+  return token;
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
@@ -57,7 +58,7 @@ export type SessionValidation = { valid: true; session: SessionPayload; user: { 
 /** Use in brand-facing API routes when getSessionAndValidate() returns deleted: true */
 export const ACCOUNT_DELETED_RESPONSE = {
   error: 'Account deleted',
-  message: 'Your account has been closed. If you believe this is a mistake, contact support@virtufit.com',
+  message: 'Your account has been closed. If you believe this is a mistake, contact asadalinawaz700@gmail.com',
   code: 'ACCOUNT_DELETED' as const,
 };
 

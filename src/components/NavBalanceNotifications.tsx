@@ -27,16 +27,19 @@ export function NavBalanceNotifications({
 
   const load = useCallback(async () => {
     try {
+      const me = await brandFetch('/api/auth/me', { credentials: 'include' });
+      if (!me.ok) {
+        setLoading(false);
+        return;
+      }
+      const u = await me.json();
+      if (u.user?.credits != null) setCredits(u.user.credits);
+
       const res = await brandFetch('/api/notifications', { credentials: 'include' });
       if (!res.ok) return;
       const data = await res.json();
       setNotifications(data.notifications ?? []);
       setUnreadCount(data.unreadCount ?? 0);
-      const me = await brandFetch('/api/auth/me', { credentials: 'include' });
-      if (me.ok) {
-        const u = await me.json();
-        if (u.user?.credits != null) setCredits(u.user.credits);
-      }
     } catch {
       /* ignore */
     } finally {

@@ -9,7 +9,6 @@ import {
   Users,
   Sparkles,
   Coins,
-  Settings,
   DollarSign,
   Percent,
   Code,
@@ -18,13 +17,15 @@ import {
   LogOut,
   Menu,
   X,
+  LayoutList,
+  Mail,
 } from 'lucide-react';
 import { getAdminToken, adminApi, clearAdminToken, redirectToAdminLogin } from '@/api/adminApi';
 
 const SIDEBAR_LINKS_FIXED = [
   { section: 'OVERVIEW', items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }, { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 }] },
-  { section: 'MANAGEMENT', items: [{ href: '/admin/brands', label: 'Brands', icon: Users }, { href: '/admin/generations', label: 'Generations', icon: Sparkles }, { href: '/admin/credits', label: 'Credits', icon: Coins }] },
-  { section: 'SYSTEM', items: [{ href: '/admin/plans', label: 'Plans & Pricing', icon: DollarSign }, { href: '/admin/credits', label: 'Credit Rate', icon: Percent }, { href: '/admin/api-settings', label: 'API Settings', icon: Code }, { href: '/admin/appearance', label: 'Appearance', icon: Palette }] },
+  { section: 'MANAGEMENT', items: [{ href: '/admin/brands', label: 'Brands', icon: Users }, { href: '/admin/generations', label: 'Generations', icon: Sparkles }, { href: '/admin/credits', label: 'Credits', icon: Coins }, { href: '/admin/contact', label: 'Contact', icon: Mail, badgeKey: 'contactUnread' }] },
+  { section: 'SYSTEM', items: [{ href: '/admin/plans', label: 'Plans & Pricing', icon: DollarSign }, { href: '/admin/credits', label: 'Credit Rate', icon: Percent }, { href: '/admin/api-settings', label: 'API Settings', icon: Code }, { href: '/admin/queues', label: 'Queue monitor', icon: LayoutList }, { href: '/admin/appearance', label: 'Appearance', icon: Palette }] },
   { section: 'ACCOUNT', items: [{ href: '/admin/profile', label: 'Admin profile', icon: User }, { href: '/admin/logout', label: 'Sign out', icon: LogOut }] },
 ];
 
@@ -41,6 +42,13 @@ export function AdminLayout({
   const router = useRouter();
   const [admin, setAdmin] = useState<{ name: string; email: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [contactUnread, setContactUnread] = useState(0);
+
+  useEffect(() => {
+    adminApi.contactCount().then((r) => {
+      if (r.data?.unreadCount != null) setContactUnread(r.data.unreadCount);
+    });
+  }, []);
 
   useEffect(() => {
     const t = getAdminToken();
@@ -107,6 +115,7 @@ export function AdminLayout({
                     </button>
                   );
                 }
+                const badge = 'badgeKey' in item && item.badgeKey === 'contactUnread' && contactUnread > 0;
                 return (
                   <Link
                     key={item.href}
@@ -119,6 +128,11 @@ export function AdminLayout({
                   >
                     <Icon className="h-4 w-4 shrink-0" />
                     {item.label}
+                    {badge && (
+                      <span className="ml-auto min-w-[18px] h-[18px] rounded-full bg-[#D9714A] text-[10px] font-medium text-[#1A1915] flex items-center justify-center px-1">
+                        {contactUnread > 99 ? '99+' : contactUnread}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

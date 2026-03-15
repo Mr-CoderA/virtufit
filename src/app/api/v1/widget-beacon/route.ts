@@ -13,6 +13,12 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ error: 'Invalid or missing API key' }, { status: 401 });
   }
+  if (!user.emailVerified) {
+    return NextResponse.json(
+      { error: 'Account not activated', message: 'Please verify your email address to use the API.' },
+      { status: 401 }
+    );
+  }
 
   let body: { origin?: string };
   try {

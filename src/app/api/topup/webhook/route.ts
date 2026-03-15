@@ -28,13 +28,21 @@ export async function POST(request: Request) {
   }
 
   let payload: {
-    meta?: { event_name?: string; custom_data?: Record<string, unknown> };
+    meta?: { event_name?: string; custom_data?: Record<string, unknown>; created_at?: number };
     data?: { id?: string; attributes?: { total?: number; total_usd?: number } };
   };
   try {
     payload = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const webhookTime = payload.meta?.created_at ?? (payload as { created_at?: number }).created_at;
+  if (typeof webhookTime === 'number') {
+    const age = Math.abs(Date.now() - webhookTime);
+    if (age > 5 * 60 * 1000) {
+      return NextResponse.json({ error: 'Webhook timestamp too old' }, { status: 400 });
+    }
   }
 
   const eventName = payload.meta?.event_name;

@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/require-admin';
 import { prisma } from '@/lib/db';
 import { logAdminAction, getIp } from '@/lib/admin-audit';
+import { sendEmailSafe } from '@/lib/email';
+import { accountRestoredTemplate } from '@/lib/email-templates';
+import { getContactSettings } from '@/lib/app-settings';
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdmin(request);
@@ -36,6 +39,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     details: { brandEmail: user.email, brandName: user.name, restoredBy: admin.email },
     ip: getIp(request),
   });
+
+  const contact = await getContactSettings();
+  const tpl = accountRestoredTemplate({ name: user.name, contact });
+  sendEmailSafe({ to: user.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
 
   return NextResponse.json({ message: 'Brand restored. They can now log in again.' });
 }

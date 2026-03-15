@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/require-admin';
 import { prisma } from '@/lib/db';
 import { logAdminAction, getIp } from '@/lib/admin-audit';
+import { sendEmailSafe } from '@/lib/email';
+import { creditsAddedTemplate } from '@/lib/email-templates';
+import { getContactSettings } from '@/lib/app-settings';
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdmin(request);
@@ -26,7 +29,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'reason is required for audit trail' }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { id }, select: { id: true, credits: true } });
+  const user = await prisma.user.findUnique({ where: { id }, select: { id: true, credits: true, email: true, name: true } });
   if (!user) return NextResponse.json({ error: 'Brand not found' }, { status: 404 });
 
   if (type === 'deduct' && user.credits < amount) {
@@ -58,6 +61,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     details: { amount, reason, newBalance: newCredits },
     ip: getIp(request),
   });
+
+  if (type === 'grant') {
+    const contact = await getContactSettings();
+    const tpl = creditsAddedTemplate({ name: user.name, credits: amount, newBalance: newCredits, reason, contact });
+    sendEmailSafe({ to: user.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
+  }
 
   return NextResponse.json({ success: true, credits: newCredits });
 }

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSessionAndValidate, ACCOUNT_DELETED_RESPONSE } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 
-const INITIAL_CREDITS = 10;
+const INITIAL_CREDITS = 5;
 
 export async function GET() {
   const validation = await getSessionAndValidate();

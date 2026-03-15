@@ -75,4 +75,13 @@ export const adminApi = {
       alerts: { brandsWithZeroCredits: number; failedGenerationsLast24h: number; failedGenerationsRate24h: number; replicateErrorsLastHour: number };
     }>('/stats');
   },
+  async contactCount() {
+    return adminFetch<{ unreadCount: number }>('/contact?countOnly=1');
+  },
+  async contactList(page = 1) {
+    return adminFetch<{ submissions: Array<{ id: string; name: string; email: string; brand: string | null; platform: string | null; subject: string; message: string; read: boolean; createdAt: string }>; total: number; unreadCount: number }>(`/contact?page=${page}&limit=20`);
+  },
+  async contactMarkRead(id: string) {
+    return adminFetch<{ success: boolean }>(`/contact/${id}/read`, { method: 'PATCH' });
+  },
 };

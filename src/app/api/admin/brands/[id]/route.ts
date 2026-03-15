@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/require-admin';
 import { prisma } from '@/lib/db';
 import { logAdminAction, getIp } from '@/lib/admin-audit';
+import { sendEmailSafe } from '@/lib/email';
+import { accountDeletedTemplate } from '@/lib/email-templates';
+import { getContactSettings } from '@/lib/app-settings';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdmin(request);
@@ -23,6 +26,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       deletedAt: true,
       deletedBy: true,
       deletedReason: true,
+      emailVerified: true,
+      emailVerifiedAt: true,
+      reactivatedAt: true,
+      reactivationPreviousDeletionReason: true,
       apiKeys: { take: 1, select: { keyPrefix: true } },
       usageLogs: { orderBy: { createdAt: 'desc' }, take: 50, select: { id: true, tier: true, creditsUsed: true, jobId: true, outputUrl: true, note: true, createdAt: true } },
       topUps: { orderBy: { createdAt: 'desc' }, select: { id: true, credits: true, amountCents: true, orderId: true, createdAt: true } },
@@ -33,6 +40,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
   const apiKeyPrefix = user.apiKeys[0]?.keyPrefix ?? null;
 
+  const wasReactivated = user.reactivatedAt != null;
   return NextResponse.json({
     brand: {
       id: user.id,
@@ -47,7 +55,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       deletedAt: user.deletedAt,
       deletedBy: user.deletedBy,
       deletedReason: user.deletedReason,
+      emailVerified: user.emailVerified,
+      emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
       apiKeyPrefix: apiKeyPrefix ? `${apiKeyPrefix.slice(0, 8)}...` : null,
+      wasReactivated,
+      reactivatedAt: user.reactivatedAt?.toISOString() ?? null,
+      previousDeletionReason: user.reactivationPreviousDeletionReason ?? null,
     },
     creditHistory: user.usageLogs.map((l) => ({ ...l, type: l.tier, amount: l.tier === 'manual_deduction' ? -l.creditsUsed : l.creditsUsed })),
     generations: user.usageLogs.filter((l) => l.tier && ['nano', 'basic', 'pro'].includes(l.tier)),
@@ -96,6 +109,10 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     details: { brandEmail: user.email, brandName: user.name, reason, deletedBy: admin.email },
     ip: getIp(request),
   });
+
+  const contact = await getContactSettings();
+  const tpl = accountDeletedTemplate({ name: user.name, contact });
+  sendEmailSafe({ to: user.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
 
   return NextResponse.json({
     message: 'Brand soft deleted successfully',

@@ -23,6 +23,8 @@ export default function AdminBrandDetailPage() {
     brand: {
       id: string; name: string | null; email: string; credits: number; createdAt: string; suspended: boolean; apiKeyPrefix: string | null;
       isDeleted?: boolean; deletedAt?: string | null; deletedBy?: string | null; deletedReason?: string | null;
+      emailVerified?: boolean; emailVerifiedAt?: string | null;
+      wasReactivated?: boolean; reactivatedAt?: string | null; previousDeletionReason?: string | null;
     };
     creditHistory: Array<{ createdAt: string; type: string; amount: number; note: string | null }>;
     generations: Array<{ id: string; tier: string; jobId: string | null; outputUrl: string | null; creditsUsed: number; createdAt: string }>;
@@ -35,6 +37,8 @@ export default function AdminBrandDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [restoring, setRestoring] = useState(false);
+  const [resendVerifyLoading, setResendVerifyLoading] = useState(false);
+  const [resendVerifySent, setResendVerifySent] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -81,12 +85,30 @@ export default function AdminBrandDetailPage() {
     }
   };
 
+  const handleResendVerification = async () => {
+    setResendVerifyLoading(true);
+    setResendVerifySent(false);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+    const r = await fetch(`/api/admin/brands/${id}/resend-verification`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } });
+    setResendVerifyLoading(false);
+    if (r.ok) setResendVerifySent(true);
+  };
+
   if (loading || !brand) return <p className="text-[#A09E97]">Loading…</p>;
 
   const b = brand.brand;
   return (
     <div className="space-y-6">
       <Link href="/admin/brands" className="text-[#D9714A] hover:underline text-[13px]">← Back to brands</Link>
+
+      {b.wasReactivated && b.reactivatedAt && (
+        <div className="rounded-xl border border-[rgba(217,113,74,0.35)] bg-[rgba(217,113,74,0.08)] p-4">
+          <p className="text-[#F0EFE8] text-[14px]">
+            This account was reactivated on {new Date(b.reactivatedAt).toLocaleString()} after being deleted on {b.deletedAt ? new Date(b.deletedAt).toLocaleString() : '—'}.
+            {b.previousDeletionReason ? ` Deletion reason: ${b.previousDeletionReason}` : ''}
+          </p>
+        </div>
+      )}
 
       {b.isDeleted && (
         <div className="rounded-xl border border-[rgba(226,75,74,0.4)] bg-[rgba(226,75,74,0.08)] p-4 flex flex-wrap items-center justify-between gap-4">
@@ -117,7 +139,23 @@ export default function AdminBrandDetailPage() {
             <p className="text-[#65635D] text-[12px]">Joined {new Date(b.createdAt).toLocaleDateString()}</p>
           </div>
         </div>
-        <p className="text-[13px] text-[#A09E97]">Plan: FREE · Status: {b.suspended ? 'Suspended' : 'Active'}</p>
+        <div className="flex flex-wrap items-center gap-4 mt-2">
+          <p className="text-[13px] text-[#A09E97]">Plan: FREE · Status: {b.suspended ? 'Suspended' : 'Active'}</p>
+          <span className="text-[13px] text-[#A09E97]">
+            Email: {b.email} · Status: {b.emailVerified ? <span className="text-[#2d8a2d]">✓ Verified</span> : <span className="text-[#d4a012]">✗ Not verified</span>}
+            {b.emailVerifiedAt ? ` · Verified at: ${new Date(b.emailVerifiedAt).toLocaleString()}` : ' · Verified at: Never'}
+          </span>
+          {!b.emailVerified && !b.isDeleted && (
+            <button
+              type="button"
+              onClick={handleResendVerification}
+              disabled={resendVerifyLoading}
+              className="rounded-lg border border-[rgba(240,239,232,0.2)] bg-transparent text-[#F0EFE8] px-3 py-1.5 text-[12px] hover:bg-[rgba(240,239,232,0.06)] disabled:opacity-50"
+            >
+              {resendVerifyLoading ? 'Sending…' : resendVerifySent ? 'Verification email sent' : 'Resend verification email'}
+            </button>
+          )}
+        </div>
         <p className="text-[13px] text-[#A09E97] mt-2">API key: {b.apiKeyPrefix ?? '—'} <button type="button" className="text-[#D9714A] hover:underline ml-2">Copy</button></p>
         {!b.isDeleted && (
           <div className="mt-6 pt-4 border-t border-[rgba(240,239,232,0.08)]">

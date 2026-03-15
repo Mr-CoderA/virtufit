@@ -89,7 +89,7 @@ export default async function IntegrationsWhatsAppPage() {
             </h2>
             <p className="mb-2 text-[15px] text-[#A09E97]">Set these for the webhook handler:</p>
             <ul className="space-y-1 text-[14px] text-[#A09E97]">
-              <li><code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[#A09E97]">VIRTUFIT_BASE_URL</code> — e.g. {baseUrl || 'https://app.virtufit.com'}</li>
+              <li><code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[#A09E97]">VIRTUFIT_BASE_URL</code> — e.g. {baseUrl || 'https://virtufit-seven.vercel.app'}</li>
               <li><code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[#A09E97]">VIRTUFIT_API_KEY</code> — your VirtuFit API key</li>
               <li><code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[#A09E97]">WHATSAPP_ACCESS_TOKEN</code> — Meta WhatsApp access token</li>
               <li><code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[#A09E97]">WHATSAPP_PHONE_NUMBER_ID</code> — Phone Number ID for sending</li>

@@ -45,6 +45,12 @@ export function AppNav({
               <Link href="/" className={navLinkClass}>
                 Home
               </Link>
+              <Link href="/docs" className={navLinkClass}>
+                Documentation
+              </Link>
+              <Link href="/contact" className={navLinkClass}>
+                Contact
+              </Link>
               <Link href="/login" className={navLinkClass}>
                 Sign in
               </Link>

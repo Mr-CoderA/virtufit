@@ -17,7 +17,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
   const closedMessage = searchParams.get('closed') === '1';
+
+  async function handleResendVerification() {
+    try {
+      const res = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok && !data.error) setResendSent(true);
+    } catch {
+      // ignore
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,9 +46,14 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const msg = data.error || 'Login failed';
-        setError(msg);
-        toast.error(msg, { title: 'Sign in failed' });
+        if (data.code === 'EMAIL_NOT_VERIFIED') {
+          setError('EMAIL_NOT_VERIFIED');
+          setEmail(data.email ?? email);
+        } else {
+          const msg = data.error || 'Login failed';
+          setError(msg);
+          toast.error(msg, { title: 'Sign in failed' });
+        }
         return;
       }
       toast.success('Redirecting to dashboard...', { title: 'Welcome back', duration: 2000 });
@@ -70,7 +90,26 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
+            {error && error === 'EMAIL_NOT_VERIFIED' && (
+              <div
+                role="alert"
+                className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]"
+              >
+                <p>Please verify your email first.</p>
+                {resendSent ? (
+                  <p className="mt-2 text-[14px] text-[#2d8a2d]">Verification email sent! Check your inbox.</p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    className="mt-2 text-[14px] text-[#D9714A] hover:underline"
+                  >
+                    Resend verification email →
+                  </button>
+                )}
+              </div>
+            )}
+            {error && error !== 'EMAIL_NOT_VERIFIED' && (
               <div
                 role="alert"
                 className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]"

@@ -9,7 +9,7 @@ export function DocsPlayground({ baseUrl }: { baseUrl?: string }) {
     baseUrl ??
     (typeof window !== 'undefined'
       ? window.location.origin
-      : process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || '');
+      : process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || '');
   const toast = useToast();
   const [apiKey, setApiKey] = useState('');
   const [personFile, setPersonFile] = useState<File | null>(null);
