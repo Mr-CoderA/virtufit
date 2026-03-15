@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                   String         @id @default(cuid())
+  email                String         @unique
+  password             String
+  name                 String?
+  credits              Int            @default(10)
+  preferredResolution  String?        @default("1K") // "1K" | "2K" | "4K"
+  integratedDomains    String[]       @default([]) // domains where widget was loaded (for onboarding)
+  onboardingCompleted  Boolean        @default(false)
+  suspended            Boolean        @default(false)
+  suspendedAt          DateTime?
+  suspendedReason     String?
+  isDeleted            Boolean        @default(false)
+  deletedAt            DateTime?
+  deletedBy            String?
+  deletedReason        String?
+  tokenVersion         Int            @default(0)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  notifications        Notification[]
+  apiKeys              ApiKey[]
+  usageLogs            UsageLog[]
+  topUps               TopUp[]
+}
+
+model TopUp {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credits      Int
+  amountCents  Int      // amount paid in cents (e.g. 100 = $1.00)
+  orderId      String?  @unique // Lemon Squeezy order identifier to avoid duplicates
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+model UsageLog {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier         String   // "nano" | "basic" | "pro" | "manual_grant" | "manual_deduction"
+  creditsUsed  Int
+  jobId        String?  // null for manual operations
+  outputUrl    String?  // null for manual operations
+  note         String?  // reason for manual grant/deduction
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  keyPrefix String    // e.g. vf_...last4 for display
+  keyHash   String    // hash of full key for verification
+  lastUsedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String   @default("")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("superadmin")
+  lastLoginAt DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@map("admins")
+}
+
+model AdminAuditLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  adminEmail String
+  action     String
+  entityType String   // brand, plan, setting, credit
+  entityId   String?
+  details    Json?
+  ip         String
+  createdAt  DateTime @default(now())
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
+}
+
+model Plan {
+  id             String   @id @default(cuid())
+  name           String
+  key            String   @unique // FREE, ENTERPRISE
+  welcomeCredits Int?     // for FREE: credits on signup
+  features       Json     // array of strings
+  contactEmail   String?
+  description    String?
+  status         String   @default("active")
+  updatedAt      DateTime @updatedAt
+  updatedBy      String?  // admin id
+
+  @@map("plans")
+}
+
+model AppSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@map("app_settings")
+}
