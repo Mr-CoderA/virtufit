@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db';
 import { checkGlobalRateLimit } from '@/lib/rate-limit';
 import { getIp } from '@/lib/admin-audit';
 import { checkResendVerificationRateLimit } from '@/lib/rate-limit';
-import { sendEmailSafe } from '@/lib/email';
+import { sendEmail } from '@/lib/email';
 import { verifyEmailTemplate } from '@/lib/email-templates';
 import { getContactSettings } from '@/lib/app-settings';
 
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
   const contact = await getContactSettings();
   const template = verifyEmailTemplate({ name: user.name, code: verifyCode, contact });
-  sendEmailSafe({
+  await sendEmail({
     to: user.email,
     subject: template.subject,
     html: template.html,

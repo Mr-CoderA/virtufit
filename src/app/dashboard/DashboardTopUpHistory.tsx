@@ -62,7 +62,7 @@ export function DashboardTopUpHistory() {
               className="border-b border-[rgba(240,239,232,0.06)] last:border-0"
             >
               <td className="py-3 pr-4 text-[14px] text-[#A09E97]">
-                {new Date(row.createdAt).toLocaleDateString(undefined, {
+                {new Date(row.createdAt).toLocaleString(undefined, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
                 })}

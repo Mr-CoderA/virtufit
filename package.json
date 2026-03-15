@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "seed": "npx prisma db push && npx tsx prisma/seed.ts",
+    "delete-all-users": "npx tsx scripts/delete-all-users.ts",
     "audit": "npm audit --audit-level=high",
     "audit:fix": "npm audit fix",
     "test:load": "npx tsx tests/loadTest.ts",

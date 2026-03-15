@@ -12,7 +12,7 @@ import { registerSchema } from '@/lib/schemas/auth';
 import { sanitizeString } from '@/lib/sanitize';
 import { validatePasswordStrength } from '@/lib/password-strength';
 import { logger } from '@/lib/logger';
-import { sendEmailSafe } from '@/lib/email';
+import { sendEmail } from '@/lib/email';
 import { verifyEmailTemplate } from '@/lib/email-templates';
 import { getContactSettings } from '@/lib/app-settings';
 
@@ -111,12 +111,16 @@ export async function POST(request: Request) {
 
     const contact = await getContactSettings();
     const template = verifyEmailTemplate({ name: safeName ?? null, code: verifyCode, contact });
-    sendEmailSafe({
+    // Await so Vercel serverless keeps the function alive until Resend responds (fire-and-forget can be killed before send completes)
+    const emailResult = await sendEmail({
       to: user.email,
       subject: template.subject,
       html: template.html,
       text: template.text,
     });
+    if (!emailResult.success) {
+      logger.error('Signup verification email failed', { email: user.email, err: String(emailResult.error) });
+    }
 
     if (isReRegisterAfter90Days && existing) {
       const daysSincePreviousDeletion = existing.deletedAt
@@ -138,7 +142,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: 'Account created. Please verify your email to activate your account.',
-        emailSent: true,
+        emailSent: emailResult.success,
         email: user.email,
       },
       { status: 201 }
