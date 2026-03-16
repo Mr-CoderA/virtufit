@@ -125,7 +125,7 @@ export function NavBalanceNotifications({
 
         {open && (
           <div
-            className="absolute right-0 top-full z-[80] mt-2 w-[min(100vw-2rem,22rem)] rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] max-h-[min(70vh,400px)] flex flex-col overflow-hidden"
+            className="absolute right-0 top-full z-[80] mt-2 flex w-[min(calc(100vw-2rem),22rem)] max-h-[min(70vh,400px)] flex-col overflow-hidden rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-[4.5rem] max-sm:mt-0 max-sm:w-[calc(100vw-2rem)]"
             role="dialog"
             aria-label="Notifications"
           >
