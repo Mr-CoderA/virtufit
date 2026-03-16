@@ -50,8 +50,7 @@ export default function LoginPage() {
         toast.success('Email verified! Redirecting...', { title: 'Welcome', duration: 2000 });
         setShowCodeModal(false);
         setVerifyCode('');
-        router.push('/dashboard');
-        router.refresh();
+        window.location.href = '/dashboard';
         return;
       }
       setVerifyError(data.message || data.error || 'Invalid or expired code. Try again or request a new one.');
@@ -85,6 +84,7 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
       const data = await res.json();
       if (!res.ok) {
@@ -99,8 +99,7 @@ export default function LoginPage() {
         return;
       }
       toast.success('Redirecting to dashboard...', { title: 'Welcome back', duration: 2000 });
-      router.push('/dashboard');
-      router.refresh();
+      window.location.href = '/dashboard';
     } catch {
       const msg = 'Something went wrong';
       setError(msg);

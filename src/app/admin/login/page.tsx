@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
           <p className="text-[14px] text-[#A09E97] mb-6">Sign in to the VirtuFit admin panel.</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <p className="text-[14px] text-[#e0a0a0] bg-[rgba(179,45,46,0.15)] border border-[rgba(179,45,46,0.3)] rounded-lg px-3 py-2">
+              <p className="text-[14px] text-[#E24B4A] bg-[rgba(226,75,74,0.08)] border border-[rgba(226,75,74,0.3)] rounded-lg px-3 py-2">
                 {error}
               </p>
             )}

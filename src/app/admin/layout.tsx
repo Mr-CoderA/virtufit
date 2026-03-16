@@ -9,6 +9,7 @@ const TITLES: Record<string, string> = {
   '/admin/brands': 'Brands',
   '/admin/generations': 'Generations',
   '/admin/credits': 'Credits',
+  '/admin/contact': 'Contact submissions',
   '/admin/plans': 'Plans & Pricing',
   '/admin/api-settings': 'API Settings',
   '/admin/queues': 'Queue monitor',

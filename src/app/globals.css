@@ -13,6 +13,13 @@
   --font-serif: var(--font-serif-anthropic), Georgia, "Times New Roman", serif;
 }
 
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
 body {
   background: #1a1915;
   color: #f0efe8;
@@ -112,4 +119,23 @@ body {
 
 .toast-exit {
   animation: toast-slide-out 0.25s ease-in forwards;
+}
+
+/* Admin panel — hide sidebar scrollbar, style content scrollbar */
+.admin-sidebar::-webkit-scrollbar {
+  display: none;
+}
+.admin-sidebar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.admin-content::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-content::-webkit-scrollbar-thumb {
+  background: rgba(240, 239, 232, 0.1);
+  border-radius: 2px;
 }

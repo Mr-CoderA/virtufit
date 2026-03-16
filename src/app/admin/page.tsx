@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis
 
 type Stats = Awaited<ReturnType<typeof adminApi.stats>>['data'];
 
-const BUCKET_COLORS = ['#65635D', '#D9714A', '#8B7355', '#A09E97', '#2d8a2d'];
+const BUCKET_COLORS = ['#65635D', '#D9714A', '#8B7355', '#A09E97', '#A09E97'];
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -47,8 +47,8 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {hasAlerts && (
-        <div className="rounded-xl border border-[rgba(179,45,46,0.3)] bg-[rgba(179,45,46,0.08)] p-4">
-          <h2 className="text-[14px] font-medium text-[#e0a0a0] mb-2">Alerts</h2>
+        <div className="rounded-2xl border border-[rgba(226,75,74,0.3)] bg-[rgba(226,75,74,0.08)] p-5" style={{ borderWidth: '0.5px' }}>
+          <h2 className="text-[14px] font-medium text-[#E24B4A] mb-2">Alerts</h2>
           <ul className="text-[13px] text-[#A09E97] space-y-1">
             {stats.alerts.brandsWithZeroCredits > 0 && (
               <li>
@@ -76,8 +76,9 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-4" style={{ borderWidth: '0.5px' }}>
-          <h3 className="text-[14px] font-medium text-[#F0EFE8] mb-4">Credit balance distribution</h3>
+        <div className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-5 transition-colors hover:bg-[#2C2C27] hover:border-[rgba(240,239,232,0.14)]" style={{ borderWidth: '0.5px' }}>
+          <h3 className="text-[20px] font-normal text-[#F0EFE8] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Credit balance distribution</h3>
+          <p className="text-[13px] text-[#A09E97] mb-4">Brands by credit bucket.</p>
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -104,8 +105,9 @@ export default function AdminDashboardPage() {
           )}
         </div>
 
-        <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-4 lg:col-span-2" style={{ borderWidth: '0.5px' }}>
-          <h3 className="text-[14px] font-medium text-[#F0EFE8] mb-4">Generation volume (last 30 days)</h3>
+        <div className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-5 lg:col-span-2 transition-colors hover:bg-[#2C2C27] hover:border-[rgba(240,239,232,0.14)]" style={{ borderWidth: '0.5px' }}>
+          <h3 className="text-[20px] font-normal text-[#F0EFE8] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Generation volume (last 30 days)</h3>
+          <p className="text-[13px] text-[#A09E97] mb-4">Daily generation counts.</p>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={stats.dailyGenerationsChart}>
               <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke="#65635D" />
@@ -117,40 +119,45 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
-        <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Top 10 brands by usage</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-[13px] min-w-[500px]">
-            <thead>
-              <tr className="text-left text-[#65635D] border-b border-[rgba(240,239,232,0.08)]">
-                <th className="p-3 font-medium">Name</th>
-                <th className="p-3 font-medium">Email</th>
-                <th className="p-3 font-medium">Generations (30d)</th>
-                <th className="p-3 font-medium">Credits left</th>
-                <th className="p-3 font-medium">Plan</th>
-                <th className="p-3 font-medium">Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.topBrands.map((b) => (
-                <tr key={b.id} className="border-b border-[rgba(240,239,232,0.06)] hover:bg-[rgba(240,239,232,0.03)]">
-                  <td className="p-3">
-                    <Link href={`/admin/brands/${b.id}`} className="text-[#D9714A] hover:underline">
-                      {b.name ?? b.email}
-                    </Link>
-                  </td>
-                  <td className="p-3 text-[#A09E97]">{b.email}</td>
-                  <td className="p-3 text-[#F0EFE8]">{b.generationsThisMonth}</td>
-                  <td className="p-3 text-[#F0EFE8]">{b.creditsRemaining}</td>
-                  <td className="p-3 text-[#A09E97]">{b.plan}</td>
-                  <td className="p-3 text-[#A09E97]">{new Date(b.joinedAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {stats.topBrands.length === 0 && (
-          <p className="p-4 text-[#65635D] text-[13px]">No brands yet.</p>
+      <div className="rounded-xl overflow-hidden" style={{ border: '0.5px solid rgba(240,239,232,0.08)' }}>
+        <h3 className="text-[20px] font-normal text-[#F0EFE8] p-5 pb-2" style={{ fontFamily: 'Georgia, serif' }}>Top 10 brands by usage</h3>
+        <p className="text-[13px] text-[#A09E97] px-5 mb-4">Most active brands in the last 30 days.</p>
+        {stats.topBrands.length === 0 ? (
+          <p className="p-6 text-[#65635D] text-[14px] text-center">No brands yet.</p>
+        ) : (
+          <>
+            <div className="w-full overflow-x-auto bg-[#222219] rounded-xl" style={{ WebkitOverflowScrolling: 'touch', border: '0.5px solid rgba(240,239,232,0.08)' }}>
+              <table className="w-full min-w-[600px] border-collapse bg-[#222219]">
+                <thead>
+                  <tr className="border-b border-[rgba(240,239,232,0.08)] bg-[#222219]" style={{ borderBottomWidth: '0.5px' }}>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Name</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Email</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Generations (30d)</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Credits left</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Plan</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Joined</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.topBrands.map((b) => (
+                    <tr key={b.id} className="border-b border-[rgba(240,239,232,0.06)] transition-colors hover:bg-[#2C2C27]" style={{ borderBottomWidth: '0.5px' }}>
+                      <td className="py-3.5 px-4 text-[13px] text-[#F0EFE8] font-medium whitespace-nowrap">
+                        <Link href={`/admin/brands/${b.id}`} className="text-[#D9714A] hover:underline">
+                          {b.name ?? b.email}
+                        </Link>
+                      </td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.email}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.generationsThisMonth}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.creditsRemaining}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.plan}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{new Date(b.joinedAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="md:hidden text-center text-[11px] text-[#65635D] mt-2">← Scroll to see more →</p>
+          </>
         )}
       </div>
     </div>
@@ -159,9 +166,9 @@ export default function AdminDashboardPage() {
 
 function Card({ title, value }: { title: string; value: number | string }) {
   return (
-    <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-4" style={{ borderWidth: '0.5px' }}>
-      <p className="text-[12px] text-[#65635D] uppercase tracking-wider mb-1">{title}</p>
-      <p className="text-[24px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>{value}</p>
+    <div className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-5 transition-colors hover:bg-[#2C2C27] hover:border-[rgba(240,239,232,0.14)]" style={{ borderWidth: '0.5px' }}>
+      <p className="text-[12px] text-[#65635D] uppercase tracking-[0.08em] mb-1">{title}</p>
+      <p className="text-[32px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>{value}</p>
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function AppNav({
       className="sticky top-0 z-50 w-full border-b border-[rgba(240,239,232,0.08)] bg-[#1A1915]"
       style={{ borderBottomWidth: '0.5px', height: '56px' }}
     >
-      <div className="mx-auto flex h-full max-w-[1100px] items-center justify-between gap-4 px-5 md:px-10">
+      <div className="mx-auto flex h-full max-w-[1100px] items-center justify-between gap-1.5 px-3 md:gap-4 md:px-10">
         <VirtuFitLogo showTagline={false} size="nav" />
 
         <nav className="hidden items-center gap-7 md:flex" aria-label="Main">
@@ -61,7 +61,7 @@ export function AppNav({
           )}
         </nav>
 
-        <div className="flex items-center justify-end gap-2 shrink-0 min-w-0">
+        <div className="flex items-center justify-end shrink-0 min-w-0">
           {session ? (
             <NavbarRight initialCredits={initialCredits} />
           ) : (

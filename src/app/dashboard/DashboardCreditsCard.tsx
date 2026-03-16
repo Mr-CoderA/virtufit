@@ -7,7 +7,7 @@ export function DashboardCreditsCard({ credits }: { credits: number }) {
 
   return (
     <div
-      className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] py-6 px-7 transition-[background,border-color] duration-200 ease-out hover:bg-[#2C2C27] hover:border-[rgba(240,239,232,0.14)]"
+      className="w-full box-border rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] py-[22px] px-6 transition-[background,border-color] duration-200 ease-out hover:bg-[#2C2C27] hover:border-[rgba(240,239,232,0.14)]"
       style={{ borderWidth: '0.5px' }}
     >
       <span className="text-[11px] text-[#65635D]">01</span>

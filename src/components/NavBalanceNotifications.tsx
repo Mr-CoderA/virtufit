@@ -92,15 +92,15 @@ export function NavBalanceNotifications({
   }
 
   return (
-    <div className="flex items-center gap-2 sm:gap-3">
+    <div className="flex items-center gap-1.5 md:gap-3">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 rounded-full border border-[rgba(240,239,232,0.08)] bg-[rgba(240,239,232,0.06)] px-3.5 py-1.5 text-[13px] text-[#A09E97] transition-[background,border-color] duration-200 ease-out hover:bg-[rgba(240,239,232,0.08)] hover:border-[rgba(240,239,232,0.14)]"
+        className="inline-flex items-center gap-1 rounded-full border border-[rgba(240,239,232,0.08)] bg-[rgba(240,239,232,0.06)] px-2 py-1 text-[11px] text-[#A09E97] transition-[background,border-color] duration-200 ease-out hover:bg-[rgba(240,239,232,0.08)] hover:border-[rgba(240,239,232,0.14)] md:gap-2 md:px-3.5 md:py-1.5 md:text-[13px]"
         style={{ borderWidth: '0.5px' }}
         title="Balance — open dashboard to top up"
       >
         <span aria-hidden>⚡</span>
-        <span>{loading ? '…' : credits}</span>
+        <span className="hidden min-[361px]:inline">{loading ? '…' : credits}</span>
         <span className="hidden sm:inline">credits</span>
       </Link>
 
@@ -111,11 +111,11 @@ export function NavBalanceNotifications({
             setOpen((o) => !o);
             if (!open) load();
           }}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(240,239,232,0.14)] bg-[#222219] text-[#A09E97] transition-colors duration-200 hover:bg-[#2C2C27] hover:text-[#F0EFE8]"
+          className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[rgba(240,239,232,0.14)] bg-[#222219] text-[#A09E97] transition-colors duration-200 hover:bg-[#2C2C27] hover:text-[#F0EFE8] md:h-10 md:w-10"
           aria-label="Notifications"
           aria-expanded={open}
         >
-          <Bell className="h-5 w-5" />
+          <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#D9714A] px-1 text-[10px] font-medium text-[#1A1915]">
               {unreadCount > 9 ? '9+' : unreadCount}

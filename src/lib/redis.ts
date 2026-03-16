@@ -11,8 +11,9 @@ export type RedisConfig =
     };
 
 function getRedisConfig(): RedisConfig | null {
-  const url = process.env.REDIS_URL;
-  if (url && url.startsWith('redis://')) return url;
+  const url = process.env.REDIS_URL?.trim();
+  // Accept both redis:// and rediss:// (TLS); Upstash uses rediss://
+  if (url && (url.startsWith('redis://') || url.startsWith('rediss://'))) return url;
   const host = process.env.REDIS_HOST ?? 'localhost';
   const port = parseInt(process.env.REDIS_PORT ?? '6379', 10);
   const password = process.env.REDIS_PASSWORD?.trim() || undefined;

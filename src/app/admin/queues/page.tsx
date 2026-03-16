@@ -31,42 +31,51 @@ export default function AdminQueuesPage() {
   }, []);
 
   if (!stats) {
-    return <p className="text-[#A09E97]">Loading queue stats…</p>;
+    return <p className="text-[#A09E97] text-[14px] py-12 text-center">Loading queue stats…</p>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6" style={{ borderWidth: '0.5px' }}>
-        <h2 className="text-[18px] font-medium text-[#F0EFE8] mb-4">Queue monitor</h2>
-        <p className="text-[13px] text-[#A09E97] mb-6">
-          Run the generation worker to process jobs: <code className="bg-[#1A1915] px-2 py-1 rounded text-[#D9714A]">npm run worker</code>
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-          <div className="p-4 rounded-lg bg-[#1A1915] border border-[rgba(240,239,232,0.08)]">
-            <div className="text-[11px] uppercase tracking-wider text-[#65635D]">Waiting</div>
-            <div className="text-[24px] font-medium text-[#F0EFE8] mt-1">{stats.queue.waiting}</div>
+      <h2 className="text-[20px] font-normal text-[#F0EFE8] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Queue monitor</h2>
+      <p className="text-[13px] text-[#A09E97] mb-5">
+        Queue stats and job counts. Workers process jobs in the background.
+      </p>
+      <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3">
+        {[
+          { label: 'Waiting', value: stats.queue.waiting, accent: false },
+          { label: 'Active', value: stats.queue.active, accent: 'orange' },
+          { label: 'Completed (total)', value: stats.queue.completed, accent: false },
+          { label: 'Failed (total)', value: stats.queue.failed, accent: 'red' },
+          { label: 'Workers active', value: stats.workersActive, accent: false },
+        ].map(({ label, value, accent }) => (
+          <div
+            key={label}
+            className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] px-5 py-4"
+            style={{ borderWidth: '0.5px' }}
+          >
+            <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[#65635D]">{label}</div>
+            <div
+              className="font-serif text-[36px] font-normal leading-none"
+              style={{
+                fontFamily: 'Georgia, serif',
+                color:
+                  value === 0
+                    ? '#A09E97'
+                    : accent === 'orange'
+                      ? '#D9714A'
+                      : accent === 'red'
+                        ? '#E24B4A'
+                        : '#F0EFE8',
+              }}
+            >
+              {value}
+            </div>
           </div>
-          <div className="p-4 rounded-lg bg-[#1A1915] border border-[rgba(240,239,232,0.08)]">
-            <div className="text-[11px] uppercase tracking-wider text-[#65635D]">Active</div>
-            <div className="text-[24px] font-medium text-[#3b82f6] mt-1">{stats.queue.active}</div>
-          </div>
-          <div className="p-4 rounded-lg bg-[#1A1915] border border-[rgba(240,239,232,0.08)]">
-            <div className="text-[11px] uppercase tracking-wider text-[#65635D]">Completed (total)</div>
-            <div className="text-[24px] font-medium text-[#2d8a2d] mt-1">{stats.queue.completed}</div>
-          </div>
-          <div className="p-4 rounded-lg bg-[#1A1915] border border-[rgba(240,239,232,0.08)]">
-            <div className="text-[11px] uppercase tracking-wider text-[#65635D]">Failed (total)</div>
-            <div className="text-[24px] font-medium text-[#b32d2e] mt-1">{stats.queue.failed}</div>
-          </div>
-          <div className="p-4 rounded-lg bg-[#1A1915] border border-[rgba(240,239,232,0.08)]">
-            <div className="text-[11px] uppercase tracking-wider text-[#65635D]">Workers active</div>
-            <div className="text-[24px] font-medium text-[#F0EFE8] mt-1">{stats.workersActive}</div>
-          </div>
-        </div>
-        <p className="text-[12px] text-[#65635D] mt-4">
-          Completed today: {stats.completedToday} · Failed today: {stats.failedToday}
-        </p>
+        ))}
       </div>
+      <p className="text-[13px] text-[#65635D]">
+        Completed today: {stats.completedToday} · Failed today: {stats.failedToday}
+      </p>
     </div>
   );
 }

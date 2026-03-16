@@ -17,7 +17,12 @@ export async function GET(request: Request) {
   const dateFrom = searchParams.get('dateFrom');
   const dateTo = searchParams.get('dateTo');
 
-  const queueCounts = await getJobCounts();
+  let queueCounts: Awaited<ReturnType<typeof getJobCounts>> = null;
+  try {
+    queueCounts = await getJobCounts();
+  } catch {
+    // Redis unreachable — use zeros for queue stats
+  }
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const [completedToday, failedToday] = await Promise.all([

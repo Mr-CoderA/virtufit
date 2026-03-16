@@ -151,7 +151,7 @@ export default function AdminApiSettingsPage() {
             {contactRow('whatsapp_number', 'WhatsApp number', 'Used in wa.me links. Include country code, no + or spaces. e.g. 923213889791', 'text', '923213889791')}
             {contactRow('founder_name', 'Founder / contact name', 'Shown in email signatures and footer.', 'text', 'Asad Ali')}
             {contactError && <p className="text-[13px] text-[#e24b4a] mb-2">{contactError}</p>}
-            {contactSuccess && <p className="text-[13px] text-[#2d8a2d] mb-2">Contact settings updated</p>}
+            {contactSuccess && <p className="text-[13px] text-[#D9714A] mb-2">Contact settings updated</p>}
             <button type="button" onClick={saveContactSettings} disabled={contactSaving} className="rounded-full bg-[#F0EFE8] text-[#1A1915] px-6 py-3 text-[13px] font-medium hover:opacity-90 disabled:opacity-50">
               {contactSaving ? 'Saving…' : 'Save contact settings'}
             </button>

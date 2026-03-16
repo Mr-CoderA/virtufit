@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   BarChart3,
@@ -26,7 +26,7 @@ const SIDEBAR_LINKS_FIXED = [
   { section: 'OVERVIEW', items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }, { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 }] },
   { section: 'MANAGEMENT', items: [{ href: '/admin/brands', label: 'Brands', icon: Users }, { href: '/admin/generations', label: 'Generations', icon: Sparkles }, { href: '/admin/credits', label: 'Credits', icon: Coins }, { href: '/admin/contact', label: 'Contact', icon: Mail, badgeKey: 'contactUnread' }] },
   { section: 'SYSTEM', items: [{ href: '/admin/plans', label: 'Plans & Pricing', icon: DollarSign }, { href: '/admin/credits', label: 'Credit Rate', icon: Percent }, { href: '/admin/api-settings', label: 'API Settings', icon: Code }, { href: '/admin/queues', label: 'Queue monitor', icon: LayoutList }, { href: '/admin/appearance', label: 'Appearance', icon: Palette }] },
-  { section: 'ACCOUNT', items: [{ href: '/admin/profile', label: 'Admin profile', icon: User }, { href: '/admin/logout', label: 'Sign out', icon: LogOut }] },
+  { section: 'ACCOUNT', items: [{ href: '/admin/profile', label: 'Admin profile', icon: User }] },
 ];
 
 export function AdminLayout({
@@ -39,18 +39,24 @@ export function AdminLayout({
   systemStatus?: 'operational' | 'issues';
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [admin, setAdmin] = useState<{ name: string; email: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [contactUnread, setContactUnread] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    adminApi.contactCount().then((r) => {
-      if (r.data?.unreadCount != null) setContactUnread(r.data.unreadCount);
-    });
+    setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    adminApi.contactCount().then((r) => {
+      if (r.data?.unreadCount != null) setContactUnread(r.data.unreadCount);
+    });
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
     const t = getAdminToken();
     if (!t) {
       redirectToAdminLogin();
@@ -64,72 +70,84 @@ export function AdminLayout({
       }
       if (r.data?.admin) setAdmin({ name: r.data.admin.name, email: r.data.admin.email });
     });
-  }, []);
+  }, [mounted]);
 
-  if (!getAdminToken()) return null;
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#1A1915] flex items-center justify-center">
+        <span className="text-[#A09E97] text-[14px]">Loading…</span>
+      </div>
+    );
+  }
+  if (!getAdminToken()) {
+    return null;
+  }
 
   const initials = admin?.name ? admin.name.split(/\s+/).map((n) => n[0]).slice(0, 2).join('').toUpperCase() : 'A';
 
   return (
-    <div className="min-h-screen bg-[#1A1915] flex">
+    <div className="flex min-h-screen bg-[#1A1915]">
+      {/* Sidebar: mobile fixed drawer 260px, desktop in-flow 220px sticky */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-[240px] bg-[#222219] border-r border-[rgba(240,239,232,0.08)] flex flex-col transition-transform md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-        style={{ borderRightWidth: '0.5px' }}
+        className={`admin-sidebar fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] flex-shrink-0 flex-col bg-[#1A1915] pb-6 transition-transform duration-[250ms] ease-out md:relative md:sticky md:top-0 md:block md:h-screen md:w-[220px] md:translate-x-0 md:pb-6 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ borderRight: '0.5px solid rgba(240,239,232,0.08)' }}
       >
-        <div className="p-4 flex items-center justify-between border-b border-[rgba(240,239,232,0.08)] md:justify-center">
+        {/* Logo area */}
+        <div
+          className="flex flex-shrink-0 items-center gap-2 border-b px-5 pb-4 pt-5"
+          style={{ borderBottomWidth: '0.5px', borderColor: 'rgba(240,239,232,0.08)', paddingTop: 20, paddingBottom: 16, marginBottom: 8 }}
+        >
           <Link href="/admin" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-            <svg width="32" height="32" viewBox="0 0 100 100" className="shrink-0">
-              <rect width="100" height="100" rx="24" fill="#1A1915" />
-              <circle cx="50" cy="26" r="10" fill="none" stroke="#F0EFE8" strokeWidth="2" />
-              <path d="M30,42 L20,47 L22,62 L34,58 L32,78 L68,78 L66,58 L78,62 L80,47 L70,42 L50,54 Z" fill="none" stroke="#F0EFE8" strokeWidth="2" strokeLinejoin="round" />
-              <path d="M38,42 L50,54 L62,42" fill="none" stroke="#F0EFE8" strokeWidth="2" strokeLinejoin="round" />
-              <path d="M78,18 L80,23 L85,25 L80,27 L78,32 L76,27 L71,25 L76,23 Z" fill="#D9714A" />
-            </svg>
-            <span className="text-[14px] font-medium text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>VirtuFit</span>
+            <span className="font-serif text-[17px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+              Virtu<span className="text-[#D9714A]">Fit</span>
+            </span>
           </Link>
-          <button type="button" className="md:hidden p-2 text-[#A09E97] hover:text-[#F0EFE8]" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
-            <X className="h-5 w-5" />
-          </button>
+          <span
+            className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[#65635D]"
+            style={{ background: 'rgba(240,239,232,0.06)' }}
+          >
+            Admin
+          </span>
         </div>
-        <div className="py-2 px-2 text-[10px] font-medium uppercase tracking-wider text-[#D9714A]">Admin</div>
-        <nav className="flex-1 overflow-y-auto py-2">
-          {SIDEBAR_LINKS_FIXED.map((group) => (
-            <div key={group.section} className="mb-4">
-              <div className="px-4 py-1 text-[11px] font-medium uppercase tracking-wider text-[#65635D]">{group.section}</div>
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto">
+          {SIDEBAR_LINKS_FIXED.map((group, gIdx) => (
+            <div key={group.section}>
+              {gIdx > 0 && (
+                <div
+                  className="mx-4 my-1.5"
+                  style={{ height: '0.5px', background: 'rgba(240,239,232,0.06)' }}
+                />
+              )}
+              <div
+                className={`px-4 pb-1 text-[10px] font-medium uppercase tracking-[0.1em] text-[#65635D] ${gIdx === 0 ? 'pt-2' : 'pt-4'}`}
+              >
+                {group.section}
+              </div>
               {group.items.map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
                 const Icon = item.icon;
-                if (item.href === '/admin/logout') {
-                  return (
-                    <button
-                      key={item.href}
-                      type="button"
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-[#A09E97] hover:text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.04)]"
-                      onClick={() => {
-                        clearAdminToken();
-                        window.location.href = '/admin/login';
-                      }}
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {item.label}
-                    </button>
-                  );
-                }
                 const badge = 'badgeKey' in item && item.badgeKey === 'contactUnread' && contactUnread > 0;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-2.5 text-[13px] transition-colors ${
-                      isActive ? 'text-[#D9714A] bg-[rgba(217,113,74,0.08)] border-l-2 border-[#D9714A]' : 'text-[#A09E97] hover:text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.04)]'
+                    className={`group mx-2 mb-0.5 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] no-underline transition-[background,color] duration-150 ${
+                      isActive
+                        ? 'bg-[rgba(217,113,74,0.12)] font-medium text-[#D9714A]'
+                        : 'text-[#A09E97] hover:bg-[rgba(240,239,232,0.05)] hover:text-[#F0EFE8]'
                     }`}
-                    style={isActive ? { marginLeft: -1, paddingLeft: 15 } : {}}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
+                    <Icon
+                      className={`h-4 w-4 flex-shrink-0 ${isActive ? 'text-[#D9714A] opacity-100' : 'opacity-70 group-hover:opacity-100'}`}
+                    />
                     {item.label}
                     {badge && (
-                      <span className="ml-auto min-w-[18px] h-[18px] rounded-full bg-[#D9714A] text-[10px] font-medium text-[#1A1915] flex items-center justify-center px-1">
+                      <span className="ml-auto min-w-[18px] flex h-[18px] items-center justify-center rounded-full bg-[#D9714A] px-1 text-[10px] font-medium text-[#1A1915]">
                         {contactUnread > 99 ? '99+' : contactUnread}
                       </span>
                     )}
@@ -139,37 +157,93 @@ export function AdminLayout({
             </div>
           ))}
         </nav>
+
+        {/* Bottom admin info row */}
+        <div
+          className="mt-auto flex flex-shrink-0 items-center gap-2.5 border-t px-4 py-3"
+          style={{ borderTopWidth: '0.5px', borderColor: 'rgba(240,239,232,0.08)', background: '#1A1915' }}
+        >
+          <div
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[#D9714A]"
+            style={{ background: 'rgba(217,113,74,0.15)' }}
+          >
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[12px] font-medium text-[#F0EFE8] whitespace-nowrap">
+              {admin?.name ?? 'Admin'}
+            </p>
+            <p className="text-[11px] text-[#65635D]">Admin</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              clearAdminToken();
+              window.location.href = '/admin/login';
+            }}
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[#65635D] transition-colors hover:bg-[rgba(217,113,74,0.1)] hover:text-[#D9714A]"
+            title="Sign out"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0 md:ml-[240px]">
-        <header className="sticky top-0 z-30 h-14 border-b border-[rgba(240,239,232,0.08)] bg-[#1A1915] flex items-center justify-between px-4 md:px-6" style={{ borderBottomWidth: '0.5px' }}>
-          <div className="flex items-center gap-4">
-            <button type="button" className="md:hidden p-2 text-[#A09E97] hover:text-[#F0EFE8]" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
-              <Menu className="h-5 w-5" />
+      {/* Main content area */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Topbar */}
+        <header
+          className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between bg-[#1A1915] pl-6 pr-5"
+          style={{ height: 56, borderBottom: '0.5px solid rgba(240,239,232,0.08)' }}
+        >
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <button
+              type="button"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#A09E97] transition-colors hover:bg-[rgba(240,239,232,0.06)] md:hidden"
+              onClick={() => setSidebarOpen((o) => !o)}
+              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+            >
+              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-            <h1 className="text-[18px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>{pageTitle}</h1>
+            <h1
+              className="truncate text-[17px] font-normal text-[#F0EFE8] whitespace-nowrap max-[768px]:max-w-[calc(100vw-200px)]"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              {pageTitle}
+            </h1>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <span className={`text-[11px] sm:text-[12px] px-2 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap ${systemStatus === 'operational' ? 'bg-[#0d5c0d] text-[#a3e0a3]' : 'bg-[#b32d2e] text-[#f0a0a0]'}`}>
-              <span className="sm:hidden">{systemStatus === 'operational' ? 'OK' : 'Issues'}</span>
-              <span className="hidden sm:inline">{systemStatus === 'operational' ? 'All systems operational' : 'Issues detected'}</span>
+          <div className="flex shrink-0 items-center gap-2 pl-2">
+            <span
+              className={`hidden min-[481px]:inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium whitespace-nowrap ${
+                systemStatus === 'operational'
+                  ? 'bg-[rgba(217,113,74,0.1)] text-[#D9714A]'
+                  : 'bg-[rgba(226,75,74,0.12)] text-[#E24B4A]'
+              }`}
+              style={{ border: '0.5px solid rgba(217,113,74,0.25)' }}
+            >
+              {systemStatus === 'operational' ? 'All systems operational' : 'Issues detected'}
             </span>
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="w-8 h-8 rounded-full bg-[#222219] border border-[rgba(240,239,232,0.12)] flex items-center justify-center text-[12px] font-medium text-[#F0EFE8]">
-                {initials}
-              </div>
-              <span className="hidden sm:inline text-[13px] text-[#A09E97] truncate max-w-[120px]">{admin?.name ?? 'Admin'}</span>
+            <div
+              className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[#D9714A]"
+              style={{ background: 'rgba(217,113,74,0.15)' }}
+            >
+              {initials}
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6 overflow-auto">
-          {children}
+        <main className="admin-content flex-1 overflow-x-hidden overflow-y-auto p-4 md:px-8 md:py-7">
+          <div className="mx-auto max-w-[1200px]">{children}</div>
         </main>
       </div>
 
+      {/* Backdrop when sidebar open on mobile */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={() => setSidebarOpen(false)} aria-hidden />
+        <div
+          className="fixed inset-0 z-[49] bg-black/60 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden
+        />
       )}
     </div>
   );

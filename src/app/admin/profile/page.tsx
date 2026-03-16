@@ -70,7 +70,7 @@ export default function AdminProfilePage() {
             <label className="block text-[12px] text-[#A09E97] mb-1">Confirm new password</label>
             <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="w-full rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8]" />
           </div>
-          {message && <p className={`text-[13px] ${message.includes('Sign in') ? 'text-[#2d8a2d]' : 'text-[#e0a0a0]'}`}>{message}</p>}
+          {message && <p className={`text-[13px] ${message.includes('Sign in') ? 'text-[#D9714A]' : 'text-[#E24B4A]'}`}>{message}</p>}
           <button type="submit" disabled={loading} className="rounded-lg bg-[#D9714A] text-[#1A1915] px-4 py-2 text-[13px] font-medium disabled:opacity-50">Save</button>
         </form>
       </div>

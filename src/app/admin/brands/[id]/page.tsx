@@ -120,7 +120,7 @@ export default function AdminBrandDetailPage() {
             type="button"
             onClick={handleRestore}
             disabled={restoring}
-            className="rounded-lg bg-[#2d8a2d] text-white px-4 py-2 text-[13px] font-medium hover:opacity-90 disabled:opacity-50"
+            className="rounded-full bg-[#F0EFE8] text-[#1A1915] px-5 py-2 text-[13px] font-medium border-0 hover:opacity-90 disabled:opacity-50"
           >
             {restoring ? 'Restoring…' : 'Restore account'}
           </button>
@@ -142,7 +142,7 @@ export default function AdminBrandDetailPage() {
         <div className="flex flex-wrap items-center gap-4 mt-2">
           <p className="text-[13px] text-[#A09E97]">Plan: FREE · Status: {b.suspended ? 'Suspended' : 'Active'}</p>
           <span className="text-[13px] text-[#A09E97]">
-            Email: {b.email} · Status: {b.emailVerified ? <span className="text-[#2d8a2d]">✓ Verified</span> : <span className="text-[#d4a012]">✗ Not verified</span>}
+            Email: {b.email} · Status: {b.emailVerified ? <span className="text-[#D9714A]">✓ Verified</span> : <span className="text-[#A09E97]">✗ Not verified</span>}
             {b.emailVerifiedAt ? ` · Verified at: ${new Date(b.emailVerifiedAt).toLocaleString()}` : ' · Verified at: Never'}
           </span>
           {!b.emailVerified && !b.isDeleted && (
@@ -162,7 +162,7 @@ export default function AdminBrandDetailPage() {
             <button
               type="button"
               onClick={() => { setDeleteOpen(true); setDeleteReason(''); setDeleteError(''); }}
-              className="rounded-lg border border-[rgba(179,45,46,0.5)] bg-[rgba(179,45,46,0.1)] px-4 py-2 text-[13px] text-[#e0a0a0] hover:bg-[rgba(179,45,46,0.2)]"
+              className="rounded-full border border-[rgba(226,75,74,0.3)] bg-transparent px-5 py-2 text-[13px] text-[#E24B4A] hover:bg-[rgba(226,75,74,0.08)]"
             >
               Delete account
             </button>
@@ -188,7 +188,7 @@ export default function AdminBrandDetailPage() {
             {deleteError && <p className="text-[13px] text-[#e0a0a0] mb-3">{deleteError}</p>}
             <div className="flex gap-3 justify-end">
               <button type="button" onClick={() => !deleting && setDeleteOpen(false)} className="rounded-lg px-4 py-2 text-[13px] text-[#A09E97] hover:bg-[rgba(240,239,232,0.06)]" disabled={deleting}>Cancel</button>
-              <button type="button" onClick={handleDelete} disabled={deleting || deleteReason.trim().length < 10} className="rounded-lg bg-[#b32d2e] text-white px-4 py-2 text-[13px] font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button type="button" onClick={handleDelete} disabled={deleting || deleteReason.trim().length < 10} className="rounded-full border border-[rgba(226,75,74,0.3)] bg-transparent px-5 py-2 text-[13px] text-[#E24B4A] hover:bg-[rgba(226,75,74,0.08)] disabled:opacity-50 disabled:cursor-not-allowed">
                 {deleting ? 'Deleting…' : 'Delete account'}
               </button>
             </div>
@@ -208,7 +208,7 @@ export default function AdminBrandDetailPage() {
                 <tr key={h.createdAt + h.amount} className="border-t border-[rgba(240,239,232,0.06)]">
                   <td className="p-2 text-[#A09E97]">{new Date(h.createdAt).toLocaleString()}</td>
                   <td className="p-2 text-[#A09E97]">{h.type}</td>
-                  <td className={`p-2 ${h.amount >= 0 ? 'text-[#2d8a2d]' : 'text-[#e0a0a0]'}`}>{h.amount >= 0 ? '+' : ''}{h.amount}</td>
+                  <td className={`p-2 ${h.amount >= 0 ? 'text-[#D9714A]' : 'text-[#E24B4A]'}`}>{h.amount >= 0 ? '+' : ''}{h.amount}</td>
                   <td className="p-2 text-[#A09E97]">{h.note ?? '—'}</td>
                 </tr>
               ))}

@@ -19,13 +19,40 @@ export type GenerationJobData = {
 
 let queue: Bull.Queue<GenerationJobData> | null = null;
 
-function getRedisOpts(): string | { host: string; port: number; password?: string } | null {
-  const url = process.env.REDIS_URL;
-  if (url && url.startsWith('redis://')) return url;
-  const host = process.env.REDIS_HOST ?? 'localhost';
-  const port = parseInt(process.env.REDIS_PORT ?? '6379', 10);
-  const password = process.env.REDIS_PASSWORD?.trim() || undefined;
-  return { host, port, ...(password && { password }) };
+function parseRedisUrl(url: string): { host: string; port: number; password?: string; tls?: object } | null {
+  try {
+    const parsed = new URL(url);
+    const port = parsed.port ? parseInt(parsed.port, 10) : 6379;
+    const password = parsed.password ? decodeURIComponent(parsed.password) : undefined;
+    const host = parsed.hostname;
+    if (!host) return null;
+    const useTls = parsed.protocol === 'rediss:';
+    return {
+      host,
+      port: Number.isNaN(port) ? 6379 : port,
+      ...(password && { password }),
+      ...(useTls && { tls: { rejectUnauthorized: true } }),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function getRedisOpts(): string | { host: string; port: number; password?: string; tls?: object } | null {
+  const url = process.env.REDIS_URL?.trim();
+  if (!url) {
+    const host = process.env.REDIS_HOST ?? 'localhost';
+    const port = parseInt(process.env.REDIS_PORT ?? '6379', 10);
+    const password = process.env.REDIS_PASSWORD?.trim() || undefined;
+    return { host, port, ...(password && { password }) };
+  }
+  // rediss:// (TLS) e.g. Upstash: use parsed options with explicit TLS so connection succeeds
+  if (url.startsWith('rediss://')) {
+    const opts = parseRedisUrl(url);
+    return opts ?? { host: 'localhost', port: 6379 };
+  }
+  if (url.startsWith('redis://')) return url;
+  return null;
 }
 
 const defaultJobOptions = {

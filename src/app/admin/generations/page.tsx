@@ -43,20 +43,22 @@ export default function AdminGenerationsPage() {
   }, [page]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <h2 className="text-[20px] font-normal text-[#F0EFE8] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Generations</h2>
+      <p className="text-[13px] text-[#A09E97] mb-5">Queue status and completed generations.</p>
       {queueStats != null && (
-        <div className="flex flex-wrap gap-4 p-4 rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219]" style={{ borderWidth: '0.5px' }}>
+        <div className="flex flex-wrap gap-4 p-5 rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] transition-colors hover:bg-[#2C2C27]" style={{ borderWidth: '0.5px' }}>
           <span className="text-[13px] text-[#A09E97]">
             Queued: <strong className="text-[#F0EFE8]">{queueStats.queued}</strong>
           </span>
           <span className="text-[13px] text-[#A09E97]">
-            Processing: <strong className="text-[#F0EFE8]">{queueStats.processing}</strong>
+            Processing: <strong className="text-[#D9714A]">{queueStats.processing}</strong>
           </span>
           <span className="text-[13px] text-[#A09E97]">
-            Completed today: <strong className="text-[#2d8a2d]">{queueStats.completedToday}</strong>
+            Completed today: <strong className="text-[#D9714A]">{queueStats.completedToday}</strong>
           </span>
           <span className="text-[13px] text-[#A09E97]">
-            Failed today: <strong className="text-[#b32d2e]">{queueStats.failedToday}</strong>
+            Failed today: <strong className="text-[#E24B4A]">{queueStats.failedToday}</strong>
           </span>
           <span className="text-[13px] text-[#A09E97]">
             Workers active: <strong className="text-[#F0EFE8]">{queueStats.workersActive}</strong>
@@ -65,60 +67,84 @@ export default function AdminGenerationsPage() {
       )}
 
       {activeJobs.length > 0 && (
-        <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
-          <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Current queue</h3>
-          <div className="overflow-x-auto">
-          <table className="w-full text-[13px] min-w-[500px]">
-            <thead><tr className="text-left text-[#65635D]"><th className="p-3">Queued</th><th className="p-3">Brand</th><th className="p-3">Tier</th><th className="p-3">Job ID</th><th className="p-3">Status</th></tr></thead>
-            <tbody>
-              {activeJobs.map((j) => (
-                <tr key={j.id} className="border-t border-[rgba(240,239,232,0.06)]">
-                  <td className="p-3 text-[#A09E97]">{new Date(j.queuedAt).toLocaleString()}</td>
-                  <td className="p-3 text-[#F0EFE8]">{j.brand}</td>
-                  <td className="p-3 text-[#A09E97]">{j.tier}</td>
-                  <td className="p-3 text-[#A09E97] font-mono text-[11px]">{j.id.slice(0, 8)}…</td>
-                  <td className="p-3">
-                    {j.status === 'queued' ? (
-                      <span className="inline-flex items-center gap-1 text-[#A09E97]"><Clock className="h-3.5 w-3" /> Queued</span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[#3b82f6]"><Loader2 className="h-3.5 w-3 animate-spin" /> Processing</span>
-                    )}
-                  </td>
+        <div className="rounded-xl overflow-hidden" style={{ border: '0.5px solid rgba(240,239,232,0.08)' }}>
+          <h3 className="text-[20px] font-normal text-[#F0EFE8] p-5 pb-2" style={{ fontFamily: 'Georgia, serif' }}>Current queue</h3>
+          <p className="text-[13px] text-[#A09E97] px-5 mb-4">Jobs in queue or processing.</p>
+          <div className="w-full overflow-x-auto bg-[#222219] rounded-xl" style={{ WebkitOverflowScrolling: 'touch', border: '0.5px solid rgba(240,239,232,0.08)' }}>
+            <table className="w-full min-w-[600px] border-collapse bg-[#222219]">
+              <thead>
+                <tr className="border-b border-[rgba(240,239,232,0.08)] bg-[#222219]" style={{ borderBottomWidth: '0.5px' }}>
+                  <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Queued</th>
+                  <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Brand</th>
+                  <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Tier</th>
+                  <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Job ID</th>
+                  <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {activeJobs.map((j) => (
+                  <tr key={j.id} className="border-b border-[rgba(240,239,232,0.06)] transition-colors hover:bg-[#2C2C27]" style={{ borderBottomWidth: '0.5px' }}>
+                    <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{new Date(j.queuedAt).toLocaleString()}</td>
+                    <td className="py-3.5 px-4 text-[13px] text-[#F0EFE8] font-medium whitespace-nowrap">{j.brand}</td>
+                    <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{j.tier}</td>
+                    <td className="py-3.5 px-4 text-[13px] text-[#A09E97] font-mono text-[11px] whitespace-nowrap">{j.id.slice(0, 8)}…</td>
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      {j.status === 'queued' ? (
+                        <span className="inline-flex items-center gap-1 text-[#A09E97]"><Clock className="h-3.5 w-3" /> Queued</span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[#D9714A]"><Loader2 className="h-3.5 w-3 animate-spin" /> Processing</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+          <p className="md:hidden text-center text-[11px] text-[#65635D] mt-2">← Scroll to see more →</p>
         </div>
       )}
 
-      <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
-        <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Generations (completed)</h3>
+      <div className="rounded-xl overflow-hidden" style={{ border: '0.5px solid rgba(240,239,232,0.08)' }}>
+        <h3 className="text-[20px] font-normal text-[#F0EFE8] p-5 pb-2" style={{ fontFamily: 'Georgia, serif' }}>Generations (completed)</h3>
+        <p className="text-[13px] text-[#A09E97] px-5 mb-4">Recent completed generations.</p>
         {loading ? (
-          <p className="p-6 text-[#A09E97]">Loading…</p>
+          <p className="p-6 text-[#A09E97] text-[14px]">Loading…</p>
         ) : (
-          <div className="overflow-x-auto">
-          <table className="w-full text-[13px] min-w-[600px]">
-            <thead><tr className="text-left text-[#65635D]"><th className="p-3">Time</th><th className="p-3">Brand</th><th className="p-3">Tier</th><th className="p-3">Job ID</th><th className="p-3">Status</th><th className="p-3">Output</th><th className="p-3">Credits</th></tr></thead>
-            <tbody>
-              {items.map((g) => (
-                <tr key={g.id} className="border-t border-[rgba(240,239,232,0.06)]">
-                  <td className="p-3 text-[#A09E97]">{new Date(g.createdAt).toLocaleString()}</td>
-                  <td className="p-3 text-[#F0EFE8]">{g.brand}</td>
-                  <td className="p-3 text-[#A09E97]">{g.tier}</td>
-                  <td className="p-3 text-[#A09E97] font-mono text-[11px]">{g.jobId ?? '—'}</td>
-                  <td className="p-3"><span className="text-[#2d8a2d]">Success</span></td>
-                  <td className="p-3">{g.outputUrl ? <img src={g.outputUrl} alt="" className="w-12 h-12 object-cover rounded" /> : '—'}</td>
-                  <td className="p-3 text-[#F0EFE8]">{g.creditsUsed}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+          <>
+            <div className="w-full overflow-x-auto bg-[#222219] rounded-xl" style={{ WebkitOverflowScrolling: 'touch', border: '0.5px solid rgba(240,239,232,0.08)' }}>
+              <table className="w-full min-w-[600px] border-collapse bg-[#222219]">
+                <thead>
+                  <tr className="border-b border-[rgba(240,239,232,0.08)] bg-[#222219]" style={{ borderBottomWidth: '0.5px' }}>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Time</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Brand</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Tier</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Job ID</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Status</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Output</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Credits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((g) => (
+                    <tr key={g.id} className="border-b border-[rgba(240,239,232,0.06)] transition-colors hover:bg-[#2C2C27]" style={{ borderBottomWidth: '0.5px' }}>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{new Date(g.createdAt).toLocaleString()}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#F0EFE8] font-medium whitespace-nowrap">{g.brand}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{g.tier}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] font-mono text-[11px] whitespace-nowrap">{g.jobId ?? '—'}</td>
+                      <td className="py-3.5 px-4 whitespace-nowrap"><span className="text-[#D9714A]">Success</span></td>
+                      <td className="py-3.5 px-4 whitespace-nowrap">{g.outputUrl ? <img src={g.outputUrl} alt="" className="w-12 h-12 object-cover rounded" /> : '—'}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[#F0EFE8] whitespace-nowrap">{g.creditsUsed}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="md:hidden text-center text-[11px] text-[#65635D] mt-2">← Scroll to see more →</p>
+          </>
         )}
-        <div className="flex justify-between p-3 border-t border-[rgba(240,239,232,0.08)]">
-          <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="text-[#D9714A] disabled:opacity-50">Previous</button>
-          <button type="button" onClick={() => setPage((p) => p + 1)} className="text-[#D9714A]">Next</button>
+        <div className="flex justify-between p-4 border-t border-[rgba(240,239,232,0.08)] bg-[#222219]">
+          <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-5 py-2 text-[13px] text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] disabled:opacity-50">Previous</button>
+          <button type="button" onClick={() => setPage((p) => p + 1)} className="rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-5 py-2 text-[13px] text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)]">Next</button>
         </div>
       </div>
     </div>

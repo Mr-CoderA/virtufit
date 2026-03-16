@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Mail, Loader2, CheckCircle } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
 import { ButtonLink } from '@/components/ui/Button';
 
 export default function VerifyEmailPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const emailParam = searchParams.get('email') ?? '';
   const [email, setEmail] = useState(emailParam);
@@ -96,9 +95,9 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     if (status !== 'success') return;
-    const t = setTimeout(() => router.push('/dashboard'), 3000);
+    const t = setTimeout(() => { window.location.href = '/dashboard'; }, 3000);
     return () => clearTimeout(t);
-  }, [status, router]);
+  }, [status]);
 
   if (status === 'success') {
     return (

@@ -7,7 +7,7 @@ export function VirtuFitLogo({ showTagline = false, size = 'md' }: { showTagline
   const textSize =
     size === 'lg' ? 'text-[20px] sm:text-[24px]' :
     size === 'sm' ? 'text-[13px]' :
-    size === 'nav' ? 'text-[18px]' :
+    size === 'nav' ? 'text-[14px] max-[360px]:text-[13px] md:text-[18px]' :
     'text-[15px] sm:text-[16px]';
   return (
     <Link
