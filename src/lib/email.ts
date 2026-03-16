@@ -2,11 +2,16 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+/** Verified sender — never use onboarding@resend.dev or other test addresses. */
+const DEFAULT_FROM = 'VirtuFit <noreply@virtufit.xyz>';
+
 function getFrom(): string {
-  if (process.env.EMAIL_FROM?.trim()) return process.env.EMAIL_FROM.trim();
-  const name = process.env.RESEND_FROM_NAME ?? 'VirtuFit';
-  const email = process.env.RESEND_FROM_EMAIL ?? 'noreply@virtufit.xyz';
-  return `${name} <${email}>`;
+  const envFrom = process.env.EMAIL_FROM?.trim();
+  if (envFrom && envFrom.endsWith('@virtufit.xyz>')) return envFrom;
+  const email = process.env.RESEND_FROM_EMAIL?.trim();
+  const name = process.env.RESEND_FROM_NAME?.trim();
+  if (email && name && email.endsWith('@virtufit.xyz')) return `${name} <${email}>`;
+  return DEFAULT_FROM;
 }
 
 export type SendEmailParams = {
@@ -54,7 +59,7 @@ const DASHBOARD_URL = 'https://virtufit.xyz/dashboard';
 export async function sendWelcomeEmail({ to, name }: { to: string; name: string }): Promise<{ success: boolean; id?: string; error?: unknown }> {
   return sendEmail({
     to,
-    subject: 'Welcome to VirtuFit — your 10 free credits are ready',
+    subject: 'Welcome to VirtuFit — your 5 free credits are ready',
     html: `
       <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;padding:40px 24px;background:#1A1915;color:#F0EFE8;">
         <h1 style="font-family:Georgia,serif;font-size:28px;font-weight:400;color:#F0EFE8;margin:0 0 8px;">
@@ -65,7 +70,7 @@ export async function sendWelcomeEmail({ to, name }: { to: string; name: string 
         </p>
         <div style="background:#222219;border:0.5px solid rgba(240,239,232,0.08);border-radius:16px;padding:24px;margin:0 0 24px;">
           <p style="color:#65635D;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 8px;">YOUR CREDITS</p>
-          <p style="font-family:Georgia,serif;font-size:36px;color:#F0EFE8;margin:0 0 4px;">10</p>
+          <p style="font-family:Georgia,serif;font-size:36px;color:#F0EFE8;margin:0 0 4px;">5</p>
           <p style="color:#A09E97;font-size:14px;margin:0;">free credits added to your account</p>
         </div>
         <p style="color:#A09E97;font-size:14px;line-height:1.75;margin:0 0 24px;">
@@ -81,7 +86,7 @@ export async function sendWelcomeEmail({ to, name }: { to: string; name: string 
         </p>
       </div>
     `,
-    text: `Welcome to VirtuFit, ${name}! Your account is ready with 10 free credits. Visit ${DASHBOARD_URL} to get started.`,
+    text: `Welcome to VirtuFit, ${name}! Your account is ready with 5 free credits. Visit ${DASHBOARD_URL} to get started.`,
   });
 }
 

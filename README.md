@@ -87,9 +87,7 @@ VirtuFit uses [Resend](https://resend.com) for verification and transactional em
 
 1. Sign up at [resend.com](https://resend.com) (free, no credit card).
 2. Go to **API Keys** → **Create API key** → set as `RESEND_API_KEY` in `.env`.
-3. **Development:** use `EMAIL_FROM=VirtuFit <onboarding@resend.dev>`. Resend allows sending from this address on the free tier without domain verification.
-4. **Production:** add your domain in Resend → **Domains**, add the DNS records Resend provides, then use `EMAIL_FROM=VirtuFit <noreply@yourdomain.com>`.  
-**Production (virtufit.xyz):** Set `RESEND_FROM_EMAIL=noreply@virtufit.xyz` and verify the domain in Resend → Domains.
+3. **Production (virtufit.xyz):** Verify the domain in Resend → **Domains**, then set `RESEND_FROM_EMAIL=noreply@virtufit.xyz` and `RESEND_FROM_NAME=VirtuFit` (or `EMAIL_FROM="VirtuFit <noreply@virtufit.xyz>"`). The app defaults to `VirtuFit <noreply@virtufit.xyz>` when env is not set.
 
 **Testing emails locally:** Resend dashboard shows all sent emails in real time. Go to [resend.com](https://resend.com) → **Emails** to see delivery status and preview the HTML of every email sent.
 

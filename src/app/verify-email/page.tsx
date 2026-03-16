@@ -55,8 +55,8 @@ export default function VerifyEmailPage() {
             // ignore
           }
         }
-        const t = setTimeout(() => router.push('/dashboard'), 3000);
-        return () => clearTimeout(t);
+        // Redirect is handled by the useEffect below when status === 'success'
+        return;
       }
       if (data.code === 'TOKEN_EXPIRED') {
         setStatus('expired');

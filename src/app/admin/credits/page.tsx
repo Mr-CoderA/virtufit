@@ -42,8 +42,9 @@ export default function AdminCreditsPage() {
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: JSON.stringify({ rate: num }),
     })
-      .then((r) => r.json())
-      .then(() => { setSavingRate(false); if (overview) setOverview({ ...overview, creditRatePerCredit: num.toFixed(2) }); });
+      .then((r) => (r.ok ? r.json().then(() => { if (overview) setOverview({ ...overview, creditRatePerCredit: num.toFixed(2) }); }) : Promise.reject(new Error('Failed'))))
+      .catch(() => { /* keep rateEdit as-is on failure */ })
+      .finally(() => setSavingRate(false));
   };
 
   if (!overview) return <p className="text-[#A09E97]">Loading…</p>;
@@ -77,7 +78,7 @@ export default function AdminCreditsPage() {
           <span className="text-[#A09E97] text-[13px]">$ per credit</span>
           <button type="button" onClick={saveRate} disabled={savingRate} className="rounded-lg bg-[#D9714A] text-[#1A1915] px-4 py-2 text-[13px] font-medium disabled:opacity-50">Save</button>
         </div>
-        <p className="text-[12px] text-[#65635D] mt-2">$5 = {rateEdit ? (5 / parseFloat(rateEdit)).toFixed(0) : '—'} credits at this rate</p>
+        <p className="text-[12px] text-[#65635D] mt-2">$5 = {(() => { const r = parseFloat(rateEdit); return r > 0 && Number.isFinite(r) ? (5 / r).toFixed(0) : '—'; })()} credits at this rate</p>
       </div>
 
       <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>

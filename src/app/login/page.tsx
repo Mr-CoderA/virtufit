@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, X } from 'lucide-react';
 import BlurText from '@/components/ui/BlurText';
 import { Button } from '@/components/ui/Button';
 import { ButtonLink } from '@/components/ui/Button';
@@ -18,7 +18,49 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendSent, setResendSent] = useState(false);
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [verifyCode, setVerifyCode] = useState('');
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyError, setVerifyError] = useState('');
   const closedMessage = searchParams.get('closed') === '1';
+
+  async function handleVerifyCode(e: React.FormEvent) {
+    e.preventDefault();
+    setVerifyError('');
+    const trimmedCode = verifyCode.trim().replace(/\s/g, '');
+    if (!/^\d{6}$/.test(trimmedCode)) {
+      setVerifyError('Please enter the 6-digit code from your email.');
+      return;
+    }
+    setVerifyLoading(true);
+    try {
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), code: trimmedCode }),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        try {
+          localStorage.setItem('brandToken', data.token);
+        } catch {
+          // ignore
+        }
+        toast.success('Email verified! Redirecting...', { title: 'Welcome', duration: 2000 });
+        setShowCodeModal(false);
+        setVerifyCode('');
+        router.push('/dashboard');
+        router.refresh();
+        return;
+      }
+      setVerifyError(data.message || data.error || 'Invalid or expired code. Try again or request a new one.');
+    } catch {
+      setVerifyError('Something went wrong. Please try again.');
+    } finally {
+      setVerifyLoading(false);
+    }
+  }
 
   async function handleResendVerification() {
     try {
@@ -107,6 +149,14 @@ export default function LoginPage() {
                     Resend verification email →
                   </button>
                 )}
+                <p className="mt-3 text-[14px] text-[#F0EFE8]">Enter the 6-digit code from your email:</p>
+                <button
+                  type="button"
+                  onClick={() => { setShowCodeModal(true); setVerifyError(''); setVerifyCode(''); }}
+                  className="mt-2 inline-flex items-center justify-center rounded-full border border-[#D9714A] bg-[#D9714A]/10 px-4 py-2 text-[14px] font-medium text-[#D9714A] hover:bg-[#D9714A]/20"
+                >
+                  Enter verification code
+                </button>
               </div>
             )}
             {error && error !== 'EMAIL_NOT_VERIFIED' && (
@@ -160,6 +210,81 @@ export default function LoginPage() {
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
+
+          {/* Verification code modal */}
+          {showCodeModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+              onClick={() => setShowCodeModal(false)}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="verify-code-title"
+            >
+              <div
+                className="relative w-full max-w-[400px] rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#1A1915] p-6 shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  onClick={() => setShowCodeModal(false)}
+                  className="absolute right-4 top-4 rounded p-1 text-[#A09E97] hover:bg-[#222219] hover:text-[#F0EFE8]"
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+                <h2 id="verify-code-title" className="pr-8 text-[20px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+                  Enter verification code
+                </h2>
+                <p className="mt-1 text-[14px] text-[#A09E97]">
+                  We sent a 6-digit code to <span className="text-[#F0EFE8]">{email || 'your email'}</span>
+                </p>
+                {verifyError && (
+                  <p className="mt-3 text-[14px] text-[#e24b4a]" role="alert">
+                    {verifyError}
+                  </p>
+                )}
+                <form onSubmit={handleVerifyCode} className="mt-4 space-y-4">
+                  <div>
+                    <label htmlFor="modal-verify-code" className="block text-[13px] text-[#A09E97] mb-1.5">
+                      Code
+                    </label>
+                    <input
+                      id="modal-verify-code"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="\d{6}"
+                      maxLength={6}
+                      value={verifyCode}
+                      onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, ''))}
+                      placeholder="000000"
+                      className="input-glass w-full text-center text-[22px] tracking-[0.3em] font-mono"
+                      autoComplete="one-time-code"
+                      autoFocus
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    className="w-full"
+                    loading={verifyLoading}
+                    disabled={verifyLoading}
+                  >
+                    {verifyLoading ? 'Verifying...' : 'Verify and sign in'}
+                  </Button>
+                </form>
+                <p className="mt-4 text-center text-[13px] text-[#A09E97]">
+                  Didn&apos;t get the code?{' '}
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    className="text-[#D9714A] hover:underline"
+                  >
+                    Resend code
+                  </button>
+                </p>
+              </div>
+            </div>
+          )}
 
           <p className="mt-10 text-center text-[15px] text-[#A09E97]">
             Don&apos;t have an account?{' '}

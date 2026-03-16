@@ -14,8 +14,13 @@ export function DashboardClient({ user }: { user: User }) {
   const toast = useToast();
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    toast.info('You have been signed out.', { duration: 3000 });
+    try {
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (res.ok) toast.info('You have been signed out.', { duration: 3000 });
+      else toast.error('Sign out failed. Please try again.');
+    } catch {
+      toast.error('Sign out failed. Please try again.');
+    }
     router.push('/');
     router.refresh();
   }
