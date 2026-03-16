@@ -5,6 +5,36 @@ import { ArrowLeft, Upload, ImageIcon, Loader2 } from 'lucide-react';
 
 // eslint-disable-next-line @next/next/no-img-element -- blob previews
 const Img = (p: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...p} alt={p.alt ?? ''} />;
+
+function ResultImage({ url, index }: { url: string; index: number }) {
+  const [failed, setFailed] = useState(false);
+  const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(url)}`;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block rounded-xl overflow-hidden hover:opacity-90 transition-opacity bg-[#222219]"
+      style={{ border: '0.5px solid rgba(240,239,232,0.14)' }}
+    >
+      {failed ? (
+        <div className="flex flex-col items-center justify-center w-full max-w-[320px] h-[200px] text-[#65635D] text-[14px] gap-2">
+          <ImageIcon className="h-10 w-10 opacity-60" />
+          <span>Image unavailable — <span className="text-[#D9714A]">open in new tab</span></span>
+        </div>
+      ) : (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={proxyUrl}
+          alt={`Output ${index + 1}`}
+          className="object-cover w-full h-auto max-w-[320px] block"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </a>
+  );
+}
+
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ButtonLink } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -407,23 +437,7 @@ export function TryOnDemo({ credits, preferredResolution }: { credits: number; p
           </h3>
           <div className="flex flex-wrap gap-4">
             {result.output_urls.map((url, i) => (
-              <a
-                key={i}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block rounded-xl overflow-hidden hover:opacity-90 transition-opacity bg-[#222219]"
-              style={{ border: '0.5px solid rgba(240,239,232,0.14)' }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={url}
-                  alt={`Output ${i + 1}`}
-                  className="object-cover w-full h-auto max-w-[320px] block"
-                  crossOrigin="anonymous"
-                  referrerPolicy="no-referrer"
-                />
-              </a>
+              <ResultImage key={i} url={url} index={i} />
             ))}
           </div>
           <p className="text-[12px] text-[#65635D] mt-4">

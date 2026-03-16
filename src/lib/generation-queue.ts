@@ -117,3 +117,23 @@ export async function closeGenerationQueue(): Promise<void> {
     queue = null;
   }
 }
+
+/**
+ * Remove all waiting (and delayed) jobs from the queue. Returns number of jobs removed.
+ * Use for clearing stuck jobs when no worker is running.
+ */
+export async function clearWaitingJobs(): Promise<number> {
+  const q = getGenerationQueue();
+  if (!q) return 0;
+  const [waiting, delayed] = await Promise.all([q.getWaiting(), q.getDelayed()]);
+  let removed = 0;
+  for (const job of [...waiting, ...delayed]) {
+    try {
+      await job.remove();
+      removed++;
+    } catch {
+      // ignore
+    }
+  }
+  return removed;
+}

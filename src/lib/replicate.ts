@@ -92,14 +92,18 @@ function buildTryOnPrompt(garmentDesc: string, garmentCount: number, swapTarget:
       ? garmentDesc
       : `the ${garmentCount} items shown in the reference images (in order).`;
 
-  return `You are doing a virtual try-on edit on a photo of a person.
+  return `Virtual try-on: dress the PERSON in the GARMENT. Image order is critical.
 
-STRICT RULES — follow exactly:
-1. KEEP UNCHANGED: ${preserve}
+IMAGE ORDER (follow exactly):
+- First image = THE PERSON. This is the subject. Keep this person's face, skin, hair, pose, and body. Do not replace their identity with anyone else.
+- Second (and any further) image(s) = GARMENT REFERENCE ONLY. These show clothing to apply. Use ONLY the clothing from these images. Do NOT use the face or body of anyone in the garment images. Ignore any person/model in the garment photo — extract only the garment and put it on the person from the first image.
+
+STRICT RULES:
+1. KEEP UNCHANGED (on the person from image 1): ${preserve}
 2. SWAP ONLY THIS: ${swap} The new item(s) to apply: ${itemRef}
 3. RESULT: ${instruction}
 
-Do not change the person's identity, pose, or background. Do not add or remove any item except the one(s) being swapped. Output must be a single, photorealistic image.`;
+Output must be the PERSON from the first image wearing the garment(s). Single, photorealistic image. Do not blend or swap faces from the garment image.`;
 }
 
 export async function generateTryOn(params: TryOnParams): Promise<TryOnResult> {

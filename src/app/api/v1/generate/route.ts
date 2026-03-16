@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import crypto from 'node:crypto';
 import { getSessionAndValidate } from '@/lib/auth';
 import { getUserIdFromApiKey } from '@/lib/auth-api-key';
 import { uploadTempImage } from '@/lib/cloudinary';
@@ -11,8 +10,9 @@ import { isSafeUrl, isSafeWebhookUrl } from '@/lib/safe-url';
 import { sanitizeString } from '@/lib/sanitize';
 import { validateAndCleanImage } from '@/lib/image-validation';
 import { logger } from '@/lib/logger';
-import { addGenerationJob, getGenerationQueue } from '@/lib/generation-queue';
-import { getBaseApiUrl } from '@/lib/base-api-url';
+import { deliverWebhook } from '@/lib/webhook-delivery';
+import { sendEmailSafe } from '@/lib/email';
+import { lowCreditsTemplate } from '@/lib/email-templates';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -243,72 +243,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const jobId = crypto.randomUUID();
-  const queue = getGenerationQueue();
-  if (queue) {
-    try {
-      await prisma.generationJob.create({
-        data: {
-          id: jobId,
-          userId: user.id,
-          status: 'queued',
-          tier: parsed.tier,
-          personImageUrl: personUrl,
-          garmentImageUrls: garmentUrls,
-          creditCost,
-          webhookUrl: parsed.webhookUrl ?? undefined,
-          webhookSecret: parsed.webhookSecret ?? undefined,
-          swapTarget: parsed.swapTarget,
-        },
-      });
-      const added = await addGenerationJob({
-        jobId,
-        userId: user.id,
-        tier: parsed.tier,
+  // Direct processing — run all garment generations in parallel (~30s total for 3 garments)
+  const results = await Promise.all(
+    garmentUrls.map((garmentUrl) =>
+      generateTryOn({
         personImageUrl: personUrl,
-        garmentImageUrls: garmentUrls,
-        garmentDescription: parsed.garmentDescription,
-        webhookUrl: parsed.webhookUrl,
-        webhookSecret: parsed.webhookSecret,
-        creditCost,
+        garmentImageUrls: [garmentUrl],
+        tier: parsed.tier,
+        garmentDescription: parsed.garmentDescription ?? undefined,
         swapTarget: parsed.swapTarget,
-      });
-      if (added) {
-        const baseUrl = await getBaseApiUrl();
-        const statusUrl = `${baseUrl}/api/v1/jobs/${jobId}`;
-        return NextResponse.json(
-          {
-            accepted: true,
-            job_id: jobId,
-            status: 'queued',
-            status_url: statusUrl,
-            message:
-              'Generation queued. Poll status_url or provide webhook_url for callback.',
-            estimated_seconds: 15,
-            credits_reserved: false,
-          },
-          { status: 202 }
-        );
-      }
-    } catch (err) {
-      logger.warn('Queue add failed, falling back to sync', { err: String(err) });
-    }
-  }
-
-  // Fallback: synchronous processing when Redis/queue unavailable
-  const RATE_LIMIT_DELAY_MS = 12_000;
-  const results: Awaited<ReturnType<typeof generateTryOn>>[] = [];
-  for (let i = 0; i < garmentUrls.length; i++) {
-    if (i > 0) await new Promise((r) => setTimeout(r, RATE_LIMIT_DELAY_MS));
-    const result = await generateTryOn({
-      personImageUrl: personUrl,
-      garmentImageUrls: [garmentUrls[i]],
-      tier: parsed.tier,
-      garmentDescription: parsed.garmentDescription ?? undefined,
-      swapTarget: parsed.swapTarget,
-    });
-    results.push(result);
-  }
+      })
+    )
+  );
 
   const firstError = results.find((r) => r.error || r.outputUrls.length === 0);
   if (firstError?.error === 'timeout') {
@@ -356,19 +302,33 @@ export async function POST(request: Request) {
   const creditsRemaining = updatedUser?.credits ?? user.credits - creditCost;
 
   if (parsed.webhookUrl) {
-    const payload = {
-      event: 'tryon.completed',
-      job_id: syncJobId,
-      output_urls: allOutputUrls,
-      tier: parsed.tier,
-      credits_used: creditCost,
-      credits_remaining: creditsRemaining,
-    };
-    fetch(parsed.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    }).catch((e) => console.error('Webhook fire error:', e));
+    await deliverWebhook(
+      parsed.webhookUrl,
+      {
+        event: 'tryon.completed',
+        job_id: syncJobId,
+        status: 'completed',
+        output_urls: allOutputUrls,
+        output_url: allOutputUrls[0],
+        tier: parsed.tier,
+        credits_used: creditCost,
+        credits_remaining: creditsRemaining,
+        processing_ms: processingTimeMs,
+        timestamp: new Date().toISOString(),
+      },
+      parsed.webhookSecret
+    ).catch((e) => logger.warn('Webhook delivery failed', { err: String(e) }));
+  }
+
+  if (creditsRemaining < 5 && creditsRemaining >= 0) {
+    const u = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { email: true, name: true },
+    });
+    if (u) {
+      const tpl = lowCreditsTemplate({ name: u.name, balance: creditsRemaining });
+      sendEmailSafe({ to: u.email, subject: tpl.subject, html: tpl.html, text: tpl.text });
+    }
   }
 
   return NextResponse.json({

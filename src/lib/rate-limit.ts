@@ -57,10 +57,10 @@ export function checkAdminLoginRateLimit(ip: string): boolean {
   return r.allowed;
 }
 
-// Admin requests (by adminId)
+// Admin requests (by adminId) — high enough for queue/contact polling (e.g. every 5s)
 const adminReqCount = new Map<string, { count: number; resetAt: number }>();
 const ADMIN_REQ_WINDOW_MS = 15 * 60 * 1000;
-const ADMIN_REQ_MAX = 100;
+const ADMIN_REQ_MAX = 300;
 
 export function checkAdminRateLimit(adminId: string): boolean {
   const r = checkRateLimit(adminReqCount, adminId, ADMIN_REQ_WINDOW_MS, ADMIN_REQ_MAX);
