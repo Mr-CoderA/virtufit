@@ -89,7 +89,7 @@ VirtuFit uses [Resend](https://resend.com) for verification and transactional em
 2. Go to **API Keys** → **Create API key** → set as `RESEND_API_KEY` in `.env`.
 3. **Development:** use `EMAIL_FROM=VirtuFit <onboarding@resend.dev>`. Resend allows sending from this address on the free tier without domain verification.
 4. **Production:** add your domain in Resend → **Domains**, add the DNS records Resend provides, then use `EMAIL_FROM=VirtuFit <noreply@yourdomain.com>`.  
-**Note:** Vercel subdomains (e.g. `virtufit-seven.vercel.app`) cannot be used as sending domains in Resend. Keep `EMAIL_FROM=VirtuFit <onboarding@resend.dev>` until you add a custom domain (e.g. virtufit.com) in Resend.
+**Production (virtufit.xyz):** Set `RESEND_FROM_EMAIL=noreply@virtufit.xyz` and verify the domain in Resend → Domains.
 
 **Testing emails locally:** Resend dashboard shows all sent emails in real time. Go to [resend.com](https://resend.com) → **Emails** to see delivery status and preview the HTML of every email sent.
 
@@ -134,38 +134,50 @@ npm run test:load
 
 ---
 
-## Production URLs (Vercel)
-
-When deployed at **https://virtufit-seven.vercel.app** (frontend and API on the same domain):
+## Production URLs
 
 | Resource | URL |
 |----------|-----|
-| Frontend | https://virtufit-seven.vercel.app |
-| API base | https://virtufit-seven.vercel.app/api |
-| Widget | https://virtufit-seven.vercel.app/widget/tryon.js |
-| Admin | https://virtufit-seven.vercel.app/admin |
-| Docs | https://virtufit-seven.vercel.app/docs |
+| Frontend | https://virtufit.xyz |
+| Backend | https://virtufit.xyz |
+| Admin | https://virtufit.xyz/admin |
+| API base | https://virtufit.xyz/api |
+| Widget | https://virtufit.xyz/widget/tryon.js |
+| Docs | https://virtufit.xyz/docs |
 
 ### Webhooks (set in provider dashboards)
 
-- **Lemon Squeezy:** `https://virtufit-seven.vercel.app/api/webhooks/lemonsqueezy`
+- **Lemon Squeezy:** `https://virtufit.xyz/api/webhooks/lemonsqueezy`
 
 ### Integration script tag (Shopify, WordPress, any site)
 
 ```html
-<script src="https://virtufit-seven.vercel.app/widget/tryon.js"></script>
+<script src="https://virtufit.xyz/widget/tryon.js"></script>
 ```
+
+### Email (Resend)
+
+- **Provider:** Resend (resend.com)
+- **From address:** noreply@virtufit.xyz
+
+Emails sent: welcome on registration (after verification), top-up confirmation after successful payment, enterprise inquiry notification to hello@virtufit.xyz, plus verification and other transactional emails.
+
+To configure:
+1. Add `RESEND_API_KEY` from resend.com → API Keys
+2. Verify virtufit.xyz domain in Resend → Domains
+3. Set `RESEND_FROM_EMAIL=noreply@virtufit.xyz`, `RESEND_FROM_NAME=VirtuFit`
 
 ### Vercel environment variables
 
 In Vercel → Project → Settings → Environment Variables, set (production):
 
-- `FRONTEND_URL` = `https://virtufit-seven.vercel.app`
-- `BACKEND_URL` = `https://virtufit-seven.vercel.app`
-- `NEXT_PUBLIC_API_URL` = `https://virtufit-seven.vercel.app`
-- `NEXT_PUBLIC_APP_URL` = `https://virtufit-seven.vercel.app`
-- `NODE_ENV` = `production`
-- Plus: `DATABASE_URL`, `JWT_SECRET`, `JWT_ADMIN_SECRET`, `REPLICATE_API_TOKEN`, Cloudinary, Lemon Squeezy, Resend, Redis, etc. (see `.env.example`).
+- `FRONTEND_URL` = `https://virtufit.xyz`
+- `BACKEND_URL` = `https://virtufit.xyz`
+- `NEXT_PUBLIC_API_URL` = `https://virtufit.xyz`
+- `NEXT_PUBLIC_APP_URL` = `https://virtufit.xyz`
+- `APP_URL` = `https://virtufit.xyz`
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL=noreply@virtufit.xyz`, `RESEND_FROM_NAME=VirtuFit`
+- Plus: `DATABASE_URL`, `JWT_SECRET`, `JWT_ADMIN_SECRET`, `REPLICATE_API_TOKEN`, Cloudinary, Lemon Squeezy, Redis, etc. (see `.env.example`).
 
 ---
 

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { getIp } from '@/lib/admin-audit';
 import { checkGlobalRateLimit, checkContactFormRateLimit } from '@/lib/rate-limit';
-import { sendEmail } from '@/lib/email';
+import { sendEmail, sendEnterpriseInquiryEmail } from '@/lib/email';
 import { getContactSettings } from '@/lib/app-settings';
 import { contactNotificationTemplate, contactConfirmationTemplate } from '@/lib/email-templates';
 
@@ -113,6 +113,13 @@ export async function POST(request: Request) {
       html: notif.html,
       text: notif.text,
     });
+
+    const isEnterprise = /enterprise/i.test(subject);
+    if (isEnterprise) {
+      await sendEnterpriseInquiryEmail({ name, email, message }).catch((err) =>
+        console.error('[Email] Enterprise inquiry notification failed:', err)
+      );
+    }
 
     const confirm = contactConfirmationTemplate({ name, email, contact });
     await sendEmail({

@@ -101,7 +101,8 @@ export default function AdminBrandsPage() {
         {loading ? (
           <p className="p-6 text-[#A09E97]">Loading…</p>
         ) : (
-          <table className="w-full text-[13px]">
+          <div className="overflow-x-auto">
+          <table className="w-full text-[13px] min-w-[700px]">
             <thead>
               <tr className="text-left text-[#65635D] border-b border-[rgba(240,239,232,0.08)]">
                 <th className="p-3 font-medium">#</th>
@@ -161,6 +162,7 @@ export default function AdminBrandsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
         {total > 20 && (
           <div className="flex items-center justify-between p-3 border-t border-[rgba(240,239,232,0.08)]">

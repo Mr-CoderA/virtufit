@@ -26,7 +26,8 @@ export default function AdminPlansPage() {
 
   return (
     <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
-      <table className="w-full text-[13px]">
+      <div className="overflow-x-auto">
+      <table className="w-full text-[13px] min-w-[500px]">
         <thead><tr className="text-left text-[#65635D]"><th className="p-4">Name</th><th className="p-4">Key</th><th className="p-4">Credits</th><th className="p-4">Status</th><th className="p-4">Last updated</th><th className="p-4">Actions</th></tr></thead>
         <tbody>
           {plans.map((p) => (
@@ -41,6 +42,7 @@ export default function AdminPlansPage() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

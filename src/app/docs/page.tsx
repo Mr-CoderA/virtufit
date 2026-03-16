@@ -54,7 +54,7 @@ export default async function DocsPage() {
               {BASE}
             </div>
             <p className="mt-2 text-[14px] text-[#A09E97]">
-              All endpoints are relative to this base. Production: <code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[13px] text-[#A09E97]">https://virtufit-seven.vercel.app</code>. Local dev: <code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[13px] text-[#A09E97]">http://localhost:3000</code>.
+              All endpoints are relative to this base. Production: <code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[13px] text-[#A09E97]">https://virtufit.xyz</code>. Local dev: <code className="rounded bg-[#2C2C27] px-1.5 py-0.5 text-[13px] text-[#A09E97]">http://localhost:3000</code>.
             </p>
           </section>
 

@@ -31,7 +31,7 @@ function CodeBlock({
   const [copied, setCopied] = useState(false);
   const text = content
     .replace(/\b__API_KEY__\b/g, apiKey || 'YOUR_API_KEY')
-    .replace(/\b__BASE_URL__\b/g, baseUrl || 'https://virtufit-seven.vercel.app');
+    .replace(/\b__BASE_URL__\b/g, baseUrl || 'https://virtufit.xyz');
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text).then(() => {

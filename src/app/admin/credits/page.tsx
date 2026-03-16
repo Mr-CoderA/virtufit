@@ -82,7 +82,8 @@ export default function AdminCreditsPage() {
 
       <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
         <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Brands with low credits (&lt;5)</h3>
-        <table className="w-full text-[13px]">
+        <div className="overflow-x-auto">
+        <table className="w-full text-[13px] min-w-[400px]">
           <thead><tr className="text-left text-[#65635D]"><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Balance</th><th className="p-3">Last top-up</th></tr></thead>
           <tbody>
             {lowBalance.map((u) => (
@@ -96,11 +97,13 @@ export default function AdminCreditsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
         <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Manual credit operations log</h3>
-        <table className="w-full text-[13px]">
+        <div className="overflow-x-auto">
+        <table className="w-full text-[13px] min-w-[500px]">
           <thead><tr className="text-left text-[#65635D]"><th className="p-3">Date</th><th className="p-3">Brand</th><th className="p-3">Amount</th><th className="p-3">Type</th><th className="p-3">Reason</th></tr></thead>
           <tbody>
             {manualLog.map((l, i) => (
@@ -114,6 +117,7 @@ export default function AdminCreditsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

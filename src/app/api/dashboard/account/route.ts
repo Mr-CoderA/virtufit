@@ -8,7 +8,7 @@ import { getContactSettings } from '@/lib/app-settings';
 
 function getFrontendUrl(): string {
   const url = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? '').trim().replace(/\/+$/, '');
-  return url || 'https://virtufit-seven.vercel.app';
+  return url || 'https://virtufit.xyz';
 }
 
 /**

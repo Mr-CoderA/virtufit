@@ -67,7 +67,8 @@ export default function AdminGenerationsPage() {
       {activeJobs.length > 0 && (
         <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
           <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Current queue</h3>
-          <table className="w-full text-[13px]">
+          <div className="overflow-x-auto">
+          <table className="w-full text-[13px] min-w-[500px]">
             <thead><tr className="text-left text-[#65635D]"><th className="p-3">Queued</th><th className="p-3">Brand</th><th className="p-3">Tier</th><th className="p-3">Job ID</th><th className="p-3">Status</th></tr></thead>
             <tbody>
               {activeJobs.map((j) => (
@@ -87,6 +88,7 @@ export default function AdminGenerationsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -95,7 +97,8 @@ export default function AdminGenerationsPage() {
         {loading ? (
           <p className="p-6 text-[#A09E97]">Loading…</p>
         ) : (
-          <table className="w-full text-[13px]">
+          <div className="overflow-x-auto">
+          <table className="w-full text-[13px] min-w-[600px]">
             <thead><tr className="text-left text-[#65635D]"><th className="p-3">Time</th><th className="p-3">Brand</th><th className="p-3">Tier</th><th className="p-3">Job ID</th><th className="p-3">Status</th><th className="p-3">Output</th><th className="p-3">Credits</th></tr></thead>
             <tbody>
               {items.map((g) => (
@@ -111,6 +114,7 @@ export default function AdminGenerationsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
         <div className="flex justify-between p-3 border-t border-[rgba(240,239,232,0.08)]">
           <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="text-[#D9714A] disabled:opacity-50">Previous</button>

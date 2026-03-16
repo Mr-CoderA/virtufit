@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
             <span className="text-[20px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>VirtuFit</span>
           </div>
         </div>
-        <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-8" style={{ borderWidth: '0.5px' }}>
+        <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-5 sm:p-8" style={{ borderWidth: '0.5px' }}>
           <h1 className="text-[22px] font-normal text-[#F0EFE8] mb-2" style={{ fontFamily: 'Georgia, serif' }}>Admin</h1>
           <p className="text-[14px] text-[#A09E97] mb-6">Sign in to the VirtuFit admin panel.</p>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#1A1915] border border-[rgba(240,239,232,0.12)] rounded-lg pl-10 pr-3 py-2.5 text-[14px] text-[#F0EFE8] placeholder:text-[#65635D] focus:outline-none focus:border-[#D9714A]"
-                  placeholder="asadalinawaz700@gmail.com"
+                  placeholder="Enter your admin email"
                   required
                   autoComplete="email"
                 />

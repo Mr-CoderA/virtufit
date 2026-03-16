@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { createSession } from '@/lib/auth';
-import { sendEmail } from '@/lib/email';
-import { welcomeTemplate } from '@/lib/email-templates';
-import { getContactSettings } from '@/lib/app-settings';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   let body: { email?: string; code?: string };
@@ -73,9 +71,9 @@ export async function POST(request: Request) {
     },
   });
 
-  const contact = await getContactSettings();
-  const welcome = welcomeTemplate({ name: user.name, contact });
-  await sendEmail({ to: user.email, subject: welcome.subject, html: welcome.html, text: welcome.text });
+  sendWelcomeEmail({ to: user.email, name: user.name ?? 'there' }).catch((err) =>
+    console.error('[Email] Welcome email failed:', err)
+  );
 
   const tokenJwt = await createSession({
     userId: user.id,

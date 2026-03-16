@@ -149,15 +149,16 @@ export function AdminLayout({
             </button>
             <h1 className="text-[18px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>{pageTitle}</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <span className={`text-[12px] px-3 py-1 rounded-full ${systemStatus === 'operational' ? 'bg-[#0d5c0d] text-[#a3e0a3]' : 'bg-[#b32d2e] text-[#f0a0a0]'}`}>
-              {systemStatus === 'operational' ? 'All systems operational' : 'Issues detected'}
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <span className={`text-[11px] sm:text-[12px] px-2 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap ${systemStatus === 'operational' ? 'bg-[#0d5c0d] text-[#a3e0a3]' : 'bg-[#b32d2e] text-[#f0a0a0]'}`}>
+              <span className="sm:hidden">{systemStatus === 'operational' ? 'OK' : 'Issues'}</span>
+              <span className="hidden sm:inline">{systemStatus === 'operational' ? 'All systems operational' : 'Issues detected'}</span>
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <div className="w-8 h-8 rounded-full bg-[#222219] border border-[rgba(240,239,232,0.12)] flex items-center justify-center text-[12px] font-medium text-[#F0EFE8]">
                 {initials}
               </div>
-              <span className="hidden sm:inline text-[13px] text-[#A09E97]">{admin?.name ?? 'Admin'}</span>
+              <span className="hidden sm:inline text-[13px] text-[#A09E97] truncate max-w-[120px]">{admin?.name ?? 'Admin'}</span>
             </div>
           </div>
         </header>

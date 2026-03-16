@@ -58,7 +58,7 @@ export default function AdminContactPage() {
           <p className="p-6 text-[#A09E97]">No contact submissions yet.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-[13px]">
+            <table className="w-full text-[13px] min-w-[600px]">
               <thead>
                 <tr className="border-b border-[rgba(240,239,232,0.08)] text-left text-[#65635D]">
                   <th className="p-3 font-medium">Date</th>

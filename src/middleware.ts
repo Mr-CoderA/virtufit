@@ -6,7 +6,7 @@ const CSP = [
   "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://assets.lemonsqueezy.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://res.cloudinary.com https://*.replicate.delivery https://*.trycloudflare.com",
-  "connect-src 'self' https://virtufit-seven.vercel.app https://api.replicate.com https://api.lemonsqueezy.com https://api.cloudinary.com",
+  "connect-src 'self' https://virtufit.xyz https://www.virtufit.xyz https://api.replicate.com https://api.lemonsqueezy.com https://api.cloudinary.com",
   "frame-src 'none'",
   "object-src 'none'",
   "base-uri 'self'",

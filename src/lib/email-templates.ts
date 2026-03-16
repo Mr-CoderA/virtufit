@@ -71,7 +71,7 @@ export function verifyEmailTemplate({ name, code, contact }: { name: string | nu
 export function welcomeTemplate({ name, contact }: { name: string | null; contact?: ContactSettings | null }) {
   const subject = 'Welcome to VirtuFit';
   const displayName = name || 'there';
-  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/dashboard';
+  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/dashboard';
   const content = `
     ${p(`Welcome to VirtuFit, ${escapeHtml(displayName)}!`)}
     ${p('Your account is active with 5 free credits.')}
@@ -121,7 +121,7 @@ export function accountReactivatedTemplate({
   const subject = 'Your VirtuFit account has been reactivated';
   const displayName = name || 'there';
   const supportEmail = contact?.email ?? CONTACT.supportEmail;
-  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/dashboard';
+  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/dashboard';
   const content = `
     ${p(`Welcome back, ${escapeHtml(displayName)}!`)}
     ${p('Your account has been successfully reactivated.')}
@@ -141,7 +141,7 @@ export function accountReactivatedTemplate({
 
 export function accountRestoredTemplate({ name, contact }: { name: string | null; contact?: ContactSettings | null }) {
   const subject = 'Your VirtuFit account has been restored';
-  const loginUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/login';
+  const loginUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/login';
   const content = `
     ${p(`Hi ${escapeHtml(name || 'there')},`)}
     ${p('Your VirtuFit account has been restored. You can now log in and use the API again.')}
@@ -194,7 +194,7 @@ export function accountSuspendedTemplate({ name, reason, contact }: { name: stri
 
 export function accountUnsuspendedTemplate({ name, contact }: { name: string | null; contact?: ContactSettings | null }) {
   const subject = 'Your VirtuFit account has been restored';
-  const loginUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/login';
+  const loginUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/login';
   const content = `
     ${p(`Hi ${escapeHtml(name || 'there')},`)}
     ${p('Your VirtuFit account has been restored. You can now log in and use the API again.')}
@@ -222,7 +222,7 @@ export function apiKeyRotatedTemplate({ name, keyPrefix, contact }: { name: stri
 
 export function lowCreditsTemplate({ name, balance, contact }: { name: string | null; balance: number; contact?: ContactSettings | null }) {
   const subject = 'Low credits on your VirtuFit account';
-  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/dashboard';
+  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/dashboard';
   const content = `
     ${p(`Hi ${escapeHtml(name || 'there')},`)}
     ${p(`You have ${balance} credit${balance === 1 ? '' : 's'} remaining.`)}
@@ -241,7 +241,7 @@ export function loginFromNewDeviceTemplate({
   contact,
 }: { name: string | null; ip: string; userAgent: string; time: string; contact?: ContactSettings | null }) {
   const subject = 'New login to your VirtuFit account';
-  const settingsUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/settings';
+  const settingsUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/settings';
   const uaShort = userAgent.length > 80 ? userAgent.slice(0, 77) + '...' : userAgent;
   const supportEmail = contact?.email ?? CONTACT.supportEmail;
   const content = `
@@ -293,7 +293,7 @@ export function contactNotificationTemplate(params: {
 /** Confirmation email to person who submitted contact form */
 export function contactConfirmationTemplate({ name, email, contact }: { name: string; email: string; contact?: ContactSettings | null }) {
   const subject = 'We got your message — VirtuFit';
-  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit-seven.vercel.app').replace(/\/+$/, '') + '/';
+  const dashboardUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? 'https://virtufit.xyz').replace(/\/+$/, '') + '/';
   const phoneDisplay = contact?.phone ?? CONTACT.phoneDisplay;
   const content = `
     ${p(`Hi ${escapeHtml(name)},`)}

@@ -176,7 +176,7 @@ export default function AdminApiSettingsPage() {
             type="url"
             value={baseApiUrl}
             onChange={(e) => setBaseApiUrl(e.target.value)}
-            placeholder="https://virtufit-seven.vercel.app"
+            placeholder="https://virtufit.xyz"
             className="flex-1 min-w-[280px] rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8] placeholder:text-[#65635D]"
           />
           <button type="button" onClick={saveBaseApiUrl} disabled={baseApiUrlSaving} className="rounded-lg bg-[#D9714A] text-[#1A1915] px-4 py-2 text-[13px] font-medium disabled:opacity-50">

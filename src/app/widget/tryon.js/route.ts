@@ -4,7 +4,7 @@ const WIDGET_SCRIPT = `(function(){
 var $=function(s,r){return(r||document).querySelector(s)};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 var script=document.currentScript;
-var DEFAULT_API_BASE='https://virtufit-seven.vercel.app';var base=(script&&script.getAttribute('data-base'))||(typeof location!='undefined'?location.origin:'')||DEFAULT_API_BASE;
+var DEFAULT_API_BASE='https://virtufit.xyz';var base=(script&&script.getAttribute('data-base'))||(typeof location!='undefined'?location.origin:'')||DEFAULT_API_BASE;
 var API=base.replace(/\\/$/,'')+'/api/v1';
 function style(el,c){for(var k in c)el.style[k]=c[k];return el}
 function el(tag,attrs,children){

@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
       <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden" style={{ borderWidth: '0.5px' }}>
         <h3 className="text-[14px] font-medium text-[#F0EFE8] p-4 border-b border-[rgba(240,239,232,0.08)]">Top 10 brands by usage</h3>
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px]">
+          <table className="w-full text-[13px] min-w-[500px]">
             <thead>
               <tr className="text-left text-[#65635D] border-b border-[rgba(240,239,232,0.08)]">
                 <th className="p-3 font-medium">Name</th>

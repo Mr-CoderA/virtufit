@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { prisma } from '@/lib/db';
+import { sendTopUpConfirmationEmail } from '@/lib/email';
 
 const WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
@@ -99,6 +100,20 @@ export async function POST(request: Request) {
         ...(orderId ? { orderId } : {}),
       },
     });
+
+    const brand = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true, name: true },
+    });
+    if (brand?.email) {
+      const dollars = (amountCents / 100).toFixed(2);
+      sendTopUpConfirmationEmail({
+        to: brand.email,
+        name: brand.name ?? 'there',
+        credits,
+        dollars: parseFloat(dollars),
+      }).catch((err) => console.error('[Email] Top-up confirmation failed:', err));
+    }
   } catch (e) {
     console.error('Webhook: failed to add credits or create TopUp:', e);
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });

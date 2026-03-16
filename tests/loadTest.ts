@@ -2,7 +2,7 @@
  * VirtuFit concurrency load test.
  * Run with: npx tsx tests/loadTest.ts
  * Requires: API server running (npm run dev), Redis running, worker running (npm run worker).
- * Optionally: BASE_URL=http://localhost:3000 (local) or https://virtufit-seven.vercel.app (production)
+ * Optionally: BASE_URL=http://localhost:3000 (local) or https://virtufit.xyz (production)
  */
 import 'dotenv/config';
 import crypto from 'node:crypto';
