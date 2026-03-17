@@ -67,10 +67,11 @@ export async function POST(request: Request) {
   }
 
   const orderId = typeof payload.data?.id === 'string' ? payload.data.id : null;
-  const totalUsd = payload.data?.attributes?.total_usd ?? payload.data?.attributes?.total;
+  // Lemon Squeezy sends total_usd (and total) in cents, not dollars
+  const totalUsdCents = payload.data?.attributes?.total_usd ?? payload.data?.attributes?.total;
   const amountCents =
-    typeof totalUsd === 'number' && totalUsd >= 0
-      ? Math.round(totalUsd * 100)
+    typeof totalUsdCents === 'number' && totalUsdCents >= 0
+      ? Math.round(totalUsdCents)
       : Math.round((credits / 5) * 100); // 1 credit = $0.20
 
   try {
