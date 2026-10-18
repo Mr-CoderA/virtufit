@@ -6,6 +6,8 @@ An open-source fitting studio: try clothes in a live webcam mirror or generate o
 
 Public try-on is free for visitors, funded by the owner's Decart account. It requires no sign-in, credit purchase or visitor API key. Daily and concurrent allowances protect the shared service. Self-hosting requires your own provider account and may incur provider charges.
 
+![VirtuFit public studio](docs/screenshots/studio-desktop.jpg)
+
 ## What you can do
 
 - Live mirror with 1080p requested by default, optional 720p, snapshots, fullscreen and original-view comparison.
