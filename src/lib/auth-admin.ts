@@ -1,8 +1,10 @@
 import { SignJWT, jwtVerify } from 'jose';
 
-const ADMIN_SECRET = new TextEncoder().encode(
-  process.env.JWT_ADMIN_SECRET || 'admin-fallback-secret-min-32-characters-long'
-);
+function adminSecret() {
+  const value = process.env.JWT_ADMIN_SECRET;
+  if (!value || value.length < 32) throw new Error('JWT_ADMIN_SECRET must contain at least 32 characters');
+  return new TextEncoder().encode(value);
+}
 
 const EXPIRY = '8h';
 
@@ -16,13 +18,13 @@ export async function createAdminToken(payload: { adminId: string; email: string
   return new SignJWT({ ...payload, role: 'admin' as const })
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime(EXPIRY)
-    .sign(ADMIN_SECRET);
+    .sign(adminSecret());
 }
 
 export async function verifyAdminToken(token: string | null): Promise<AdminPayload | null> {
   if (!token?.trim()) return null;
   try {
-    const { payload } = await jwtVerify(token.trim(), ADMIN_SECRET);
+    const { payload } = await jwtVerify(token.trim(), adminSecret(), { algorithms: ['HS256'] });
     if ((payload.role as string) !== 'admin') return null;
     return {
       adminId: payload.adminId as string,

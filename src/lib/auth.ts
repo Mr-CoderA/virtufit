@@ -3,9 +3,11 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
 
 const SESSION_COOKIE = 'session';
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fallback-secret-min-32-characters-long'
-);
+function sessionSecret() {
+  const value = process.env.JWT_SECRET;
+  if (!value || value.length < 32) throw new Error('JWT_SECRET must contain at least 32 characters');
+  return new TextEncoder().encode(value);
+}
 
 export interface SessionPayload {
   userId: string;
@@ -19,7 +21,7 @@ export async function createSession(payload: Omit<SessionPayload, 'expiresAt'> &
   const token = await new SignJWT({ ...payload, expiresAt })
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('7d')
-    .sign(SECRET);
+    .sign(sessionSecret());
 
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
@@ -38,7 +40,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, sessionSecret(), { algorithms: ['HS256'] });
     if (payload.expiresAt && (payload.expiresAt as number) < Date.now()) {
       return null;
     }

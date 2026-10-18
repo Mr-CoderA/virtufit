@@ -74,7 +74,7 @@ export async function sendWelcomeEmail({ to, name }: { to: string; name: string 
           <p style="color:#A09E97;font-size:14px;margin:0;">free credits added to your account</p>
         </div>
         <p style="color:#A09E97;font-size:14px;line-height:1.75;margin:0 0 24px;">
-          Each credit = 1 virtual try-on generation at 1024px.<br/>
+          Use credits for a try-on photo or a timed live mirror session. The price is shown before you start.<br/>
           Top up anytime from $5 — no subscription required.
         </p>
         <a href="${DASHBOARD_URL}"

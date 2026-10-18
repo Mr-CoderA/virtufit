@@ -12,11 +12,9 @@ const FILES = ['virtufit-tryon.php', 'readme.txt'] as const;
  * Serves the VirtuFit Try-On WordPress plugin as a zip so users can download and upload in WordPress.
  */
 export async function GET() {
-  const base = path.join(process.cwd(), '..', 'integrations', 'wordpress', PLUGIN_DIR);
-  const altBase = path.join(process.cwd(), 'integrations', 'wordpress', PLUGIN_DIR);
-  const dir = fs.existsSync(base) ? base : fs.existsSync(altBase) ? altBase : null;
+  const dir = path.join(process.cwd(), 'integrations/wordpress/virtufit-tryon');
 
-  if (!dir) {
+  if (!fs.existsSync(dir)) {
     return NextResponse.json({ error: 'Plugin files not found' }, { status: 404 });
   }
 
@@ -33,7 +31,7 @@ export async function GET() {
     archive.pipe(pass);
 
     for (const file of FILES) {
-      const filePath = path.join(dir, file);
+      const filePath = path.join(process.cwd(), 'integrations/wordpress/virtufit-tryon', file);
       if (fs.existsSync(filePath)) {
         archive.file(filePath, { name: `${PLUGIN_DIR}/${file}` });
       }

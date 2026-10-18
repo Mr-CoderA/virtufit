@@ -15,8 +15,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VirtuFit — Virtual try-on API",
-  description: "Virtual try-on API. Sign up, manage credits, and integrate try-on into your app.",
+  title: "VirtuFit — Your personal AI fitting room",
+  description: "Try clothes in a live AI mirror or generate a finished try-on photo. Upload your own garments and find your next look.",
 };
 
 export default async function RootLayout({

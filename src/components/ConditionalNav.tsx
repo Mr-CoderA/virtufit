@@ -17,7 +17,7 @@ export function ConditionalNav({
 }) {
   const pathname = usePathname() ?? '';
   const isAdmin = pathname.startsWith('/admin');
-  if (isAdmin) {
+  if (isAdmin || pathname === '/') {
     return <>{children}</>;
   }
   // On login/signup etc. always show logged-out nav so the bar is never misleading
