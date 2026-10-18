@@ -1,16 +1,9 @@
-import sharp from 'sharp';
+import { prepareProviderImage } from '@/lib/try-on-images';
 import { models } from '@decartai/sdk';
 import { requireSameOrigin, limitedBody, photoCost, PHOTO_TIER, TryOnError } from '@/lib/try-on-policy';
 import { provider, requireTryOnUser, reserve, refund, failure } from '@/lib/try-on-service';
 export const runtime = 'nodejs';
 export const maxDuration = 180;
-async function image(value: FormDataEntryValue | null, name: string) {
-  if (!(value instanceof Blob) || !['image/png', 'image/jpeg', 'image/webp'].includes(value.type) || !value.size || value.size > 1_800_000) throw new TryOnError(`Choose a valid ${name} image. Use the app to resize large photos.`);
-  try {
-    const bytes = await sharp(Buffer.from(await value.arrayBuffer()), { limitInputPixels: 25_000_000, animated: false }).rotate().resize(1600, 1600, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 92 }).toBuffer();
-    return new Blob([new Uint8Array(bytes)], { type: 'image/jpeg' });
-  } catch { throw new TryOnError(`The ${name} image could not be opened.`); }
-}
 export async function POST(request: Request) {
   let reservation: string | undefined;
   try {
@@ -24,7 +17,7 @@ export async function POST(request: Request) {
     try { form = await new Request('http://upload.local', { method: 'POST', headers: { 'content-type': type }, body: new Uint8Array(bytes) }).formData(); } catch { throw new TryOnError('Could not read the uploaded photos.'); }
     const prompt = form.get('prompt');
     if (typeof prompt !== 'string' || prompt.length < 10 || prompt.length > 2000) throw new TryOnError('Choose a garment before generating.');
-    const [person, garment] = await Promise.all([image(form.get('person'), 'person'), image(form.get('garment'), 'garment')]);
+    const [person, garment] = await Promise.all([prepareProviderImage(form.get('person'), 'person'), prepareProviderImage(form.get('garment'), 'garment')]);
     const log = await reserve(user.id, PHOTO_TIER, photoCost(), 150); reservation = log.id;
     // Complete the provider request even if a browser closes; avoid retrying
     // a potentially already-billed generation on a client disconnect.
