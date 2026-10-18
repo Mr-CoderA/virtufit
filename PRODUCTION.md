@@ -1,38 +1,55 @@
-# VirtuFit production release
+# VirtuFit production operations
 
-The home page is the live fitting room and photo studio. Existing login, verified accounts, dashboard, billing, administrator tools and integration APIs remain available. The PostgreSQL schema is unchanged; this release does not run database migrations or overwrite account data.
+## One platform
 
-## Owner configuration
+Repository: https://github.com/Mr-CoderA/virtufit. Production branch: `main`.
 
-Set `DECART_API_KEY` as a sensitive **server-side production** environment variable in the existing Vercel project `virtufit`. Never use a `NEXT_PUBLIC_` prefix, commit a key, or ask visitors for provider credentials. Preview deployments intentionally receive no production Decart key. Set `DECART_ENABLED=false` and redeploy to disable both paid modes.
+Vercel project `virtufit` serves https://www.virtufit.xyz and https://virtufit-seven.vercel.app. https://virtufit.xyz redirects to www. Hostinger supplies DNS (`ns1.dns-parking.com` / `ns2.dns-parking.com`); the www CNAME points to Vercel. There is no separate Hostinger copy of the app to update.
 
-The existing DATABASE_URL, JWT_SECRET, JWT_ADMIN_SECRET, billing, email and legacy provider environment variables remain required. JWT secrets must be distinct, random and at least 64 characters. The new feature uses the existing PostgreSQL database for durable reservations and limits; a background worker and Redis are not needed for these two new routes. Older integration queue features keep their original infrastructure requirements.
+The fitting room, photo studio, guide, contact and account pages use one shared navigation, footer and design-token system in `src/app/globals.css`. The old integration endpoints and historical account/billing records are retained for compatibility.
+
+## Free mode and payments
+
+`PAYMENTS_ENABLED` is false unless its value is exactly `true`. Keep it false for this launch. In free mode public live and photo routes do not require an account, verified email or credit balance; checkout initiation returns `PAYMENTS_DISABLED` before authentication or any external payment call. The previous paid implementation is retained behind the explicit toggle. Turning payments back on requires reviewing the paid UI, prices, provider settings and operating policy before deploying.
+
+Do not disable or change the existing billing webhook when disabling new payments: legitimate pending callbacks must still be authenticated and reconciled. No account balances, top-ups, orders, subscriptions or payment records are deleted, reset or refunded by this release.
+
+## Secrets and services
+
+Required for the hosted studio: DATABASE_URL; distinct random JWT_SECRET and JWT_ADMIN_SECRET values of at least 64 characters; DECART_API_KEY. The Decart key is a sensitive server-side production environment variable. It must never be in a NEXT_PUBLIC variable, response, log, public bundle or Git history.
+
+Optional account email needs RESEND_API_KEY and a verified EMAIL_FROM. Existing integrations retain their original Replicate/Cloudinary/Redis requirements. Public studio routes do not use those services. Existing payment credentials remain in place for callback handling; they are only needed for new checkout when payments are explicitly enabled.
+
+DECART_ENABLED=false disables both AI modes after deployment. Local camera preview and wardrobe remain available. Preview deployments intentionally have no production Decart key.
+
+## Durable anonymous allowances
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| DECART_LIVE_CREDITS_PER_MINUTE | 10 | VirtuFit credits; 30-second sessions cost half |
-| DECART_PHOTO_CREDITS | 2 | VirtuFit credits per image |
-| DECART_DAILY_CREDIT_LIMIT | 100 | Total new Decart reservation credits per UTC day |
-| DECART_USER_DAILY_CREDIT_LIMIT | 40 | Per-account reservation credits per UTC day |
-| DECART_DAILY_REQUEST_LIMIT | 50 | Global attempts per UTC day, including refunded failures |
-| DECART_USER_DAILY_REQUEST_LIMIT | 10 | Per-account attempts per UTC day |
+| DECART_DAILY_REQUEST_LIMIT | 50 | Shared attempts per UTC day |
+| DECART_VISITOR_DAILY_REQUEST_LIMIT | 5 | Attempts per signed browser cookie per UTC day |
+| DECART_NETWORK_DAILY_REQUEST_LIMIT | 10 | Attempts shared by a network per UTC day |
+| DECART_CONCURRENT_LIMIT | 2 | Shared active reservations |
+| DECART_DAILY_UNIT_LIMIT | 100 | Internal cost-control units per UTC day |
 
-These are application allowances, not a guaranteed dollar spending cap at Decart. The provider's client token constraints support a per-session duration, model and browser origin, not a per-token spending/speed cap. Configure provider account spending and concurrency limits in Decart as well. Live pricing reserves for the faster tier. Tokens expire after 30 seconds for new connections and allow only the requested 30- or 60-second session. They cannot be revoked early; do not log or persist them. A provider session or token replay remains subject to the provider's own concurrency and billing policies.
+A 60-second live request reserves 10 units, 30 seconds reserves 5 and a photo reserves 2. These are owner-side operating limits, not visitor money or credit balances. Both failed and cancelled attempts remain counted, including units. Provider failures release concurrency holds, while issued live tokens keep their server hold until the maximum session and connection window ends. No browser stop callback can free that hold early.
 
-Paid routes reject cross-origin requests, require verified, non-suspended accounts, and atomically deduct credits under a shared PostgreSQL transaction lock. Database failure prevents provider calls. A server-side hold prevents overlapping requests from one account, including across Vercel instances. Provider failures restore credits through a guarded transaction; failed refund transactions log the reservation ID for reconciliation. Successfully issued live tokens charge the entire selected duration, including abandoned connections or early stops. Photo requests finish server-side even if the browser leaves; no automatic retry of billed generations.
+The existing AppSetting table stores JSON counters under `virtufit:free:v1:`. PostgreSQL advisory transaction locking serializes updates across all Vercel instances. Only daily HMAC hashes of browser/network identifiers, counts, and temporary holds are stored. Browser identity is a signed, HttpOnly, SameSite=Lax cookie. Clearing it cannot bypass the separate network or global limits. Raw IPs and uploaded photographs are not stored in these records. Counters older than seven days are removed; unrelated settings and billing records are never affected. Database failure prevents provider calls.
 
-## Camera, media and uploads
+The hosted app relies on Vercel's forwarded-address header handling. Self-host behind a trusted proxy that overwrites incoming forwarding headers. Global request/unit/concurrency limits still bound requests issued by the app even if a visitor changes identity or address.
 
-1080p is the default; 720p and faster compute remain selectable. Reported FPS, output dimensions and camera-to-display latency come from SDK metrics; network round-trip time is labelled separately. Physical latency and garment fidelity depend on the provider, network and input and are not guaranteed.
+These are application allowances, not a guaranteed dollar spending cap. Decart client tokens can be replayed during their short validity window, and browser origin restrictions do not stop a non-browser client spoofing Origin. Configure provider spending and concurrency limits in Decart too. Tokens expire after 30 seconds for new connections, allow only lucy-vton-latest on the current origin, and carry a 30- or 60-second maximum session duration. Do not log or persist them.
 
-Camera permission is allowed for the current site; microphone access stays disabled. CSP allows the official Decart signaling domains, local hand-tracking worker and WebAssembly. Hand tracking uses a 480-pixel local frame in a worker with one frame in flight. Browser-local wardrobe images use IndexedDB and are sent to Decart only when chosen for AI. Photos and generated outputs are not persisted by VirtuFit; provider retention terms still apply.
+## Images and camera
 
-Photo inputs can be selected up to 12 MB locally. The browser converts each to JPEG at up to 1600 pixels and 1.8 MB before upload. The server limits the complete request to 3.8 MB, decodes with a pixel limit and removes metadata. Output uses Lucy Image's supported 720p setting and original image download.
+1080p live is requested by default. 720p and faster processing are optional. Actual FPS, dimensions and camera-to-display delay come from SDK statistics; network RTT is labelled separately. Performance and fidelity are not guaranteed.
 
-## Hosting and release
+Camera permission is restricted to the current site; microphone access is disabled. Hand tracking processes 480-pixel local frames in a worker with one frame in flight. The saved wardrobe is browser-local IndexedDB. AI requests send the selected inputs to Decart, whose processing and retention terms apply.
 
-Repository: https://github.com/Mr-CoderA/virtufit — production branch `main`.
+Photo inputs selected locally can be up to 12 MB. The browser resizes each to JPEG, up to 1600 pixels and 1.8 MB. The server bounds the whole request at 3.8 MB, verifies actual decoded formats, removes metadata and imposes a pixel limit. The result is a downloadable 720p image. VirtuFit does not persist inputs or results. Photo processing completes server-side even if the browser leaves, without automatically repeating a potentially billed request.
 
-Public domains: https://www.virtufit.xyz and https://virtufit-seven.vercel.app; the apex https://virtufit.xyz redirects to www. DNS nameservers are `ns1.dns-parking.com` / `ns2.dns-parking.com` (Hostinger), while the www CNAME points to Vercel. The observed app is served by Vercel. No separate Hostinger app server was found; changing this repository updates the Vercel app behind the domain.
+## Release and rollback
 
-Build: `npm ci`, `npm run build`. Tests: `npm run test:try-on`. No seed, database reset or db:push is part of a release. Inspect the Git-triggered Vercel deployment, fix build failures before promotion, and verify the public site and API guards after deployment. Roll back using the prior Vercel deployment if needed; no data migration rollback is required.
+Use npm ci, npm run test:try-on and npm run build. No seed, schema push or data migration is part of deployment. Inspect the Git-triggered Vercel deployment and verify its commit and public aliases. Roll back to the previous Vercel deployment if needed; no data rollback is required.
+
+The owner requested skipping paid tests. Automated verification uses fixtures and input/policy checks; no real paid video, image generation, personal-photo upload or purchase is authorized for this release. Record that residual end-to-end verification gap in the release report.

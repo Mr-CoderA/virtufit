@@ -74,8 +74,8 @@ export function AdminLayout({
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#1A1915] flex items-center justify-center">
-        <span className="text-[#A09E97] text-[14px]">Loading…</span>
+      <div className="min-h-screen bg-[var(--vf-page)] flex items-center justify-center">
+        <span className="text-[var(--vf-muted)] text-[14px]">Loading…</span>
       </div>
     );
   }
@@ -86,27 +86,27 @@ export function AdminLayout({
   const initials = admin?.name ? admin.name.split(/\s+/).map((n) => n[0]).slice(0, 2).join('').toUpperCase() : 'A';
 
   return (
-    <div className="flex min-h-screen bg-[#1A1915]">
+    <div className="flex min-h-screen bg-[var(--vf-page)]">
       {/* Sidebar: mobile fixed drawer 260px, desktop in-flow 220px sticky */}
       <aside
-        className={`admin-sidebar fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] flex-shrink-0 flex-col bg-[#1A1915] pb-6 transition-transform duration-[250ms] ease-out md:relative md:sticky md:top-0 md:block md:h-screen md:w-[220px] md:translate-x-0 md:pb-6 ${
+        className={`admin-sidebar fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] flex-shrink-0 flex-col bg-[var(--vf-page)] pb-6 transition-transform duration-[250ms] ease-out md:relative md:sticky md:top-0 md:block md:h-screen md:w-[220px] md:translate-x-0 md:pb-6 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ borderRight: '0.5px solid rgba(240,239,232,0.08)' }}
+        style={{ borderRight: '0.5px solid rgba(21,43,67,0.14)' }}
       >
         {/* Logo area */}
         <div
           className="flex flex-shrink-0 items-center gap-2 border-b px-5 pb-4 pt-5"
-          style={{ borderBottomWidth: '0.5px', borderColor: 'rgba(240,239,232,0.08)', paddingTop: 20, paddingBottom: 16, marginBottom: 8 }}
+          style={{ borderBottomWidth: '0.5px', borderColor: 'rgba(21,43,67,0.14)', paddingTop: 20, paddingBottom: 16, marginBottom: 8 }}
         >
           <Link href="/admin" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-            <span className="font-serif text-[17px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
-              Virtu<span className="text-[#D9714A]">Fit</span>
+            <span className="font-serif text-[17px] font-normal text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>
+              Virtu<span className="text-[var(--vf-accent)]">Fit</span>
             </span>
           </Link>
           <span
-            className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[#65635D]"
-            style={{ background: 'rgba(240,239,232,0.06)' }}
+            className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)]"
+            style={{ background: 'rgba(21,43,67,0.14)' }}
           >
             Admin
           </span>
@@ -119,11 +119,11 @@ export function AdminLayout({
               {gIdx > 0 && (
                 <div
                   className="mx-4 my-1.5"
-                  style={{ height: '0.5px', background: 'rgba(240,239,232,0.06)' }}
+                  style={{ height: '0.5px', background: 'rgba(21,43,67,0.14)' }}
                 />
               )}
               <div
-                className={`px-4 pb-1 text-[10px] font-medium uppercase tracking-[0.1em] text-[#65635D] ${gIdx === 0 ? 'pt-2' : 'pt-4'}`}
+                className={`px-4 pb-1 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--vf-quiet)] ${gIdx === 0 ? 'pt-2' : 'pt-4'}`}
               >
                 {group.section}
               </div>
@@ -138,16 +138,16 @@ export function AdminLayout({
                     onClick={() => setSidebarOpen(false)}
                     className={`group mx-2 mb-0.5 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] no-underline transition-[background,color] duration-150 ${
                       isActive
-                        ? 'bg-[rgba(217,113,74,0.12)] font-medium text-[#D9714A]'
-                        : 'text-[#A09E97] hover:bg-[rgba(240,239,232,0.05)] hover:text-[#F0EFE8]'
+                        ? 'bg-[rgba(39,87,214,0.12)] font-medium text-[var(--vf-accent)]'
+                        : 'text-[var(--vf-muted)] hover:bg-[rgba(21,43,67,0.14)] hover:text-[var(--vf-ink)]'
                     }`}
                   >
                     <Icon
-                      className={`h-4 w-4 flex-shrink-0 ${isActive ? 'text-[#D9714A] opacity-100' : 'opacity-70 group-hover:opacity-100'}`}
+                      className={`h-4 w-4 flex-shrink-0 ${isActive ? 'text-[var(--vf-accent)] opacity-100' : 'opacity-70 group-hover:opacity-100'}`}
                     />
                     {item.label}
                     {badge && (
-                      <span className="ml-auto min-w-[18px] flex h-[18px] items-center justify-center rounded-full bg-[#D9714A] px-1 text-[10px] font-medium text-[#1A1915]">
+                      <span className="ml-auto min-w-[18px] flex h-[18px] items-center justify-center rounded-full bg-[var(--vf-accent)] px-1 text-[10px] font-medium text-[var(--vf-page)]">
                         {contactUnread > 99 ? '99+' : contactUnread}
                       </span>
                     )}
@@ -161,19 +161,19 @@ export function AdminLayout({
         {/* Bottom admin info row */}
         <div
           className="mt-auto flex flex-shrink-0 items-center gap-2.5 border-t px-4 py-3"
-          style={{ borderTopWidth: '0.5px', borderColor: 'rgba(240,239,232,0.08)', background: '#1A1915' }}
+          style={{ borderTopWidth: '0.5px', borderColor: 'rgba(21,43,67,0.14)', background: 'var(--vf-page)' }}
         >
           <div
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[#D9714A]"
-            style={{ background: 'rgba(217,113,74,0.15)' }}
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[var(--vf-accent)]"
+            style={{ background: 'rgba(39,87,214,0.15)' }}
           >
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[12px] font-medium text-[#F0EFE8] whitespace-nowrap">
+            <p className="truncate text-[12px] font-medium text-[var(--vf-ink)] whitespace-nowrap">
               {admin?.name ?? 'Admin'}
             </p>
-            <p className="text-[11px] text-[#65635D]">Admin</p>
+            <p className="text-[11px] text-[var(--vf-quiet)]">Admin</p>
           </div>
           <button
             type="button"
@@ -181,7 +181,7 @@ export function AdminLayout({
               clearAdminToken();
               window.location.href = '/admin/login';
             }}
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[#65635D] transition-colors hover:bg-[rgba(217,113,74,0.1)] hover:text-[#D9714A]"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[var(--vf-quiet)] transition-colors hover:bg-[rgba(39,87,214,0.1)] hover:text-[var(--vf-accent)]"
             title="Sign out"
           >
             <LogOut className="h-4 w-4" />
@@ -193,20 +193,20 @@ export function AdminLayout({
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Topbar */}
         <header
-          className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between bg-[#1A1915] pl-6 pr-5"
-          style={{ height: 56, borderBottom: '0.5px solid rgba(240,239,232,0.08)' }}
+          className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between bg-[var(--vf-page)] pl-6 pr-5"
+          style={{ height: 56, borderBottom: '0.5px solid rgba(21,43,67,0.14)' }}
         >
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <button
               type="button"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#A09E97] transition-colors hover:bg-[rgba(240,239,232,0.06)] md:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--vf-muted)] transition-colors hover:bg-[rgba(21,43,67,0.14)] md:hidden"
               onClick={() => setSidebarOpen((o) => !o)}
               aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
             <h1
-              className="truncate text-[17px] font-normal text-[#F0EFE8] whitespace-nowrap max-[768px]:max-w-[calc(100vw-200px)]"
+              className="truncate text-[17px] font-normal text-[var(--vf-ink)] whitespace-nowrap max-[768px]:max-w-[calc(100vw-200px)]"
               style={{ fontFamily: 'Georgia, serif' }}
             >
               {pageTitle}
@@ -216,16 +216,16 @@ export function AdminLayout({
             <span
               className={`hidden min-[481px]:inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium whitespace-nowrap ${
                 systemStatus === 'operational'
-                  ? 'bg-[rgba(217,113,74,0.1)] text-[#D9714A]'
+                  ? 'bg-[rgba(39,87,214,0.1)] text-[var(--vf-accent)]'
                   : 'bg-[rgba(226,75,74,0.12)] text-[#E24B4A]'
               }`}
-              style={{ border: '0.5px solid rgba(217,113,74,0.25)' }}
+              style={{ border: '0.5px solid rgba(39,87,214,0.25)' }}
             >
               {systemStatus === 'operational' ? 'All systems operational' : 'Issues detected'}
             </span>
             <div
-              className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[#D9714A]"
-              style={{ background: 'rgba(217,113,74,0.15)' }}
+              className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[var(--vf-accent)]"
+              style={{ background: 'rgba(39,87,214,0.15)' }}
             >
               {initials}
             </div>

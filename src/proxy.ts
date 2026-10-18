@@ -22,7 +22,11 @@ export function proxy(request: NextRequest) {
   res.headers.set('X-XSS-Protection', '1; mode=block');
   res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=()');
-  res.headers.set('Content-Security-Policy', CSP);
+  // Webpack's local refresh runtime uses eval; keep it out of production.
+  const policy = process.env.NODE_ENV === 'development'
+    ? CSP.replace("'wasm-unsafe-eval'", "'wasm-unsafe-eval' 'unsafe-eval'").replace("connect-src 'self'", "connect-src 'self' ws://localhost:* ws://127.0.0.1:*")
+    : CSP;
+  res.headers.set('Content-Security-Policy', policy);
   if (request.nextUrl.protocol === 'https:') {
     res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }

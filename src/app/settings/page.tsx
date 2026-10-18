@@ -22,17 +22,17 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] bg-[#1A1915]">
+    <div className="relative min-h-[calc(100vh-80px)] bg-[var(--vf-page)]">
       <main className="relative z-10 mx-auto max-w-4xl px-4 py-[64px] sm:px-6 lg:px-8">
         <div className="mb-10">
           <p className="eyebrow mb-2">Account</p>
           <h1
-            className="text-[28px] font-normal tracking-[-0.025em] text-[#F0EFE8]"
+            className="text-[28px] font-normal tracking-[-0.025em] text-[var(--vf-ink)]"
             style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
           >
             Settings
           </h1>
-          <p className="mt-2 text-[15px] leading-[1.75] text-[#A09E97]">
+          <p className="mt-2 text-[15px] leading-[1.75] text-[var(--vf-muted)]">
             Manage your account and preferences.
           </p>
         </div>
@@ -42,12 +42,12 @@ export default async function SettingsPage() {
             <Avatar name={user.name} email={user.email} size="lg" />
             <div>
               <h2
-                className="text-[22px] font-normal tracking-[-0.025em] text-[#F0EFE8]"
+                className="text-[22px] font-normal tracking-[-0.025em] text-[var(--vf-ink)]"
                 style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
               >
                 {user.name || user.email}
               </h2>
-              <p className="text-[15px] text-[#A09E97] mt-1">{user.email}</p>
+              <p className="text-[15px] text-[var(--vf-muted)] mt-1">{user.email}</p>
             </div>
           </div>
 

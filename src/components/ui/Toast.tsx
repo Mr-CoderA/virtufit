@@ -15,20 +15,20 @@ export interface ToastItem {
 
 const variantStyles: Record<ToastVariant, { border: string; icon: React.ReactNode }> = {
   success: {
-    border: 'border-[rgba(240,239,232,0.08)]',
-    icon: <CheckCircle2 className="h-5 w-5 text-[#D9714A]" />,
+    border: 'border-[rgba(21,43,67,0.14)]',
+    icon: <CheckCircle2 className="h-5 w-5 text-[var(--vf-accent)]" />,
   },
   error: {
-    border: 'border-[rgba(240,239,232,0.14)]',
+    border: 'border-[rgba(21,43,67,0.14)]',
     icon: <XCircle className="h-5 w-5 text-[#A06E5B]" />,
   },
   warning: {
-    border: 'border-[rgba(240,239,232,0.08)]',
-    icon: <AlertCircle className="h-5 w-5 text-[#D9714A]" />,
+    border: 'border-[rgba(21,43,67,0.14)]',
+    icon: <AlertCircle className="h-5 w-5 text-[var(--vf-accent)]" />,
   },
   info: {
-    border: 'border-[rgba(240,239,232,0.08)]',
-    icon: <Info className="h-5 w-5 text-[#A09E97]" />,
+    border: 'border-[rgba(21,43,67,0.14)]',
+    icon: <Info className="h-5 w-5 text-[var(--vf-muted)]" />,
   },
 };
 
@@ -50,19 +50,19 @@ export function Toast({ toast, onDismiss }: ToastProps) {
   return (
     <div
       role="alert"
-      className={`toast-enter flex items-start gap-3 rounded-2xl border bg-[#222219] overflow-hidden min-w-[320px] max-w-[420px] ${style.border}`}
+      className={`toast-enter flex items-start gap-3 rounded-2xl border bg-[var(--vf-surface)] overflow-hidden min-w-[320px] max-w-[420px] ${style.border}`}
     >
-      <div className="flex-shrink-0 rounded-2xl p-2.5 mt-3.5 ml-3.5 bg-[#2C2C27] border border-[rgba(240,239,232,0.08)]">
+      <div className="flex-shrink-0 rounded-2xl p-2.5 mt-3.5 ml-3.5 bg-[var(--vf-surface-hover)] border border-[rgba(21,43,67,0.14)]">
         {style.icon}
       </div>
       <div className="flex-1 min-w-0 py-3.5 pr-3">
         {toast.title && (
-          <p className="font-medium text-[#F0EFE8] text-[13px] mb-0.5">{toast.title}</p>
+          <p className="font-medium text-[var(--vf-ink)] text-[13px] mb-0.5">{toast.title}</p>
         )}
-        <p className="text-[#A09E97] text-[15px] leading-relaxed">{toast.message}</p>
+        <p className="text-[var(--vf-muted)] text-[15px] leading-relaxed">{toast.message}</p>
         {duration > 0 && (
           <div
-            className="h-0.5 mt-2 overflow-hidden origin-left rounded-full bg-[rgba(240,239,232,0.14)]"
+            className="h-0.5 mt-2 overflow-hidden origin-left rounded-full bg-[rgba(21,43,67,0.14)]"
             style={{
               animation: `toast-progress ${duration}ms linear forwards`,
             }}
@@ -72,7 +72,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
-        className="flex-shrink-0 p-2 mt-2 mr-2 rounded-full text-[#65635D] hover:text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[rgba(240,239,232,0.14)]"
+        className="flex-shrink-0 p-2 mt-2 mr-2 rounded-full text-[var(--vf-quiet)] hover:text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[rgba(21,43,67,0.14)]"
         aria-label="Dismiss"
       >
         <X className="h-4 w-4" />

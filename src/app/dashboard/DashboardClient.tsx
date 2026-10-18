@@ -29,11 +29,11 @@ export function DashboardClient({ user }: { user: User }) {
     <div className="flex items-center gap-3">
       <Link
         href="/settings"
-        className="hidden sm:flex items-center gap-2 rounded-full px-2 py-1.5 transition-opacity duration-200 hover:bg-[rgba(240,239,232,0.05)]"
+        className="hidden sm:flex items-center gap-2 rounded-full px-2 py-1.5 transition-opacity duration-200 hover:bg-[rgba(21,43,67,0.14)]"
         title="Settings"
       >
         <Avatar name={user.name} email={user.email} size="sm" />
-        <span className="text-[13px] text-[#A09E97] truncate max-w-[140px]">{user.email}</span>
+        <span className="text-[13px] text-[var(--vf-muted)] truncate max-w-[140px]">{user.email}</span>
       </Link>
       <Button variant="secondary" size="sm" onClick={handleLogout} leftIcon={<LogOut className="h-4 w-4" />}>
         Log out

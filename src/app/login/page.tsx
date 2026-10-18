@@ -110,18 +110,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
       <div className="relative z-10 w-full max-w-[420px]">
         <GlassCard className="p-7 sm:p-10">
           <div className="mb-10">
             <h1
-              className="text-[28px] font-normal tracking-[-0.025em] text-[#F0EFE8] mb-3 [&_span]:text-[#F0EFE8]"
+              className="text-[28px] font-normal tracking-[-0.025em] text-[var(--vf-ink)] mb-3 [&_span]:text-[var(--vf-ink)]"
               style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
             >
-              <BlurText text="Welcome back" delay={60} animateBy="words" direction="top" className="text-[#F0EFE8]" />
+              <BlurText text="Welcome back" delay={60} animateBy="words" direction="top" className="text-[var(--vf-ink)]" />
             </h1>
-            <p className="text-[15px] leading-[1.75] font-normal text-[#A09E97]">
-              Sign in to your account to continue.
+            <p className="text-[15px] leading-[1.75] font-normal text-[var(--vf-muted)]">
+              Sign in for account settings. The fitting studio is free without an account.
             </p>
             {closedMessage && (
               <p className="mt-3 rounded-2xl border border-[rgba(226,75,74,0.3)] bg-[rgba(226,75,74,0.08)] px-4 py-3 text-[14px] text-[#e0a0a0]">
@@ -134,7 +134,7 @@ export default function LoginPage() {
             {error && error === 'EMAIL_NOT_VERIFIED' && (
               <div
                 role="alert"
-                className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]"
+                className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] px-4 py-3 text-[15px] text-[var(--vf-muted)]"
               >
                 <p>Please verify your email first.</p>
                 {resendSent ? (
@@ -143,16 +143,16 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={handleResendVerification}
-                    className="mt-2 text-[14px] text-[#D9714A] hover:underline"
+                    className="mt-2 text-[14px] text-[var(--vf-accent)] hover:underline"
                   >
                     Resend verification email →
                   </button>
                 )}
-                <p className="mt-3 text-[14px] text-[#F0EFE8]">Enter the 6-digit code from your email:</p>
+                <p className="mt-3 text-[14px] text-[var(--vf-ink)]">Enter the 6-digit code from your email:</p>
                 <button
                   type="button"
                   onClick={() => { setShowCodeModal(true); setVerifyError(''); setVerifyCode(''); }}
-                  className="mt-2 inline-flex items-center justify-center rounded-full border border-[#D9714A] bg-[#D9714A]/10 px-4 py-2 text-[14px] font-medium text-[#D9714A] hover:bg-[#D9714A]/20"
+                  className="mt-2 inline-flex items-center justify-center rounded-full border border-[var(--vf-accent)] bg-[var(--vf-accent)]/10 px-4 py-2 text-[14px] font-medium text-[var(--vf-accent)] hover:bg-[var(--vf-accent)]/20"
                 >
                   Enter verification code
                 </button>
@@ -161,14 +161,14 @@ export default function LoginPage() {
             {error && error !== 'EMAIL_NOT_VERIFIED' && (
               <div
                 role="alert"
-                className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]"
+                className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] px-4 py-3 text-[15px] text-[var(--vf-muted)]"
               >
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-[13px] font-normal text-[#A09E97] flex items-center gap-2">
-                <Mail className="h-4 w-4 text-[#65635D]" />
+              <label htmlFor="email" className="block text-[13px] font-normal text-[var(--vf-muted)] flex items-center gap-2">
+                <Mail className="h-4 w-4 text-[var(--vf-quiet)]" />
                 Email
               </label>
               <input
@@ -183,8 +183,8 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-[13px] font-normal text-[#A09E97] flex items-center gap-2">
-                <Lock className="h-4 w-4 text-[#65635D]" />
+              <label htmlFor="password" className="block text-[13px] font-normal text-[var(--vf-muted)] flex items-center gap-2">
+                <Lock className="h-4 w-4 text-[var(--vf-quiet)]" />
                 Password
               </label>
               <input
@@ -220,22 +220,22 @@ export default function LoginPage() {
               aria-labelledby="verify-code-title"
             >
               <div
-                className="relative w-full max-w-[400px] rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#1A1915] p-6 shadow-xl"
+                className="relative w-full max-w-[400px] rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] p-6 shadow-xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   type="button"
                   onClick={() => setShowCodeModal(false)}
-                  className="absolute right-4 top-4 rounded p-1 text-[#A09E97] hover:bg-[#222219] hover:text-[#F0EFE8]"
+                  className="absolute right-4 top-4 rounded p-1 text-[var(--vf-muted)] hover:bg-[var(--vf-surface)] hover:text-[var(--vf-ink)]"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />
                 </button>
-                <h2 id="verify-code-title" className="pr-8 text-[20px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+                <h2 id="verify-code-title" className="pr-8 text-[20px] font-normal text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>
                   Enter verification code
                 </h2>
-                <p className="mt-1 text-[14px] text-[#A09E97]">
-                  We sent a 6-digit code to <span className="text-[#F0EFE8]">{email || 'your email'}</span>
+                <p className="mt-1 text-[14px] text-[var(--vf-muted)]">
+                  We sent a 6-digit code to <span className="text-[var(--vf-ink)]">{email || 'your email'}</span>
                 </p>
                 {verifyError && (
                   <p className="mt-3 text-[14px] text-[#e24b4a]" role="alert">
@@ -244,7 +244,7 @@ export default function LoginPage() {
                 )}
                 <form onSubmit={handleVerifyCode} className="mt-4 space-y-4">
                   <div>
-                    <label htmlFor="modal-verify-code" className="block text-[13px] text-[#A09E97] mb-1.5">
+                    <label htmlFor="modal-verify-code" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">
                       Code
                     </label>
                     <input
@@ -271,12 +271,12 @@ export default function LoginPage() {
                     {verifyLoading ? 'Verifying...' : 'Verify and sign in'}
                   </Button>
                 </form>
-                <p className="mt-4 text-center text-[13px] text-[#A09E97]">
+                <p className="mt-4 text-center text-[13px] text-[var(--vf-muted)]">
                   Didn&apos;t get the code?{' '}
                   <button
                     type="button"
                     onClick={handleResendVerification}
-                    className="text-[#D9714A] hover:underline"
+                    className="text-[var(--vf-accent)] hover:underline"
                   >
                     Resend code
                   </button>
@@ -285,9 +285,9 @@ export default function LoginPage() {
             </div>
           )}
 
-          <p className="mt-10 text-center text-[15px] text-[#A09E97]">
+          <p className="mt-10 text-center text-[15px] text-[var(--vf-muted)]">
             Don&apos;t have an account?{' '}
-            <ButtonLink href="/signup" variant="ghost" size="sm" className="inline-flex text-[#D9714A] hover:text-[#F0EFE8]">
+            <ButtonLink href="/signup" variant="ghost" size="sm" className="inline-flex text-[var(--vf-accent)] hover:text-[var(--vf-ink)]">
               Sign up
             </ButtonLink>
           </p>

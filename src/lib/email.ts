@@ -1,6 +1,9 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function emailClient() {
+  if (!process.env.RESEND_API_KEY) throw new Error('Account email is not configured');
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 /** Verified sender — never use onboarding@resend.dev or other test addresses. */
 const DEFAULT_FROM = 'VirtuFit <noreply@virtufit.xyz>';
@@ -28,7 +31,7 @@ export type SendEmailParams = {
 export async function sendEmail({ to, subject, html, text }: SendEmailParams): Promise<{ success: boolean; id?: string; error?: unknown }> {
   const from = getFrom();
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await emailClient().emails.send({
       from,
       to,
       subject,
@@ -59,7 +62,7 @@ const DASHBOARD_URL = 'https://virtufit.xyz/dashboard';
 export async function sendWelcomeEmail({ to, name }: { to: string; name: string }): Promise<{ success: boolean; id?: string; error?: unknown }> {
   return sendEmail({
     to,
-    subject: 'Welcome to VirtuFit — your 5 free credits are ready',
+    subject: 'Welcome to VirtuFit — your account is ready',
     html: `
       <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;padding:40px 24px;background:#1A1915;color:#F0EFE8;">
         <h1 style="font-family:Georgia,serif;font-size:28px;font-weight:400;color:#F0EFE8;margin:0 0 8px;">
@@ -69,13 +72,13 @@ export async function sendWelcomeEmail({ to, name }: { to: string; name: string 
           Hi ${name}, your account is ready.
         </p>
         <div style="background:#222219;border:0.5px solid rgba(240,239,232,0.08);border-radius:16px;padding:24px;margin:0 0 24px;">
-          <p style="color:#65635D;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 8px;">YOUR CREDITS</p>
-          <p style="font-family:Georgia,serif;font-size:36px;color:#F0EFE8;margin:0 0 4px;">5</p>
-          <p style="color:#A09E97;font-size:14px;margin:0;">free credits added to your account</p>
+          <p style="color:#65635D;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 8px;">STUDIO ACCESS</p>
+          <p style="font-family:Georgia,serif;font-size:36px;color:#F0EFE8;margin:0 0 4px;">Free</p>
+          <p style="color:#A09E97;font-size:14px;margin:0;">public try-on, open to everyone</p>
         </div>
         <p style="color:#A09E97;font-size:14px;line-height:1.75;margin:0 0 24px;">
-          Use credits for a try-on photo or a timed live mirror session. The price is shown before you start.<br/>
-          Top up anytime from $5 — no subscription required.
+          The public fitting studio is free, with shared daily allowances.<br/>
+          No payment or provider key is needed for public try-on.
         </p>
         <a href="${DASHBOARD_URL}"
            style="display:inline-block;background:#F0EFE8;color:#1A1915;border-radius:100px;padding:10px 24px;font-size:14px;font-weight:500;text-decoration:none;">
@@ -86,7 +89,7 @@ export async function sendWelcomeEmail({ to, name }: { to: string; name: string 
         </p>
       </div>
     `,
-    text: `Welcome to VirtuFit, ${name}! Your account is ready with 5 free credits. Visit ${DASHBOARD_URL} to get started.`,
+    text: `Welcome to VirtuFit, ${name}! Your account is ready. The public fitting studio is free. Visit ${DASHBOARD_URL} to get started.`,
   });
 }
 

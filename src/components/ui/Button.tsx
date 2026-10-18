@@ -5,24 +5,24 @@ import Link from 'next/link';
 
 const base =
   'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-opacity duration-200 ' +
-  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[rgba(240,239,232,0.14)] ' +
+  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[rgba(21,43,67,0.14)] ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
 const variants = {
   primary:
-    'bg-[#F0EFE8] text-[#1A1915] border border-transparent hover:opacity-[0.88] ' +
+    'bg-[var(--vf-accent)] text-white border border-transparent hover:opacity-[0.88] ' +
     'min-h-[44px] px-6 py-2.5 text-[13px]',
   secondary:
-    'bg-transparent text-[#F0EFE8] border border-[rgba(240,239,232,0.14)] hover:bg-[rgba(240,239,232,0.05)] ' +
+    'bg-transparent text-[var(--vf-ink)] border border-[rgba(21,43,67,0.14)] hover:bg-[rgba(21,43,67,0.14)] ' +
     'min-h-[44px] px-6 py-2.5 text-[13px]',
   primaryAccent:
-    'bg-[#F0EFE8] text-[#1A1915] border border-transparent hover:opacity-[0.88] ' +
+    'bg-[var(--vf-accent)] text-white border border-transparent hover:opacity-[0.88] ' +
     'min-h-[44px] px-6 py-2.5 text-[13px]',
   ghost:
-    'bg-transparent text-[#A09E97] border border-transparent hover:text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] ' +
+    'bg-transparent text-[var(--vf-muted)] border border-transparent hover:text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] ' +
     'min-h-[40px] px-4 py-2 text-[13px] rounded-full',
   danger:
-    'bg-[#222219] text-[#D9714A] border border-[rgba(240,239,232,0.14)] hover:bg-[#2C2C27] ' +
+    'bg-[var(--vf-surface)] text-[var(--vf-accent)] border border-[rgba(21,43,67,0.14)] hover:bg-[var(--vf-surface-hover)] ' +
     'min-h-[44px] px-5 py-2.5 text-[13px]',
 };
 

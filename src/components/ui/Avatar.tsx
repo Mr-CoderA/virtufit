@@ -25,8 +25,8 @@ export function Avatar({ name, email, size = 'md', className = '' }: AvatarProps
   return (
     <div
       className={
-        `inline-flex items-center justify-center rounded-full font-medium text-[#F0EFE8] ` +
-        `bg-[#2C2C27] border border-[rgba(240,239,232,0.08)] ` +
+        `inline-flex items-center justify-center rounded-full font-medium text-[var(--vf-ink)] ` +
+        `bg-[var(--vf-surface-hover)] border border-[rgba(21,43,67,0.14)] ` +
         `${sizeClasses[size]} ${className}`
       }
       title={name || email}

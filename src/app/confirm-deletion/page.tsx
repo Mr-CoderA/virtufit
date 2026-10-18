@@ -35,10 +35,10 @@ export default function ConfirmDeletionPage() {
 
   if (status === 'loading') {
     return (
-      <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+      <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
         <GlassCard className="p-10 text-center">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-[#D9714A]" />
-          <p className="mt-4 text-[15px] text-[#A09E97]">Processing your request...</p>
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-[var(--vf-accent)]" />
+          <p className="mt-4 text-[15px] text-[var(--vf-muted)]">Processing your request...</p>
         </GlassCard>
       </div>
     );
@@ -46,19 +46,19 @@ export default function ConfirmDeletionPage() {
 
   if (status === 'success') {
     return (
-      <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+      <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
         <GlassCard className="p-10 text-center max-w-[420px]">
-          <h1 className="text-[22px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+          <h1 className="text-[22px] font-normal text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>
             Your account has been deleted.
           </h1>
-          <p className="mt-3 text-[15px] text-[#A09E97]">
+          <p className="mt-3 text-[15px] text-[var(--vf-muted)]">
             We&apos;re sorry to see you go{name ? `, ${name}` : ''}.
           </p>
-          <p className="mt-2 text-[14px] text-[#A09E97]">
+          <p className="mt-2 text-[14px] text-[var(--vf-muted)]">
             All your data will be retained for 90 days.
           </p>
-          <p className="mt-6 text-[14px] text-[#A09E97]">
-            <ButtonLink href="/" variant="ghost" size="sm" className="text-[#D9714A]">
+          <p className="mt-6 text-[14px] text-[var(--vf-muted)]">
+            <ButtonLink href="/" variant="ghost" size="sm" className="text-[var(--vf-accent)]">
               Changed your mind? Contact support
             </ButtonLink>
           </p>
@@ -68,12 +68,12 @@ export default function ConfirmDeletionPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
       <GlassCard className="p-10 text-center max-w-[420px]">
-        <h1 className="text-[22px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+        <h1 className="text-[22px] font-normal text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>
           This link has expired or is invalid.
         </h1>
-        <p className="mt-3 text-[15px] text-[#A09E97]">
+        <p className="mt-3 text-[15px] text-[var(--vf-muted)]">
           Log in to request a new deletion link.
         </p>
         <ButtonLink href="/login" className="mt-6 inline-block" variant="primary">

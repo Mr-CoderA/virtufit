@@ -88,7 +88,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-[#1A1915]/85"
+        className="absolute inset-0 bg-[var(--vf-page)]/85"
         aria-hidden
         onClick={onClose}
       />
@@ -96,17 +96,17 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="topup-title"
-        className="relative w-full max-w-md rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden"
+        className="relative w-full max-w-md rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] overflow-hidden"
       >
         <div className="relative p-7 sm:p-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-[#2C2C27] p-2.5 border border-[rgba(240,239,232,0.08)]">
-                <DollarSign className="h-6 w-6 text-[#D9714A]" />
+              <div className="rounded-2xl bg-[var(--vf-surface-hover)] p-2.5 border border-[rgba(21,43,67,0.14)]">
+                <DollarSign className="h-6 w-6 text-[var(--vf-accent)]" />
               </div>
               <h2
                 id="topup-title"
-                className="text-[20px] font-normal tracking-[-0.025em] text-[#F0EFE8]"
+                className="text-[20px] font-normal tracking-[-0.025em] text-[var(--vf-ink)]"
                 style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
               >
                 Top up credits
@@ -115,39 +115,39 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-[#65635D] hover:text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[rgba(240,239,232,0.14)]"
+              className="rounded-full p-2 text-[var(--vf-quiet)] hover:text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[rgba(21,43,67,0.14)]"
               aria-label="Close"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <p className="text-[15px] leading-[1.75] text-[#A09E97] mb-8">
+          <p className="text-[15px] leading-[1.75] text-[var(--vf-muted)] mb-8">
             Enter the amount in USD. You get{' '}
-            <strong className="font-medium text-[#D9714A]">5 credits per $1</strong> ($0.20 per credit). Powered by Lemon Squeezy.
+            <strong className="font-medium text-[var(--vf-accent)]">5 credits per $1</strong> ($0.20 per credit). Powered by Lemon Squeezy.
           </p>
 
           {error && (
             <div
               role="alert"
-              className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#1A1915] px-4 py-3 text-[15px] text-[#A09E97] mb-6"
+              className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-4 py-3 text-[15px] text-[var(--vf-muted)] mb-6"
             >
               {error}
             </div>
           )}
 
           <div className="mb-8">
-            <label htmlFor="topup-amount" className="block text-[13px] font-normal text-[#A09E97] mb-2">
+            <label htmlFor="topup-amount" className="block text-[13px] font-normal text-[var(--vf-muted)] mb-2">
               Amount (USD)
             </label>
             <div
-              className={`flex items-center gap-3 rounded-2xl border bg-[#1A1915] px-4 py-3.5 transition-colors duration-200 ${
+              className={`flex items-center gap-3 rounded-2xl border bg-[var(--vf-page)] px-4 py-3.5 transition-colors duration-200 ${
                 focused
-                  ? 'border-[rgba(240,239,232,0.14)]'
-                  : 'border-[rgba(240,239,232,0.08)] hover:border-[rgba(240,239,232,0.14)]'
+                  ? 'border-[rgba(21,43,67,0.14)]'
+                  : 'border-[rgba(21,43,67,0.14)] hover:border-[rgba(21,43,67,0.14)]'
               }`}
             >
-              <span className="text-2xl font-medium text-[#D9714A]">$</span>
+              <span className="text-2xl font-medium text-[var(--vf-accent)]">$</span>
               <input
                 ref={inputRef}
                 id="topup-amount"
@@ -160,7 +160,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                 onChange={(e) => setAmount(e.target.value)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
-                className="flex-1 bg-transparent text-2xl font-normal text-[#F0EFE8] placeholder-[#65635D] focus:outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="flex-1 bg-transparent text-2xl font-normal text-[var(--vf-ink)] placeholder-[var(--vf-quiet)] focus:outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </div>
           </div>
@@ -173,7 +173,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                   key={preset}
                   type="button"
                   onClick={() => setAmount(String(preset))}
-                  className="rounded-full px-4 py-2.5 text-[13px] font-medium border border-[rgba(240,239,232,0.14)] bg-transparent text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] transition-colors duration-200"
+                  className="rounded-full px-4 py-2.5 text-[13px] font-medium border border-[rgba(21,43,67,0.14)] bg-transparent text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] transition-colors duration-200"
                 >
                   ${preset}
                 </button>

@@ -39,50 +39,50 @@ export default function AdminPlanEditPage() {
       .then(() => setSaving(false));
   };
 
-  if (loading || !plan) return <p className="text-[#A09E97]">Loading…</p>;
+  if (loading || !plan) return <p className="text-[var(--vf-muted)]">Loading…</p>;
 
   const features: string[] = Array.isArray(plan.features) ? (plan.features as string[]) : [];
 
   return (
     <div className="space-y-6">
-      <Link href="/admin/plans" className="text-[#D9714A] hover:underline text-[13px]">← Back to plans</Link>
-      <div className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6" style={{ borderWidth: '0.5px' }}>
-        <p className="text-[12px] text-[#65635D] mb-2">Last updated {new Date(plan.updatedAt).toLocaleString()}</p>
+      <Link href="/admin/plans" className="text-[var(--vf-accent)] hover:underline text-[13px]">← Back to plans</Link>
+      <div className="rounded-xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] p-6" style={{ borderWidth: '0.5px' }}>
+        <p className="text-[12px] text-[var(--vf-quiet)] mb-2">Last updated {new Date(plan.updatedAt).toLocaleString()}</p>
         <div className="space-y-4">
           <div>
-            <label className="block text-[12px] text-[#A09E97] mb-1">Name</label>
-            <input value={plan.name} onChange={(e) => setPlan({ ...plan, name: e.target.value })} className="w-full rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8]" />
+            <label className="block text-[12px] text-[var(--vf-muted)] mb-1">Name</label>
+            <input value={plan.name} onChange={(e) => setPlan({ ...plan, name: e.target.value })} className="w-full rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-3 py-2 text-[14px] text-[var(--vf-ink)]" />
           </div>
           {plan.key === 'FREE' && (
             <div>
-              <label className="block text-[12px] text-[#A09E97] mb-1">Welcome credits</label>
-              <input type="number" value={plan.welcomeCredits ?? ''} onChange={(e) => setPlan({ ...plan, welcomeCredits: e.target.value ? parseInt(e.target.value, 10) : null })} className="w-full rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8] w-24" />
+              <label className="block text-[12px] text-[var(--vf-muted)] mb-1">Welcome credits</label>
+              <input type="number" value={plan.welcomeCredits ?? ''} onChange={(e) => setPlan({ ...plan, welcomeCredits: e.target.value ? parseInt(e.target.value, 10) : null })} className="w-full rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-3 py-2 text-[14px] text-[var(--vf-ink)] w-24" />
             </div>
           )}
           {(plan.key === 'ENTERPRISE') && (
             <>
               <div>
-                <label className="block text-[12px] text-[#A09E97] mb-1">Contact email</label>
-                <input type="email" value={plan.contactEmail ?? ''} onChange={(e) => setPlan({ ...plan, contactEmail: e.target.value || null })} className="w-full rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8]" />
+                <label className="block text-[12px] text-[var(--vf-muted)] mb-1">Contact email</label>
+                <input type="email" value={plan.contactEmail ?? ''} onChange={(e) => setPlan({ ...plan, contactEmail: e.target.value || null })} className="w-full rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-3 py-2 text-[14px] text-[var(--vf-ink)]" />
               </div>
               <div>
-                <label className="block text-[12px] text-[#A09E97] mb-1">Description</label>
-                <textarea value={plan.description ?? ''} onChange={(e) => setPlan({ ...plan, description: e.target.value || null })} className="w-full rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8]" rows={3} />
+                <label className="block text-[12px] text-[var(--vf-muted)] mb-1">Description</label>
+                <textarea value={plan.description ?? ''} onChange={(e) => setPlan({ ...plan, description: e.target.value || null })} className="w-full rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-3 py-2 text-[14px] text-[var(--vf-ink)]" rows={3} />
               </div>
             </>
           )}
           <div>
-            <label className="block text-[12px] text-[#A09E97] mb-1">Features</label>
+            <label className="block text-[12px] text-[var(--vf-muted)] mb-1">Features</label>
             {features.map((f, i) => (
               <div key={i} className="flex gap-2 mb-2">
-                <input value={f} onChange={(e) => setPlan({ ...plan, features: features.map((x, j) => (j === i ? e.target.value : x)) })} className="flex-1 rounded-lg border border-[rgba(240,239,232,0.12)] bg-[#1A1915] px-3 py-2 text-[14px] text-[#F0EFE8]" />
+                <input value={f} onChange={(e) => setPlan({ ...plan, features: features.map((x, j) => (j === i ? e.target.value : x)) })} className="flex-1 rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-3 py-2 text-[14px] text-[var(--vf-ink)]" />
                 <button type="button" onClick={() => setPlan({ ...plan, features: features.filter((_, j) => j !== i) })} className="text-[#e0a0a0] hover:underline">Remove</button>
               </div>
             ))}
-            <button type="button" onClick={() => setPlan({ ...plan, features: [...features, ''] })} className="text-[#D9714A] hover:underline text-[13px]">Add feature</button>
+            <button type="button" onClick={() => setPlan({ ...plan, features: [...features, ''] })} className="text-[var(--vf-accent)] hover:underline text-[13px]">Add feature</button>
           </div>
         </div>
-        <button type="button" onClick={save} disabled={saving} className="mt-4 rounded-lg bg-[#D9714A] text-[#1A1915] px-4 py-2 text-[13px] font-medium disabled:opacity-50">Save</button>
+        <button type="button" onClick={save} disabled={saving} className="mt-4 rounded-lg bg-[var(--vf-accent)] text-[var(--vf-page)] px-4 py-2 text-[13px] font-medium disabled:opacity-50">Save</button>
       </div>
     </div>
   );

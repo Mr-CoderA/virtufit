@@ -30,7 +30,7 @@ export function DashboardUsageChart() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[200px] w-full items-center justify-center text-[14px] text-[#65635D]">
+      <div className="flex min-h-[200px] w-full items-center justify-center text-[14px] text-[var(--vf-quiet)]">
         Loading usage…
       </div>
     );
@@ -38,7 +38,7 @@ export function DashboardUsageChart() {
 
   if (!data || data.length === 0 || data.every((d) => d.calls === 0 && d.credits === 0)) {
     return (
-      <div className="flex min-h-[200px] w-full items-center justify-center py-12 text-[14px] text-[#65635D]">
+      <div className="flex min-h-[200px] w-full items-center justify-center py-12 text-[14px] text-[var(--vf-quiet)]">
         No API calls in the last 7 days.
       </div>
     );
@@ -48,36 +48,36 @@ export function DashboardUsageChart() {
     <div className="h-[200px] min-h-[200px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(240,239,232,0.06)" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(21,43,67,0.14)" vertical={false} />
           <XAxis
             dataKey="date"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#65635D', fontSize: 11 }}
+            tick={{ fill: 'var(--vf-quiet)', fontSize: 11 }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#65635D', fontSize: 11 }}
+            tick={{ fill: 'var(--vf-quiet)', fontSize: 11 }}
             width={28}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#222219',
-              border: '0.5px solid rgba(240,239,232,0.08)',
+              backgroundColor: 'var(--vf-surface)',
+              border: '0.5px solid rgba(21,43,67,0.14)',
               borderRadius: '16px',
               padding: '8px 12px',
             }}
-            labelStyle={{ color: '#A09E97', fontSize: 11 }}
-            itemStyle={{ color: '#F0EFE8', fontSize: 13 }}
+            labelStyle={{ color: 'var(--vf-muted)', fontSize: 11 }}
+            itemStyle={{ color: 'var(--vf-ink)', fontSize: 13 }}
             formatter={(value: unknown) => [String(value ?? 0), 'API calls']}
           />
           <Area
             type="monotone"
             dataKey="calls"
-            stroke="#D9714A"
+            stroke="var(--vf-accent)"
             strokeWidth={2}
-            fill="#D9714A"
+            fill="var(--vf-accent)"
             fillOpacity={0.12}
           />
         </AreaChart>

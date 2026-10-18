@@ -16,8 +16,14 @@ export class TryOnError extends Error {
 }
 export function requireSameOrigin(request: Request) {
   const origin = request.headers.get('origin');
-  const url = new URL(request.url);
-  if (!origin || origin !== url.origin || request.headers.get('sec-fetch-site') === 'cross-site') {
+  const requestUrl = new URL(request.url);
+  // Next.js can construct request.url with an internal hostname. The browser's
+  // immutable Host header identifies the actual destination through the proxy.
+  const destination = (request.headers.get('host') || requestUrl.host).toLowerCase();
+  let parsed: URL;
+  try { parsed = new URL(origin || ''); } catch { throw new TryOnError('Open VirtuFit to use this action.', 403); }
+  const local = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
+  if (parsed.origin !== origin || parsed.host !== destination || !['http:', 'https:'].includes(parsed.protocol) || (process.env.NODE_ENV === 'production' && !local && parsed.protocol !== 'https:') || request.headers.get('sec-fetch-site') === 'cross-site') {
     throw new TryOnError('Open VirtuFit to use this action.', 403);
   }
   return origin;

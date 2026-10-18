@@ -62,7 +62,7 @@ export function UploadDialog({ live, onClose, onAdd }: Props) {
         <div className="product-framing">↔ {productFraming(category)}</div>
         <details className="upload-details"><summary>Name & optional details</summary><label htmlFor="product-name">Name</label><input id="product-name" value={name} onChange={e => setName(e.target.value)} placeholder="My outfit" maxLength={80}/><label htmlFor="product-description">Garment details</label><textarea id="product-description" value={description} onChange={e => setDescription(e.target.value)} rows={2} maxLength={500} placeholder="e.g. Olive linen, embroidered collar, relaxed fit"/><small>A try-on prompt is generated for you. Add details only if needed.</small></details>
         <label className="save-product"><input type="checkbox" checked={save} onChange={e => setSave(e.target.checked)}/> Keep this product in my local wardrobe</label>
-        <small>{live ? 'Your AI session is live. Trying this product sends its image to Decart.' : 'The image stays on this Mac until you start an AI try-on session.'}</small>
+        <small>{live ? 'Your AI session is live. Trying this product sends its image to Decart.' : 'The image stays on this device until you start an AI try-on session.'}</small>
         {error && <p className="upload-error" role="alert">{error}</p>}
         <button className="primary full-width" disabled={!file || busy}>{busy ? 'Preparing your product…' : live ? 'Try this product now' : 'Add product to my mirror'} <span>↗</span></button>
       </form>

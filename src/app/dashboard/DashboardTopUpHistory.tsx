@@ -25,7 +25,7 @@ export function DashboardTopUpHistory() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[120px] items-center justify-center text-[14px] text-[#65635D]">
+      <div className="flex min-h-[120px] items-center justify-center text-[14px] text-[var(--vf-quiet)]">
         Loading…
       </div>
     );
@@ -33,8 +33,8 @@ export function DashboardTopUpHistory() {
 
   if (list.length === 0) {
     return (
-      <div className="flex min-h-[120px] items-center justify-center py-8 text-[14px] text-[#65635D]">
-        No top-ups yet. Add credits from the Top up button above.
+      <div className="flex min-h-[120px] items-center justify-center py-8 text-[14px] text-[var(--vf-quiet)]">
+        No previous payments. Public try-on is free.
       </div>
     );
   }
@@ -43,14 +43,14 @@ export function DashboardTopUpHistory() {
     <div className="overflow-x-auto">
       <table className="w-full text-left">
         <thead>
-          <tr className="border-b border-[rgba(240,239,232,0.08)]">
-            <th className="pb-3 pr-4 text-[11px] font-normal uppercase tracking-[0.1em] text-[#65635D]">
+          <tr className="border-b border-[rgba(21,43,67,0.14)]">
+            <th className="pb-3 pr-4 text-[11px] font-normal uppercase tracking-[0.1em] text-[var(--vf-quiet)]">
               Date
             </th>
-            <th className="pb-3 pr-4 text-[11px] font-normal uppercase tracking-[0.1em] text-[#65635D]">
+            <th className="pb-3 pr-4 text-[11px] font-normal uppercase tracking-[0.1em] text-[var(--vf-quiet)]">
               Amount
             </th>
-            <th className="pb-3 text-[11px] font-normal uppercase tracking-[0.1em] text-[#65635D]">
+            <th className="pb-3 text-[11px] font-normal uppercase tracking-[0.1em] text-[var(--vf-quiet)]">
               Credits
             </th>
           </tr>
@@ -59,18 +59,18 @@ export function DashboardTopUpHistory() {
           {list.map((row) => (
             <tr
               key={row.id}
-              className="border-b border-[rgba(240,239,232,0.06)] last:border-0"
+              className="border-b border-[rgba(21,43,67,0.14)] last:border-0"
             >
-              <td className="py-3 pr-4 text-[14px] text-[#A09E97]">
+              <td className="py-3 pr-4 text-[14px] text-[var(--vf-muted)]">
                 {new Date(row.createdAt).toLocaleString(undefined, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
                 })}
               </td>
-              <td className="py-3 pr-4 text-[14px] text-[#F0EFE8]">
+              <td className="py-3 pr-4 text-[14px] text-[var(--vf-ink)]">
                 ${row.amountDollars}
               </td>
-              <td className="py-3 text-[14px] text-[#F0EFE8]">
+              <td className="py-3 text-[14px] text-[var(--vf-ink)]">
                 +{row.credits}
               </td>
             </tr>

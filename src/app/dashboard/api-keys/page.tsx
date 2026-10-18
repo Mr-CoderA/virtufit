@@ -12,7 +12,7 @@ export default async function ApiKeysPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] bg-[#1A1915]">
+    <div className="relative min-h-[calc(100vh-80px)] bg-[var(--vf-page)]">
       <main className="relative z-10 mx-auto max-w-4xl px-4 py-[64px] sm:px-6 lg:px-8">
         <div className="mb-10">
           <ButtonLink
@@ -26,12 +26,12 @@ export default async function ApiKeysPage() {
           </ButtonLink>
           <p className="eyebrow mb-2">API keys</p>
           <h1
-            className="text-[28px] font-normal tracking-[-0.025em] text-[#F0EFE8]"
+            className="text-[28px] font-normal tracking-[-0.025em] text-[var(--vf-ink)]"
             style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
           >
             Manage API keys
           </h1>
-          <p className="mt-2 text-[15px] leading-[1.75] text-[#A09E97]">
+          <p className="mt-2 text-[15px] leading-[1.75] text-[var(--vf-muted)]">
             Create and delete API keys for authenticating your requests. Copy the key from your dashboard; you can view it again anytime in Settings.
           </p>
         </div>

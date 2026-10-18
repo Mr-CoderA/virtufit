@@ -128,8 +128,8 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
           <Monitor className="h-3.5 w-3.5" />
           Default resolution
         </h3>
-        <p className="text-[15px] leading-[1.75] text-[#A09E97] mb-6">
-          Choose the resolution for your outputs. Credits are consumed per use: 1K = 1 credit, 2K = 2 credits, 4K = 3 credits.
+        <p className="text-[15px] leading-[1.75] text-[var(--vf-muted)] mb-6">
+          This preference applies to older developer integrations. Choose live video quality in the fitting room’s Studio settings.
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
@@ -141,13 +141,13 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
               aria-expanded={resolutionDropdownOpen}
               aria-label="Select resolution"
             >
-              <span className="text-[#F0EFE8] font-medium text-[15px]">{currentOption.label}</span>
-              <span className="text-[#65635D] text-[13px] flex items-center gap-1">
+              <span className="text-[var(--vf-ink)] font-medium text-[15px]">{currentOption.label}</span>
+              <span className="text-[var(--vf-quiet)] text-[13px] flex items-center gap-1">
                 <Coins className="h-3.5 w-3.5" />
-                {currentOption.credits} {currentOption.credits === 1 ? 'credit' : 'credits'}
+                Legacy API
               </span>
               <ChevronDown
-                className={`h-4 w-4 text-[#65635D] transition-opacity duration-200 ${resolutionDropdownOpen ? 'opacity-70' : ''}`}
+                className={`h-4 w-4 text-[var(--vf-quiet)] transition-opacity duration-200 ${resolutionDropdownOpen ? 'opacity-70' : ''}`}
               />
             </button>
             {resolutionDropdownOpen && (
@@ -159,7 +159,7 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
                 />
                 <ul
                   role="listbox"
-                  className="absolute left-0 top-full mt-1 z-20 min-w-[220px] rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] overflow-hidden py-1"
+                  className="absolute left-0 top-full mt-1 z-20 min-w-[220px] rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] overflow-hidden py-1"
                 >
                   {RESOLUTION_OPTIONS.map((opt) => (
                     <li
@@ -172,14 +172,14 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
                       }}
                       className={`flex items-center justify-between px-4 py-3 cursor-pointer transition-colors duration-200 ${
                         resolution === opt.value
-                          ? 'bg-[#2C2C27] text-[#F0EFE8]'
-                          : 'text-[#A09E97] hover:bg-[rgba(240,239,232,0.05)] hover:text-[#F0EFE8]'
+                          ? 'bg-[var(--vf-surface-hover)] text-[var(--vf-ink)]'
+                          : 'text-[var(--vf-muted)] hover:bg-[rgba(21,43,67,0.14)] hover:text-[var(--vf-ink)]'
                       }`}
                     >
                       <span className="font-medium text-[15px]">{opt.label}</span>
-                      <span className="text-[#65635D] text-[13px] flex items-center gap-1">
+                      <span className="text-[var(--vf-quiet)] text-[13px] flex items-center gap-1">
                         <Coins className="h-3.5 w-3.5" />
-                        {opt.credits} {opt.credits === 1 ? 'credit' : 'credits'}
+                        Legacy API
                       </span>
                     </li>
                   ))}
@@ -211,15 +211,15 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
               role="alert"
               className={
                 passwordMessage.type === 'success'
-                  ? 'rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#2C2C27] px-4 py-3 text-[15px] text-[#A09E97]'
-                  : 'rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]'
+                  ? 'rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface-hover)] px-4 py-3 text-[15px] text-[var(--vf-muted)]'
+                  : 'rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] px-4 py-3 text-[15px] text-[var(--vf-muted)]'
               }
             >
               {passwordMessage.text}
             </div>
           )}
           <div className="space-y-2">
-            <label htmlFor="current-password" className="block text-[13px] font-normal text-[#A09E97]">
+            <label htmlFor="current-password" className="block text-[13px] font-normal text-[var(--vf-muted)]">
               Current password
             </label>
             <input
@@ -234,7 +234,7 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="new-password" className="block text-[13px] font-normal text-[#A09E97]">
+            <label htmlFor="new-password" className="block text-[13px] font-normal text-[var(--vf-muted)]">
               New password
             </label>
             <input
@@ -250,7 +250,7 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="confirm-password" className="block text-[13px] font-normal text-[#A09E97]">
+            <label htmlFor="confirm-password" className="block text-[13px] font-normal text-[var(--vf-muted)]">
               Confirm new password
             </label>
             <input
@@ -277,16 +277,16 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
         </form>
       </GlassCardInner>
 
-      <GlassCardInner className="pr-14 border-[rgba(240,239,232,0.14)]" cardNumber="03">
-        <h3 className="eyebrow mb-3 flex items-center gap-2 text-[#D9714A]">
+      <GlassCardInner className="pr-14 border-[rgba(21,43,67,0.14)]" cardNumber="03">
+        <h3 className="eyebrow mb-3 flex items-center gap-2 text-[var(--vf-accent)]">
           <Trash2 className="h-3.5 w-3.5" />
           Delete account
         </h3>
-        <p className="text-[15px] leading-[1.75] text-[#A09E97] mb-6">
+        <p className="text-[15px] leading-[1.75] text-[var(--vf-muted)] mb-6">
           Permanently delete your VirtuFit account. You will receive a confirmation email. This action can be reversed within 90 days by contacting support.
         </p>
         {deleteRequestSent ? (
-          <p className="text-[15px] text-[#A09E97]">
+          <p className="text-[15px] text-[var(--vf-muted)]">
             Check your email to confirm deletion. The link expires in 1 hour.
           </p>
         ) : (
@@ -303,10 +303,10 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
             {deleteModalOpen && (
               <>
                 <div className="fixed inset-0 z-50 bg-black/60" aria-hidden onClick={() => setDeleteModalOpen(false)} />
-                <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6 shadow-xl">
-                  <h4 className="text-[18px] font-medium text-[#F0EFE8]">Are you sure?</h4>
-                  <p className="mt-3 text-[15px] text-[#A09E97]">
-                    We will send a confirmation email to <strong className="text-[#F0EFE8]">{userEmail}</strong>. You must click the link in that email to complete deletion.
+                <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] p-6 shadow-xl">
+                  <h4 className="text-[18px] font-medium text-[var(--vf-ink)]">Are you sure?</h4>
+                  <p className="mt-3 text-[15px] text-[var(--vf-muted)]">
+                    We will send a confirmation email to <strong className="text-[var(--vf-ink)]">{userEmail}</strong>. You must click the link in that email to complete deletion.
                   </p>
                   <div className="mt-6 flex gap-3 justify-end">
                     <Button type="button" variant="ghost" onClick={() => setDeleteModalOpen(false)}>

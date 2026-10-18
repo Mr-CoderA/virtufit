@@ -101,32 +101,32 @@ export default function VerifyEmailPage() {
 
   if (status === 'success') {
     return (
-      <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+      <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
         <GlassCard className="p-10 text-center max-w-[420px]">
-          <CheckCircle className="mx-auto h-16 w-16 text-[#D9714A]" />
-          <h1 className="mt-6 text-[24px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+          <CheckCircle className="mx-auto h-16 w-16 text-[var(--vf-accent)]" />
+          <h1 className="mt-6 text-[24px] font-normal text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>
             Email verified!
           </h1>
-          <p className="mt-3 text-[15px] text-[#A09E97]">
+          <p className="mt-3 text-[15px] text-[var(--vf-muted)]">
             Welcome to VirtuFit{name ? `, ${name}` : ''}. Your account is active.
           </p>
-          <p className="mt-1 text-[14px] text-[#A09E97]">You have 5 free credits to get started.</p>
+          <p className="mt-1 text-[14px] text-[var(--vf-muted)]">Your account is ready. The public fitting studio is free to use.</p>
           <ButtonLink href="/dashboard" className="mt-8 inline-block" variant="primary" size="lg">
             Go to dashboard →
           </ButtonLink>
-          <p className="mt-4 text-[12px] text-[#65635D]">Redirecting in 3 seconds...</p>
+          <p className="mt-4 text-[12px] text-[var(--vf-quiet)]">Redirecting in 3 seconds...</p>
         </GlassCard>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
       <GlassCard className="p-10 max-w-[420px] w-full">
-        <h1 className="text-[22px] font-normal text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>
+        <h1 className="text-[22px] font-normal text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>
           Verify your email
         </h1>
-        <p className="mt-2 text-[15px] text-[#A09E97]">
+        <p className="mt-2 text-[15px] text-[var(--vf-muted)]">
           Enter the 6-digit code we sent to your email.
         </p>
         {resendSent && (
@@ -139,7 +139,7 @@ export default function VerifyEmailPage() {
         )}
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label htmlFor="verify-email" className="block text-[13px] text-[#A09E97] mb-1.5">
+            <label htmlFor="verify-email" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">
               Email
             </label>
             <input
@@ -154,7 +154,7 @@ export default function VerifyEmailPage() {
             />
           </div>
           <div>
-            <label htmlFor="verify-code" className="block text-[13px] text-[#A09E97] mb-1.5">
+            <label htmlFor="verify-code" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">
               Verification code
             </label>
             <input
@@ -181,13 +181,13 @@ export default function VerifyEmailPage() {
             {status === 'loading' ? 'Verifying...' : 'Verify email'}
           </Button>
         </form>
-        <p className="mt-6 text-[14px] text-[#A09E97]">
+        <p className="mt-6 text-[14px] text-[var(--vf-muted)]">
           Didn&apos;t receive the code?{' '}
           <button
             type="button"
             onClick={handleResend}
             disabled={resendLoading || !email.trim()}
-            className="text-[#D9714A] hover:underline disabled:opacity-50"
+            className="text-[var(--vf-accent)] hover:underline disabled:opacity-50"
           >
             {resendLoading ? 'Sending...' : 'Resend code'}
           </button>

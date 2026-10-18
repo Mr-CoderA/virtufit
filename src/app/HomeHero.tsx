@@ -9,7 +9,7 @@ export function HomeHero({ isLoggedIn }: { isLoggedIn: boolean }) {
     <div className="relative z-10 text-center max-w-lg px-2">
       <div className="flex flex-col items-center gap-8 mb-10">
         <VirtuFitLogo showTagline size="lg" />
-        <p className="text-[15px] leading-[1.75] text-[#A09E97] max-w-md">
+        <p className="text-[15px] leading-[1.75] text-[var(--vf-muted)] max-w-md">
           Virtual try-on API — integrate try-on into your app with credits.
         </p>
       </div>

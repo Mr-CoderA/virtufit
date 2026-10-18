@@ -1,5 +1,7 @@
 import 'server-only';
 import { createDecartClient } from '@decartai/sdk';
+import { paymentsEnabled } from './product-mode';
+import { reserveFree, finishFree } from './free-allowance';
 import { prisma } from './db';
 import { getSession } from './auth';
 import { TryOnError, positiveSetting, LIVE_TIER, PHOTO_TIER } from './try-on-policy';
@@ -55,5 +57,21 @@ export function failure(error: unknown, action: string) {
   if (error instanceof TryOnError) return Response.json({ error: error.message }, { status: error.status, headers: { 'Cache-Control': 'no-store' } });
   // No provider response bodies, tokens, personal photos or credentials in logs.
   console.error(`[VirtuFit] ${action} failed`, { type: error instanceof Error ? error.name : 'UnknownError' });
-  return Response.json({ error: 'AI try-on could not finish. Please try again shortly. Failed provider requests restore your VirtuFit credits.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
+  return Response.json({ error: 'AI try-on could not finish. Please try again shortly.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
+}
+
+export type TryOnReservation = { kind: 'paid'; id: string } | Awaited<ReturnType<typeof reserveFree>>;
+export async function reserveTryOn(request: Request, tier: string, units: number, holdSeconds: number): Promise<TryOnReservation> {
+  if (!paymentsEnabled()) return reserveFree(request, units, holdSeconds);
+  const user = await requireTryOnUser();
+  const log = await reserve(user.id, tier, units, holdSeconds);
+  return { kind: 'paid', id: log.id };
+}
+export async function failReservation(reservation: TryOnReservation) {
+  if (reservation.kind === 'free') await finishFree(reservation.key, reservation.id);
+  else await refund(reservation.id);
+}
+export async function completePhoto(reservation: TryOnReservation) {
+  if (reservation.kind === 'free') await finishFree(reservation.key, reservation.id);
+  else await prisma.usageLog.update({ where: { id: reservation.id }, data: { note: 'Photo generated. Images are not stored by VirtuFit.' } });
 }

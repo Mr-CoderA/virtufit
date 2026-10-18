@@ -138,18 +138,18 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#1A1915] px-4 py-[64px]">
+    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
       <div className="relative z-10 flex flex-col items-center w-full max-w-[420px]">
         <GlassCard className="w-full p-7 sm:p-10">
           <div className="mb-10">
             <h1
-              className="text-[28px] font-normal tracking-[-0.025em] text-[#F0EFE8] mb-3"
+              className="text-[28px] font-normal tracking-[-0.025em] text-[var(--vf-ink)] mb-3"
               style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
             >
-              <BlurText text="Create an account" delay={60} animateBy="words" direction="top" className="text-[#F0EFE8]" />
+              <BlurText text="Create an account" delay={60} animateBy="words" direction="top" className="text-[var(--vf-ink)]" />
             </h1>
-            <p className="text-[15px] leading-[1.75] font-normal text-[#A09E97]">
-              Get started with your free account.
+            <p className="text-[15px] leading-[1.75] font-normal text-[var(--vf-muted)]">
+              An account is optional. The fitting studio is free for everyone.
             </p>
           </div>
 
@@ -157,14 +157,14 @@ export default function SignupPage() {
             {error && (
               <div
                 role="alert"
-                className="rounded-2xl border border-[rgba(240,239,232,0.14)] bg-[#222219] px-4 py-3 text-[15px] text-[#A09E97]"
+                className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] px-4 py-3 text-[15px] text-[var(--vf-muted)]"
               >
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <label htmlFor="name" className="block text-[13px] font-normal text-[#A09E97] flex items-center gap-2">
-                <User className="h-4 w-4 text-[#65635D]" />
+              <label htmlFor="name" className="block text-[13px] font-normal text-[var(--vf-muted)] flex items-center gap-2">
+                <User className="h-4 w-4 text-[var(--vf-quiet)]" />
                 Name (optional)
               </label>
               <input
@@ -178,8 +178,8 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-[13px] font-normal text-[#A09E97] flex items-center gap-2">
-                <Mail className="h-4 w-4 text-[#65635D]" />
+              <label htmlFor="email" className="block text-[13px] font-normal text-[var(--vf-muted)] flex items-center gap-2">
+                <Mail className="h-4 w-4 text-[var(--vf-quiet)]" />
                 Email
               </label>
               <input
@@ -194,8 +194,8 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-[13px] font-normal text-[#A09E97] flex items-center gap-2">
-                <Lock className="h-4 w-4 text-[#65635D]" />
+              <label htmlFor="password" className="block text-[13px] font-normal text-[var(--vf-muted)] flex items-center gap-2">
+                <Lock className="h-4 w-4 text-[var(--vf-quiet)]" />
                 Password
               </label>
               <input
@@ -222,9 +222,9 @@ export default function SignupPage() {
             </Button>
           </form>
 
-          <p className="mt-10 text-center text-[15px] text-[#A09E97]">
+          <p className="mt-10 text-center text-[15px] text-[var(--vf-muted)]">
             Already have an account?{' '}
-            <ButtonLink href="/login" variant="ghost" size="sm" className="inline-flex text-[#D9714A] hover:text-[#F0EFE8]">
+            <ButtonLink href="/login" variant="ghost" size="sm" className="inline-flex text-[var(--vf-accent)] hover:text-[var(--vf-ink)]">
               Sign in
             </ButtonLink>
           </p>
@@ -232,22 +232,22 @@ export default function SignupPage() {
 
         {reactivationModal && !createNewConfirmOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true">
-            <div className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6 max-w-md w-full shadow-xl">
+            <div className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] p-6 max-w-md w-full shadow-xl">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-[rgba(217,113,74,0.2)] flex items-center justify-center">
-                  <RotateCcw className="h-5 w-5 text-[#D9714A]" />
+                <div className="w-10 h-10 rounded-full bg-[rgba(39,87,214,0.2)] flex items-center justify-center">
+                  <RotateCcw className="h-5 w-5 text-[var(--vf-accent)]" />
                 </div>
-                <h2 className="text-[18px] font-medium text-[#F0EFE8]" style={{ fontFamily: 'Georgia, serif' }}>Welcome back</h2>
+                <h2 className="text-[18px] font-medium text-[var(--vf-ink)]" style={{ fontFamily: 'Georgia, serif' }}>Welcome back</h2>
               </div>
               {isAdminDeleted ? (
                 <>
-                  <p className="text-[15px] text-[#A09E97] mb-6">
+                  <p className="text-[15px] text-[var(--vf-muted)] mb-6">
                     This account was closed. Contact us at asadalinawaz700@gmail.com to discuss reactivation.
                   </p>
                   <div className="flex justify-end">
                     <a
                       href="mailto:asadalinawaz700@gmail.com"
-                      className="rounded-xl bg-[#D9714A] text-[#1A1915] px-4 py-2.5 text-[14px] font-medium hover:opacity-90"
+                      className="rounded-xl bg-[var(--vf-accent)] text-[var(--vf-page)] px-4 py-2.5 text-[14px] font-medium hover:opacity-90"
                     >
                       Contact support
                     </a>
@@ -255,21 +255,21 @@ export default function SignupPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-[15px] text-[#A09E97] mb-2">
+                  <p className="text-[15px] text-[var(--vf-muted)] mb-2">
                     An account with this email was deleted {reactivationModal.daysRemaining === 0 ? 'recently' : `${90 - reactivationModal.daysRemaining} days ago`}.
                   </p>
-                  <p className="text-[15px] text-[#A09E97] mb-4">
+                  <p className="text-[15px] text-[var(--vf-muted)] mb-4">
                     You can reactivate your old account and restore everything:
                   </p>
-                  <ul className="text-[14px] text-[#F0EFE8] space-y-1.5 mb-4 list-none">
+                  <ul className="text-[14px] text-[var(--vf-ink)] space-y-1.5 mb-4 list-none">
                     <li className="flex items-center gap-2"><Check className="h-4 w-4 text-[#2d8a2d] shrink-0" /> Your previous credit balance</li>
                     <li className="flex items-center gap-2"><Check className="h-4 w-4 text-[#2d8a2d] shrink-0" /> Your API key and usage history</li>
                     <li className="flex items-center gap-2"><Check className="h-4 w-4 text-[#2d8a2d] shrink-0" /> All your integrations</li>
                   </ul>
-                  <p className="text-[13px] text-[#A09E97] mb-4">
+                  <p className="text-[13px] text-[var(--vf-muted)] mb-4">
                     Reactivation is available for {reactivationModal.daysRemaining} more days (until {reactivationModal.reactivatableUntil ? new Date(reactivationModal.reactivatableUntil).toLocaleDateString() : '—'}).
                   </p>
-                  <label className="block text-[13px] text-[#A09E97] mb-1.5">Enter your old account password to confirm</label>
+                  <label className="block text-[13px] text-[var(--vf-muted)] mb-1.5">Enter your old account password to confirm</label>
                   <input
                     type="password"
                     value={reactivationPassword}
@@ -293,7 +293,7 @@ export default function SignupPage() {
                     <Button
                       type="button"
                       variant="ghost"
-                      className="border border-[rgba(240,239,232,0.2)]"
+                      className="border border-[rgba(21,43,67,0.2)]"
                       onClick={() => setCreateNewConfirmOpen(true)}
                       disabled={reactivationLoading}
                     >
@@ -308,9 +308,9 @@ export default function SignupPage() {
 
         {reactivationModal && createNewConfirmOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true">
-            <div className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6 max-w-md w-full shadow-xl">
-              <h3 className="text-[16px] font-medium text-[#F0EFE8] mb-3">Create new account?</h3>
-              <p className="text-[15px] text-[#A09E97] mb-6">
+            <div className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] p-6 max-w-md w-full shadow-xl">
+              <h3 className="text-[16px] font-medium text-[var(--vf-ink)] mb-3">Create new account?</h3>
+              <p className="text-[15px] text-[var(--vf-muted)] mb-6">
                 Creating a new account will use a different email address. Your old account data cannot be recovered after the reactivation window closes.
               </p>
               <div className="flex gap-3 justify-end">

@@ -95,7 +95,7 @@ export function NavBalanceNotifications({
     <div className="flex items-center gap-1.5 md:gap-3">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-1 rounded-full border border-[rgba(240,239,232,0.08)] bg-[rgba(240,239,232,0.06)] px-2 py-1 text-[11px] text-[#A09E97] transition-[background,border-color] duration-200 ease-out hover:bg-[rgba(240,239,232,0.08)] hover:border-[rgba(240,239,232,0.14)] md:gap-2 md:px-3.5 md:py-1.5 md:text-[13px]"
+        className="inline-flex items-center gap-1 rounded-full border border-[rgba(21,43,67,0.14)] bg-[rgba(21,43,67,0.14)] px-2 py-1 text-[11px] text-[var(--vf-muted)] transition-[background,border-color] duration-200 ease-out hover:bg-[rgba(21,43,67,0.14)] hover:border-[rgba(21,43,67,0.14)] md:gap-2 md:px-3.5 md:py-1.5 md:text-[13px]"
         style={{ borderWidth: '0.5px' }}
         title="Balance — open dashboard to top up"
       >
@@ -111,13 +111,13 @@ export function NavBalanceNotifications({
             setOpen((o) => !o);
             if (!open) load();
           }}
-          className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[rgba(240,239,232,0.14)] bg-[#222219] text-[#A09E97] transition-colors duration-200 hover:bg-[#2C2C27] hover:text-[#F0EFE8] md:h-10 md:w-10"
+          className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] text-[var(--vf-muted)] transition-colors duration-200 hover:bg-[var(--vf-surface-hover)] hover:text-[var(--vf-ink)] md:h-10 md:w-10"
           aria-label="Notifications"
           aria-expanded={open}
         >
           <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#D9714A] px-1 text-[10px] font-medium text-[#1A1915]">
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--vf-accent)] px-1 text-[10px] font-medium text-[var(--vf-page)]">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -125,17 +125,17 @@ export function NavBalanceNotifications({
 
         {open && (
           <div
-            className="absolute right-0 top-full z-[80] mt-2 flex w-[min(calc(100vw-2rem),22rem)] max-h-[min(70vh,400px)] flex-col overflow-hidden rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-[4.5rem] max-sm:mt-0 max-sm:w-[calc(100vw-2rem)]"
+            className="absolute right-0 top-full z-[80] mt-2 flex w-[min(calc(100vw-2rem),22rem)] max-h-[min(70vh,400px)] flex-col overflow-hidden rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-[4.5rem] max-sm:mt-0 max-sm:w-[calc(100vw-2rem)]"
             role="dialog"
             aria-label="Notifications"
           >
-            <div className="flex items-center justify-between border-b border-[rgba(240,239,232,0.08)] px-4 py-3">
-              <span className="text-[13px] font-medium text-[#F0EFE8]">Notifications</span>
+            <div className="flex items-center justify-between border-b border-[rgba(21,43,67,0.14)] px-4 py-3">
+              <span className="text-[13px] font-medium text-[var(--vf-ink)]">Notifications</span>
               {unreadCount > 0 && (
                 <button
                   type="button"
                   onClick={markAllRead}
-                  className="text-[11px] uppercase tracking-wider text-[#D9714A] hover:opacity-80 transition-opacity"
+                  className="text-[11px] uppercase tracking-wider text-[var(--vf-accent)] hover:opacity-80 transition-opacity"
                 >
                   Mark all read
                 </button>
@@ -143,28 +143,28 @@ export function NavBalanceNotifications({
             </div>
             <div className="overflow-y-auto flex-1">
               {notifications.length === 0 && !loading ? (
-                <p className="px-4 py-8 text-center text-[15px] text-[#65635D]">No notifications yet.</p>
+                <p className="px-4 py-8 text-center text-[15px] text-[var(--vf-quiet)]">No notifications yet.</p>
               ) : (
-                <ul className="divide-y divide-[rgba(240,239,232,0.08)]">
+                <ul className="divide-y divide-[rgba(21,43,67,0.14)]">
                   {notifications.map((n) => (
                     <li key={n.id}>
                       <button
                         type="button"
                         onClick={() => !n.read && markRead(n.id)}
-                        className={`w-full text-left px-4 py-3 transition-colors duration-200 hover:bg-[#2C2C27] ${
-                          !n.read ? 'bg-[#1A1915]/50' : ''
+                        className={`w-full text-left px-4 py-3 transition-colors duration-200 hover:bg-[var(--vf-surface-hover)] ${
+                          !n.read ? 'bg-[var(--vf-page)]/50' : ''
                         }`}
                       >
                         <div className="flex items-start gap-2">
                           {!n.read && (
-                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#D9714A]" />
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--vf-accent)]" />
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="text-[13px] font-medium text-[#F0EFE8]">{n.title}</p>
+                            <p className="text-[13px] font-medium text-[var(--vf-ink)]">{n.title}</p>
                             {n.body && (
-                              <p className="mt-1 text-[13px] leading-relaxed text-[#A09E97]">{n.body}</p>
+                              <p className="mt-1 text-[13px] leading-relaxed text-[var(--vf-muted)]">{n.body}</p>
                             )}
-                            <p className="mt-1.5 text-[11px] text-[#65635D]">
+                            <p className="mt-1.5 text-[11px] text-[var(--vf-quiet)]">
                               {new Date(n.createdAt).toLocaleString(undefined, {
                                 dateStyle: 'medium',
                                 timeStyle: 'short',
@@ -178,10 +178,10 @@ export function NavBalanceNotifications({
                 </ul>
               )}
             </div>
-            <div className="border-t border-[rgba(240,239,232,0.08)] px-4 py-2">
+            <div className="border-t border-[rgba(21,43,67,0.14)] px-4 py-2">
               <Link
                 href="/dashboard"
-                className="block py-2 text-center text-[12px] text-[#D9714A] hover:opacity-80"
+                className="block py-2 text-center text-[12px] text-[var(--vf-accent)] hover:opacity-80"
                 onClick={() => setOpen(false)}
               >
                 Open dashboard

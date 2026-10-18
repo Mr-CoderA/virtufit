@@ -23,7 +23,7 @@ const SUBJECTS = [
   { value: '', label: 'Select topic' },
   { value: 'integration', label: 'Integration help' },
   { value: 'api', label: 'API question' },
-  { value: 'enterprise', label: 'Enterprise pricing' },
+  { value: 'enterprise', label: 'Open-source collaboration' },
   { value: 'technical', label: 'Technical issue' },
   { value: 'general', label: 'General inquiry' },
 ];
@@ -111,34 +111,34 @@ export default function ContactPage() {
   const responseTimes = [
     { label: 'General inquiries', time: 'Within 24 hours' },
     { label: 'Integration support', time: 'Within 12 hours' },
-    { label: 'Enterprise sales', time: 'Within 4 hours' },
+    { label: 'Project collaboration', time: 'Within 4 hours' },
   ];
 
   const faqs = [
     {
-      q: 'How quickly can I integrate?',
-      a: "Shopify integration takes under 10 minutes. WordPress plugin installs in 5. We'll walk you through it.",
+      q: 'Can I bring VirtuFit to my own project?',
+      a: "Share the public studio link, or fork the source and self-host it with your own private provider configuration. The repository includes setup instructions.",
     },
     {
-      q: 'Do you offer a free trial?',
-      a: 'Every account starts with 5 free credits — no credit card needed. Try a full generation before paying anything.',
+      q: 'Is VirtuFit free?',
+      a: 'Yes. Public live and photo try-on are funded by the owner, within daily studio allowances. No account or payment is required.',
     },
     {
       q: "What if the try-on quality isn't good enough?",
-      a: "We only charge credits for successful generations. If the output fails, you pay nothing.",
+      a: "Use a clear person photo and a well-lit garment reference. Try a different category or framing if the result misses details. The public studio is free.",
     },
   ];
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] bg-[#1A1915] px-4 py-12 md:py-16">
+    <div className="relative min-h-[calc(100vh-80px)] bg-[var(--vf-page)] px-4 py-12 md:py-16">
       <div className="mx-auto max-w-[1100px]">
         {/* Hero */}
         <section className="mb-12 md:mb-16">
-          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#D9714A] mb-3">CONTACT</p>
-          <h1 className="text-[42px] font-normal tracking-[-0.025em] text-[#F0EFE8] mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--vf-accent)] mb-3">CONTACT</p>
+          <h1 className="text-[42px] font-normal tracking-[-0.025em] text-[var(--vf-ink)] mb-4" style={{ fontFamily: 'Georgia, serif' }}>
             Get in touch
           </h1>
-          <p className="text-[15px] text-[#A09E97] max-w-[520px] leading-relaxed">
+          <p className="text-[15px] text-[var(--vf-muted)] max-w-[520px] leading-relaxed">
             Whether you&apos;re a fashion brand looking to integrate virtual try-on, or have a question about the API — we respond within 24 hours.
           </p>
         </section>
@@ -148,12 +148,12 @@ export default function ContactPage() {
           {/* Left — contact info cards */}
           <div className="space-y-6">
             <GlassCard className="p-6" cardNumber="01">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-[#65635D] mb-2">REACH OUT DIRECTLY</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--vf-quiet)] mb-2">REACH OUT DIRECTLY</p>
               <div className="space-y-4">
                 <div>
-                  <p className="text-[12px] text-[#65635D] mb-1">Email</p>
+                  <p className="text-[12px] text-[var(--vf-quiet)] mb-1">Email</p>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`mailto:${contact.email}`} className="text-[#D9714A] hover:underline">
+                    <a href={`mailto:${contact.email}`} className="text-[var(--vf-accent)] hover:underline">
                       {contact.email}
                     </a>
                     <button
@@ -163,23 +163,23 @@ export default function ContactPage() {
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}
-                      className="text-[12px] text-[#A09E97] hover:text-[#F0EFE8] border border-[rgba(240,239,232,0.14)] rounded-lg px-2 py-1"
+                      className="text-[12px] text-[var(--vf-muted)] hover:text-[var(--vf-ink)] border border-[rgba(21,43,67,0.14)] rounded-lg px-2 py-1"
                     >
                       {copied ? 'Copied!' : 'Copy'}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[12px] text-[#65635D] mb-1">Phone / WhatsApp</p>
+                  <p className="text-[12px] text-[var(--vf-quiet)] mb-1">Phone / WhatsApp</p>
                   <div className="flex items-center gap-2">
-                    <a href={`tel:${contact.phone}`} className="text-[#F0EFE8] hover:text-[#D9714A]">
+                    <a href={`tel:${contact.phone}`} className="text-[var(--vf-ink)] hover:text-[var(--vf-accent)]">
                       {contact.phone}
                     </a>
                     <a
                       href={`https://wa.me/${contact.whatsapp}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#222219] border border-[rgba(240,239,232,0.08)] text-[#25D366] hover:bg-[#2C2C27]"
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--vf-surface)] border border-[rgba(21,43,67,0.14)] text-[#25D366] hover:bg-[var(--vf-surface-hover)]"
                       aria-label="WhatsApp"
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -189,19 +189,19 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[12px] text-[#65635D] mb-1">Founder</p>
-                  <p className="text-[#F0EFE8]">{contact.founderName}</p>
+                  <p className="text-[12px] text-[var(--vf-quiet)] mb-1">Founder</p>
+                  <p className="text-[var(--vf-ink)]">{contact.founderName}</p>
                 </div>
               </div>
             </GlassCard>
 
             <GlassCard className="p-6" cardNumber="02">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-[#65635D] mb-4">RESPONSE TIME</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--vf-quiet)] mb-4">RESPONSE TIME</p>
               <div className="space-y-3">
                 {responseTimes.map((r) => (
                   <div key={r.label} className="flex items-center justify-between gap-4">
-                    <span className="text-[13px] text-[#A09E97]">{r.label}</span>
-                    <span className="rounded-full border border-[rgba(240,239,232,0.08)] bg-[#2C2C27] px-3 py-1 text-[12px] text-[#F0EFE8]">
+                    <span className="text-[13px] text-[var(--vf-muted)]">{r.label}</span>
+                    <span className="rounded-full border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface-hover)] px-3 py-1 text-[12px] text-[var(--vf-ink)]">
                       {r.time}
                     </span>
                   </div>
@@ -210,33 +210,31 @@ export default function ContactPage() {
             </GlassCard>
 
             <GlassCard className="p-6" cardNumber="03">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-[#65635D] mb-2">ENTERPRISE</p>
-              <p className="text-[15px] text-[#A09E97] mb-4">
-                Need volume pricing, a custom SLA, or Pro resolution (2048px) for your brand?
+              <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--vf-quiet)] mb-2">OPEN SOURCE</p>
+              <p className="text-[15px] text-[var(--vf-muted)] mb-4">
+                Building a fitting experience of your own? Explore the source, report an issue, or share an idea for VirtuFit.
               </p>
               <a
-                href={`mailto:${contact.email}?subject=${encodeURIComponent('Enterprise Inquiry — VirtuFit')}&body=${encodeURIComponent(
-                  'Hi,\n\nI\'m interested in VirtuFit enterprise for [brand name].\n\nOur store:\nMonthly orders approx:\nPlatform (Shopify/WooCommerce/other):'
-                )}`}
-                className="block w-full text-center rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-4 py-3 text-[13px] text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] transition-colors"
+                href="https://github.com/Mr-CoderA/virtufit"
+                className="block w-full text-center rounded-full border border-[rgba(21,43,67,0.14)] bg-transparent px-4 py-3 text-[13px] text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] transition-colors"
               >
-                Start enterprise conversation →
+                Explore the project →
               </a>
             </GlassCard>
           </div>
 
           {/* Right — form */}
           <GlassCard className="p-6 md:p-8">
-            <h2 className="text-[18px] font-medium text-[#F0EFE8] mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+            <h2 className="text-[18px] font-medium text-[var(--vf-ink)] mb-6" style={{ fontFamily: 'Georgia, serif' }}>
               Send a message
             </h2>
             {success ? (
               <div className="text-center py-8">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[rgba(217,113,74,0.2)] text-[#D9714A] mb-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[rgba(39,87,214,0.2)] text-[var(--vf-accent)] mb-4">
                   <Check className="w-7 h-7" />
                 </div>
-                <p className="text-[18px] font-medium text-[#F0EFE8] mb-2">Message sent!</p>
-                <p className="text-[15px] text-[#A09E97] mb-6">
+                <p className="text-[18px] font-medium text-[var(--vf-ink)] mb-2">Message sent!</p>
+                <p className="text-[15px] text-[var(--vf-muted)] mb-6">
                   Thanks {successName}. We&apos;ll get back to you at {successEmail} within 24 hours.
                 </p>
                 <button
@@ -250,7 +248,7 @@ export default function ContactPage() {
                     setSubject('');
                     setMessage('');
                   }}
-                  className="text-[14px] text-[#D9714A] hover:underline"
+                  className="text-[14px] text-[var(--vf-accent)] hover:underline"
                 >
                   Send another message
                 </button>
@@ -258,7 +256,7 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="contact-name" className="block text-[13px] text-[#A09E97] mb-1.5">Your name</label>
+                  <label htmlFor="contact-name" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">Your name</label>
                   <input
                     id="contact-name"
                     type="text"
@@ -270,7 +268,7 @@ export default function ContactPage() {
                   {errors.name && <p className="mt-1 text-[12px] text-[#e24b4a]">{errors.name}</p>}
                 </div>
                 <div>
-                  <label htmlFor="contact-email" className="block text-[13px] text-[#A09E97] mb-1.5">Your email</label>
+                  <label htmlFor="contact-email" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">Your email</label>
                   <input
                     id="contact-email"
                     type="email"
@@ -282,7 +280,7 @@ export default function ContactPage() {
                   {errors.email && <p className="mt-1 text-[12px] text-[#e24b4a]">{errors.email}</p>}
                 </div>
                 <div>
-                  <label htmlFor="contact-brand" className="block text-[13px] text-[#A09E97] mb-1.5">Brand or company</label>
+                  <label htmlFor="contact-brand" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">Brand or company</label>
                   <input
                     id="contact-brand"
                     type="text"
@@ -293,12 +291,12 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="contact-platform" className="block text-[13px] text-[#A09E97] mb-1.5">Your platform</label>
+                  <label htmlFor="contact-platform" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">Your platform</label>
                   <select
                     id="contact-platform"
                     value={platform}
                     onChange={(e) => setPlatform(e.target.value)}
-                    className="input-glass w-full bg-[#1A1915]"
+                    className="input-glass w-full bg-[var(--vf-page)]"
                   >
                     {PLATFORMS.map((p) => (
                       <option key={p.value} value={p.value} disabled={!p.value}>
@@ -308,12 +306,12 @@ export default function ContactPage() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="contact-subject" className="block text-[13px] text-[#A09E97] mb-1.5">What&apos;s this about?</label>
+                  <label htmlFor="contact-subject" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">What&apos;s this about?</label>
                   <select
                     id="contact-subject"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    className={`input-glass w-full bg-[#1A1915] ${errors.subject ? 'border-[#e24b4a]' : ''}`}
+                    className={`input-glass w-full bg-[var(--vf-page)] ${errors.subject ? 'border-[#e24b4a]' : ''}`}
                   >
                     {SUBJECTS.map((s) => (
                       <option key={s.value} value={s.value} disabled={!s.value}>
@@ -324,7 +322,7 @@ export default function ContactPage() {
                   {errors.subject && <p className="mt-1 text-[12px] text-[#e24b4a]">{errors.subject}</p>}
                 </div>
                 <div>
-                  <label htmlFor="contact-message" className="block text-[13px] text-[#A09E97] mb-1.5">Message</label>
+                  <label htmlFor="contact-message" className="block text-[13px] text-[var(--vf-muted)] mb-1.5">Message</label>
                   <textarea
                     id="contact-message"
                     value={message}
@@ -373,13 +371,13 @@ export default function ContactPage() {
           {faqs.map((faq) => (
             <div
               key={faq.q}
-              className="rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6 hover:bg-[#2C2C27] transition-colors"
+              className="rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] p-6 hover:bg-[var(--vf-surface-hover)] transition-colors"
               style={{ borderWidth: '0.5px' }}
             >
-              <p className="text-[14px] font-normal text-[#F0EFE8] mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <p className="text-[14px] font-normal text-[var(--vf-ink)] mb-2" style={{ fontFamily: 'Georgia, serif' }}>
                 {faq.q}
               </p>
-              <p className="text-[13px] text-[#A09E97] leading-relaxed">{faq.a}</p>
+              <p className="text-[13px] text-[var(--vf-muted)] leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </section>

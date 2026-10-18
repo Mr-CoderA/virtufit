@@ -111,21 +111,21 @@ export function ApiKeysManager() {
   return (
     <div className="space-y-8">
       {newKey && (
-        <GlassCard className="p-7 border-[#D9714A]/30 bg-[#222219]">
+        <GlassCard className="p-7 border-[var(--vf-accent)]/30 bg-[var(--vf-surface)]">
           <p className="eyebrow mb-2">New API key — copy now</p>
-          <p className="text-[15px] text-[#A09E97] mb-3">
+          <p className="text-[15px] text-[var(--vf-muted)] mb-3">
             Store it securely. You can view and copy it again anytime in Settings.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <code className="flex-1 min-w-0 truncate rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#1A1915] px-4 py-3 text-[13px] text-[#F0EFE8] font-mono">
+            <code className="flex-1 min-w-0 truncate rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] px-4 py-3 text-[13px] text-[var(--vf-ink)] font-mono">
               {newKey.key}
             </code>
             <button
               type="button"
               onClick={copyNewKey}
-              className="shrink-0 flex items-center gap-2 rounded-full border border-[rgba(240,239,232,0.14)] bg-[#2C2C27] px-4 py-2.5 text-[13px] font-medium text-[#F0EFE8] hover:bg-[#1A1915] transition-colors"
+              className="shrink-0 flex items-center gap-2 rounded-full border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface-hover)] px-4 py-2.5 text-[13px] font-medium text-[var(--vf-ink)] hover:bg-[var(--vf-page)] transition-colors"
             >
-              {copiedKey ? <Check className="h-4 w-4 text-[#D9714A]" /> : <Copy className="h-4 w-4" />}
+              {copiedKey ? <Check className="h-4 w-4 text-[var(--vf-accent)]" /> : <Copy className="h-4 w-4" />}
               {copiedKey ? 'Copied' : 'Copy'}
             </button>
             <Button variant="secondary" size="sm" onClick={() => setNewKey(null)}>
@@ -138,7 +138,7 @@ export function ApiKeysManager() {
       <GlassCard className="p-7 sm:p-10">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h2
-            className="text-[18px] font-normal tracking-[-0.025em] text-[#F0EFE8]"
+            className="text-[18px] font-normal tracking-[-0.025em] text-[var(--vf-ink)]"
             style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
           >
             Your API keys
@@ -154,8 +154,8 @@ export function ApiKeysManager() {
         </div>
 
         {createOpen && (
-          <form onSubmit={handleCreate} className="mb-8 p-5 rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#1A1915]">
-            <label htmlFor="key-name" className="block text-[13px] font-medium text-[#A09E97] mb-2">
+          <form onSubmit={handleCreate} className="mb-8 p-5 rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)]">
+            <label htmlFor="key-name" className="block text-[13px] font-medium text-[var(--vf-muted)] mb-2">
               Key name
             </label>
             <input
@@ -179,14 +179,14 @@ export function ApiKeysManager() {
         )}
 
         {loading ? (
-          <p className="text-[15px] text-[#65635D]">Loading…</p>
+          <p className="text-[15px] text-[var(--vf-quiet)]">Loading…</p>
         ) : keys.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-2xl bg-[#2C2C27] border border-[rgba(240,239,232,0.08)] p-4 mb-4">
-              <Key className="h-8 w-8 text-[#65635D]" />
+            <div className="rounded-2xl bg-[var(--vf-surface-hover)] border border-[rgba(21,43,67,0.14)] p-4 mb-4">
+              <Key className="h-8 w-8 text-[var(--vf-quiet)]" />
             </div>
-            <p className="text-[15px] text-[#A09E97]">No API keys yet.</p>
-            <p className="text-[13px] text-[#65635D] mt-1">Create one to authenticate your API requests.</p>
+            <p className="text-[15px] text-[var(--vf-muted)]">No API keys yet.</p>
+            <p className="text-[13px] text-[var(--vf-quiet)] mt-1">Create one to authenticate your API requests.</p>
             <Button
               variant="primary"
               size="sm"
@@ -202,14 +202,14 @@ export function ApiKeysManager() {
             {keys.map((k) => (
               <li
                 key={k.id}
-                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#1A1915] p-4"
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-page)] p-4"
               >
                 <div className="flex items-center gap-4 min-w-0">
-                  <Key className="h-5 w-5 text-[#65635D] shrink-0" />
+                  <Key className="h-5 w-5 text-[var(--vf-quiet)] shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[15px] font-medium text-[#F0EFE8]">{k.name}</p>
-                    <p className="text-[13px] font-mono text-[#65635D] truncate">{k.keyPrefix}</p>
-                    <p className="text-[11px] text-[#65635D] mt-1">
+                    <p className="text-[15px] font-medium text-[var(--vf-ink)]">{k.name}</p>
+                    <p className="text-[13px] font-mono text-[var(--vf-quiet)] truncate">{k.keyPrefix}</p>
+                    <p className="text-[11px] text-[var(--vf-quiet)] mt-1">
                       Created {new Date(k.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                       {k.lastUsedAt && (
                         <> · Last used {new Date(k.lastUsedAt).toLocaleDateString(undefined, { dateStyle: 'short' })}</>
@@ -220,7 +220,7 @@ export function ApiKeysManager() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-[#A09E97] hover:text-[#D9714A] shrink-0"
+                  className="text-[var(--vf-muted)] hover:text-[var(--vf-accent)] shrink-0"
                   leftIcon={<Trash2 className="h-4 w-4" />}
                   onClick={() => handleDelete(k.id)}
                   disabled={deletingId === k.id}

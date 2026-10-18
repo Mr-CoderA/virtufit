@@ -5,19 +5,8 @@
 export function validateEnv(): void {
   if (process.env.NODE_ENV !== 'production') return;
 
-  const required = [
-    'DATABASE_URL',
-    'JWT_SECRET',
-    'JWT_ADMIN_SECRET',
-    'REPLICATE_API_TOKEN',
-    'CLOUDINARY_CLOUD_NAME',
-    'CLOUDINARY_API_KEY',
-    'CLOUDINARY_API_SECRET',
-    'LEMONSQUEEZY_API_KEY',
-    'LEMONSQUEEZY_WEBHOOK_SECRET',
-    'LEMONSQUEEZY_STORE_ID',
-    'LEMONSQUEEZY_VARIANT_ID',
-  ];
+  const required = ['DATABASE_URL', 'JWT_SECRET', 'JWT_ADMIN_SECRET'];
+  if (process.env.PAYMENTS_ENABLED === 'true') required.push('LEMONSQUEEZY_API_KEY', 'LEMONSQUEEZY_WEBHOOK_SECRET', 'LEMONSQUEEZY_STORE_ID', 'LEMONSQUEEZY_VARIANT_ID');
 
   for (const key of required) {
     if (!process.env[key]) {

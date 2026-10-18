@@ -71,20 +71,20 @@ export default function AdminQueuesPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-[20px] font-normal text-[#F0EFE8] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Queue monitor</h2>
+      <h2 className="text-[20px] font-normal text-[var(--vf-ink)] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Queue monitor</h2>
       {rateLimited && (
         <p className="text-[13px] text-[#E24B4A] mb-2">
           Too many requests — stats will refresh when the rate limit resets.
         </p>
       )}
       {!stats && (
-        <p className="text-[#A09E97] text-[14px] mb-2">Loading queue stats…</p>
+        <p className="text-[var(--vf-muted)] text-[14px] mb-2">Loading queue stats…</p>
       )}
-      <p className="text-[13px] text-[#A09E97] mb-2">
+      <p className="text-[13px] text-[var(--vf-muted)] mb-2">
         Direct processing mode — generations run in the API request. No worker process. Use Clear queue to remove any stuck jobs.
       </p>
       {clearMessage && (
-        <p className={`text-[13px] ${clearMessage.startsWith('Cleared') ? 'text-[#D9714A]' : 'text-[#E24B4A]'}`}>
+        <p className={`text-[13px] ${clearMessage.startsWith('Cleared') ? 'text-[var(--vf-accent)]' : 'text-[#E24B4A]'}`}>
           {clearMessage}
         </p>
       )}
@@ -93,7 +93,7 @@ export default function AdminQueuesPage() {
           type="button"
           onClick={handleClearQueue}
           disabled={clearing || (safeStats.queue.waiting === 0 && safeStats.queue.active === 0)}
-          className="rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-5 py-2 text-[13px] font-medium text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="rounded-full border border-[rgba(21,43,67,0.14)] bg-transparent px-5 py-2 text-[13px] font-medium text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {clearing ? 'Clearing…' : 'Clear queue'}
         </button>
@@ -108,22 +108,22 @@ export default function AdminQueuesPage() {
         ].map(({ label, value, accent }) => (
           <div
             key={label}
-            className="rounded-xl border border-[rgba(240,239,232,0.08)] bg-[#222219] px-5 py-4"
+            className="rounded-xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] px-5 py-4"
             style={{ borderWidth: '0.5px' }}
           >
-            <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[#65635D]">{label}</div>
+            <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--vf-quiet)]">{label}</div>
             <div
               className="font-serif text-[36px] font-normal leading-none"
               style={{
                 fontFamily: 'Georgia, serif',
                 color:
                   value === 0
-                    ? '#A09E97'
+                    ? 'var(--vf-muted)'
                     : accent === 'orange'
-                      ? '#D9714A'
+                      ? 'var(--vf-accent)'
                       : accent === 'red'
                         ? '#E24B4A'
-                        : '#F0EFE8',
+                        : 'var(--vf-ink)',
               }}
             >
               {value}
@@ -131,7 +131,7 @@ export default function AdminQueuesPage() {
           </div>
         ))}
       </div>
-      <p className="text-[13px] text-[#65635D]">
+      <p className="text-[13px] text-[var(--vf-quiet)]">
         Completed today: {safeStats.completedToday} · Failed today: {safeStats.failedToday}
       </p>
     </div>

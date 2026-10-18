@@ -70,8 +70,8 @@ export default function AdminBrandsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-[20px] font-normal text-[#F0EFE8] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Brands</h2>
-      <p className="text-[13px] text-[#A09E97] mb-5">Manage brand accounts and view usage.</p>
+      <h2 className="text-[20px] font-normal text-[var(--vf-ink)] mb-1" style={{ fontFamily: 'Georgia, serif' }}>Brands</h2>
+      <p className="text-[13px] text-[var(--vf-muted)] mb-5">Manage brand accounts and view usage.</p>
 
       <div className="flex flex-wrap items-center gap-4">
         <input
@@ -79,78 +79,78 @@ export default function AdminBrandsPage() {
           placeholder="Search by name, email, or API key prefix..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-[280px] rounded-lg border border-[rgba(240,239,232,0.08)] bg-[#2C2C27] px-3.5 py-2 text-[13px] text-[#F0EFE8] placeholder:text-[#65635D] focus:border-[rgba(240,239,232,0.3)] outline-none"
+          className="w-full md:w-[280px] rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface-hover)] px-3.5 py-2 text-[13px] text-[var(--vf-ink)] placeholder:text-[var(--vf-quiet)] focus:border-[rgba(21,43,67,0.3)] outline-none"
         />
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-lg border border-[rgba(240,239,232,0.08)] bg-[#2C2C27] px-3.5 py-2 text-[13px] text-[#F0EFE8] outline-none focus:border-[rgba(240,239,232,0.3)]">
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface-hover)] px-3.5 py-2 text-[13px] text-[var(--vf-ink)] outline-none focus:border-[rgba(21,43,67,0.3)]">
           <option value="All">All</option>
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
         </select>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-lg border border-[rgba(240,239,232,0.08)] bg-[#2C2C27] px-3.5 py-2 text-[13px] text-[#F0EFE8] outline-none focus:border-[rgba(240,239,232,0.3)]">
+        <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-lg border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface-hover)] px-3.5 py-2 text-[13px] text-[var(--vf-ink)] outline-none focus:border-[rgba(21,43,67,0.3)]">
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
           <option value="most_credits">Most credits</option>
         </select>
-        <label className="flex items-center gap-2 text-[13px] text-[#A09E97] cursor-pointer">
-          <input type="checkbox" checked={showDeleted} onChange={(e) => setShowDeleted(e.target.checked)} className="rounded border-[rgba(240,239,232,0.3)] accent-[#D9714A]" />
+        <label className="flex items-center gap-2 text-[13px] text-[var(--vf-muted)] cursor-pointer">
+          <input type="checkbox" checked={showDeleted} onChange={(e) => setShowDeleted(e.target.checked)} className="rounded border-[rgba(21,43,67,0.3)] accent-[var(--vf-accent)]" />
           Show deleted accounts
         </label>
-        <button type="button" onClick={exportCsv} className="rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-5 py-2 text-[13px] font-medium text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] transition-colors">
+        <button type="button" onClick={exportCsv} className="rounded-full border border-[rgba(21,43,67,0.14)] bg-transparent px-5 py-2 text-[13px] font-medium text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] transition-colors">
           Export CSV
         </button>
       </div>
 
-      <div className="rounded-xl overflow-hidden" style={{ border: '0.5px solid rgba(240,239,232,0.08)' }}>
+      <div className="rounded-xl overflow-hidden" style={{ border: '0.5px solid rgba(21,43,67,0.14)' }}>
         {loading ? (
-          <p className="p-6 text-[#A09E97] text-[14px]">Loading…</p>
+          <p className="p-6 text-[var(--vf-muted)] text-[14px]">Loading…</p>
         ) : (
           <>
-            <div className="w-full overflow-x-auto bg-[#222219] rounded-xl" style={{ WebkitOverflowScrolling: 'touch', border: '0.5px solid rgba(240,239,232,0.08)' }}>
-              <table className="w-full min-w-[600px] border-collapse bg-[#222219]">
+            <div className="w-full overflow-x-auto bg-[var(--vf-surface)] rounded-xl" style={{ WebkitOverflowScrolling: 'touch', border: '0.5px solid rgba(21,43,67,0.14)' }}>
+              <table className="w-full min-w-[600px] border-collapse bg-[var(--vf-surface)]">
                 <thead>
-                  <tr className="border-b border-[rgba(240,239,232,0.08)] bg-[#222219]" style={{ borderBottomWidth: '0.5px' }}>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left w-10 whitespace-nowrap">#</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Name</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Email</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Plan</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Credits</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Generations (30d)</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Joined</th>
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Last active</th>
+                  <tr className="border-b border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)]" style={{ borderBottomWidth: '0.5px' }}>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left w-10 whitespace-nowrap">#</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Name</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Email</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Plan</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Credits</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Generations (30d)</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Joined</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Last active</th>
                     {showDeleted && (
                       <>
-                        <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Deleted</th>
-                        <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Deleted by</th>
-                        <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Reason</th>
+                        <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Deleted</th>
+                        <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Deleted by</th>
+                        <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Reason</th>
                       </>
                     )}
-                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[#65635D] text-left whitespace-nowrap">Actions</th>
+                    <th className="py-3 px-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--vf-quiet)] text-left whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((b, i) => (
                     <tr
                       key={b.id}
-                      className={`border-b border-[rgba(240,239,232,0.06)] transition-colors hover:bg-[#2C2C27] ${b.isDeleted ? 'bg-[rgba(226,75,74,0.06)]' : ''}`}
+                      className={`border-b border-[rgba(21,43,67,0.14)] transition-colors hover:bg-[var(--vf-surface-hover)] ${b.isDeleted ? 'bg-[rgba(226,75,74,0.06)]' : ''}`}
                       style={{ borderBottomWidth: '0.5px' }}
                     >
-                      <td className="py-3.5 px-4 text-[13px] text-[#65635D] w-10 whitespace-nowrap">{(page - 1) * 20 + i + 1}</td>
-                      <td className="py-3.5 px-4 text-[13px] text-[#F0EFE8] font-medium whitespace-nowrap">{b.name}</td>
-                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.email}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-quiet)] w-10 whitespace-nowrap">{(page - 1) * 20 + i + 1}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-ink)] font-medium whitespace-nowrap">{b.name}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{b.email}</td>
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span className={`inline-block rounded-full px-2 py-0.5 text-[12px] ${b.plan === 'ENTERPRISE' ? 'bg-[rgba(217,113,74,0.1)] text-[#D9714A]' : 'bg-[rgba(160,158,151,0.1)] text-[#A09E97]'}`}>
+                        <span className={`inline-block rounded-full px-2 py-0.5 text-[12px] ${b.plan === 'ENTERPRISE' ? 'bg-[rgba(39,87,214,0.1)] text-[var(--vf-accent)]' : 'bg-[rgba(160,158,151,0.1)] text-[var(--vf-muted)]'}`}>
                           {b.plan}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.credits}</td>
-                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.generations30d}</td>
-                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{new Date(b.joinedAt).toLocaleDateString()}</td>
-                      <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.lastActive ? new Date(b.lastActive).toLocaleString() : '—'}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{b.credits}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{b.generations30d}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{new Date(b.joinedAt).toLocaleDateString()}</td>
+                      <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{b.lastActive ? new Date(b.lastActive).toLocaleString() : '—'}</td>
                       {showDeleted && (
                         <>
-                          <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.deletedAt ? new Date(b.deletedAt).toLocaleString() : '—'}</td>
-                          <td className="py-3.5 px-4 text-[13px] text-[#A09E97] whitespace-nowrap">{b.deletedBy ?? '—'}</td>
-                          <td className="py-3.5 px-4 text-[13px] text-[#A09E97] max-w-[180px] truncate whitespace-nowrap" title={b.deletedReason ?? undefined}>{b.deletedReason ?? '—'}</td>
+                          <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{b.deletedAt ? new Date(b.deletedAt).toLocaleString() : '—'}</td>
+                          <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] whitespace-nowrap">{b.deletedBy ?? '—'}</td>
+                          <td className="py-3.5 px-4 text-[13px] text-[var(--vf-muted)] max-w-[180px] truncate whitespace-nowrap" title={b.deletedReason ?? undefined}>{b.deletedReason ?? '—'}</td>
                         </>
                       )}
                       <td className="py-3.5 px-4 whitespace-nowrap">
@@ -159,12 +159,12 @@ export default function AdminBrandsPage() {
                             type="button"
                             onClick={() => handleRestore(b.id)}
                             disabled={restoringId === b.id}
-                            className="text-[#D9714A] hover:underline font-medium disabled:opacity-50 text-[13px]"
+                            className="text-[var(--vf-accent)] hover:underline font-medium disabled:opacity-50 text-[13px]"
                           >
                             {restoringId === b.id ? 'Restoring…' : 'Restore'}
                           </button>
                         ) : (
-                          <Link href={`/admin/brands/${b.id}`} className="inline-flex rounded-full border border-[rgba(240,239,232,0.14)] px-3 py-1 text-[12px] text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] transition-colors">
+                          <Link href={`/admin/brands/${b.id}`} className="inline-flex rounded-full border border-[rgba(21,43,67,0.14)] px-3 py-1 text-[12px] text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] transition-colors">
                             View
                           </Link>
                         )}
@@ -174,14 +174,14 @@ export default function AdminBrandsPage() {
                 </tbody>
               </table>
             </div>
-            <p className="md:hidden text-center text-[11px] text-[#65635D] mt-2">← Scroll to see more →</p>
+            <p className="md:hidden text-center text-[11px] text-[var(--vf-quiet)] mt-2">← Scroll to see more →</p>
           </>
         )}
         {total > 20 && (
-          <div className="flex items-center justify-between p-4 border-t border-[rgba(240,239,232,0.08)] bg-[#222219]" style={{ borderTopWidth: '0.5px' }}>
-            <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-5 py-2 text-[13px] text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] disabled:opacity-50">Previous</button>
-            <span className="text-[#A09E97] text-[13px]">Page {page} of {Math.ceil(total / 20)}</span>
-            <button type="button" disabled={page >= Math.ceil(total / 20)} onClick={() => setPage((p) => p + 1)} className="rounded-full border border-[rgba(240,239,232,0.14)] bg-transparent px-5 py-2 text-[13px] text-[#F0EFE8] hover:bg-[rgba(240,239,232,0.05)] disabled:opacity-50">Next</button>
+          <div className="flex items-center justify-between p-4 border-t border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)]" style={{ borderTopWidth: '0.5px' }}>
+            <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-full border border-[rgba(21,43,67,0.14)] bg-transparent px-5 py-2 text-[13px] text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] disabled:opacity-50">Previous</button>
+            <span className="text-[var(--vf-muted)] text-[13px]">Page {page} of {Math.ceil(total / 20)}</span>
+            <button type="button" disabled={page >= Math.ceil(total / 20)} onClick={() => setPage((p) => p + 1)} className="rounded-full border border-[rgba(21,43,67,0.14)] bg-transparent px-5 py-2 text-[13px] text-[var(--vf-ink)] hover:bg-[rgba(21,43,67,0.14)] disabled:opacity-50">Next</button>
           </div>
         )}
       </div>

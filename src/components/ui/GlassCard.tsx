@@ -1,7 +1,7 @@
 'use client';
 
 const cardBase =
-  'relative rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] ' +
+  'relative rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] ' +
   'transition-[background-color,border-color] duration-200';
 
 export function GlassCard({
@@ -14,21 +14,17 @@ export function GlassCard({
   cardNumber?: string;
   interactive?: boolean;
 }) {
+  void cardNumber; // Retain the legacy prop without decorative numbering.
   return (
     <div
       className={
         cardBase +
-        (interactive ? ' hover:bg-[#2C2C27] hover:border-[rgba(240,239,232,0.14)]' : '') +
+        (interactive ? ' hover:bg-[var(--vf-surface-hover)] hover:border-[rgba(21,43,67,0.14)]' : '') +
         ' ' +
         className
       }
       {...props}
     >
-      {cardNumber && (
-        <span className="absolute top-5 right-6 text-[11px] font-normal text-[#65635D]">
-          {cardNumber}
-        </span>
-      )}
       {children}
     </div>
   );
@@ -40,14 +36,12 @@ export function GlassCardInner({
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & { cardNumber?: string }) {
+  void cardNumber; // Retain the legacy prop without decorative numbering.
   return (
     <div
-      className={'relative rounded-2xl border border-[rgba(240,239,232,0.08)] bg-[#222219] p-6 sm:p-7 ' + className}
+      className={'relative rounded-2xl border border-[rgba(21,43,67,0.14)] bg-[var(--vf-surface)] p-6 sm:p-7 ' + className}
       {...props}
     >
-      {cardNumber && (
-        <span className="absolute top-5 right-6 text-[11px] font-normal text-[#65635D]">{cardNumber}</span>
-      )}
       {children}
     </div>
   );

@@ -1,3 +1,4 @@
+import { paymentsEnabled } from '@/lib/product-mode';
 import { NextResponse } from 'next/server';
 import { getSessionAndValidate, ACCOUNT_DELETED_RESPONSE } from '@/lib/auth';
 import { getBaseApiUrl } from '@/lib/base-api-url';
@@ -7,6 +8,7 @@ import { getIp } from '@/lib/admin-audit';
 const LEMONSQUEEZY_API = 'https://api.lemonsqueezy.com/v1/checkouts';
 
 export async function POST(request: Request) {
+  if (!paymentsEnabled()) return NextResponse.json({ error: 'Payments are disabled. Public try-on is free.', code: 'PAYMENTS_DISABLED' }, { status: 403 });
   const ip = getIp(request);
   const globalLimit = checkGlobalRateLimit(ip);
   if (!globalLimit.allowed) {
