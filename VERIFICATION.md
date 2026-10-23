@@ -36,3 +36,11 @@ The allowance check minted one non-billable client token and consumed one anonym
 
 - [Deployed desktop studio](docs/screenshots/studio-desktop.jpg)
 - [Deployed mobile photo studio](docs/screenshots/studio-mobile.jpg)
+
+## Live connection repair — 23 October 2026
+
+The owner reported seeing the normal webcam with unchanged clothes. A non-billable provider quota request returned HTTP 200. Production `/api/status` returned `configured=true`, `freeAccess=true`, `paymentsEnabled=false`; an anonymous token request returned HTTP 200. Its decoded scope allowed `lucy-vton-latest` and the exact www origin. These checks establish credential/token issuance, not sufficient Decart credits or successful GPU generation. The last 30 minutes of retained production server error/warning logs were empty, and the public page had no browser errors before starting a stream.
+
+Camera constraints and garment encoding now finish before token issuance. The initial garment is explicitly sent with its prompt after connection and its acknowledgement is awaited. The UI waits for connection, garment acceptance, AI generation and a subsequent displayed video frame before reporting live try-on. A 20-second missing-video timeout disconnects the stream, and token/network/credit failures have clearer messages with credential-bearing addresses removed. Startup time counts toward the existing session timer; all server limits remain intact.
+
+Regression tests cover raw webcam frames, missing garment acknowledgement, event ordering, cancellation and credential-safe errors. No paid stream or generated photo was started; the owner’s restriction remains in force. Actual visual swapping, fidelity and latency require a real session and are still unverified.

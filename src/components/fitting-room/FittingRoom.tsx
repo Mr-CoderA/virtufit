@@ -6,12 +6,13 @@ import { catalog, type Garment } from './catalog';
 import { UploadDialog, type ProductUpload } from './UploadDialog';
 import { PhotoTryOn } from './PhotoTryOn';
 import { liveOptions, streamMetrics } from './live-settings.mjs';
+import { encodeLiveGarment, liveError, liveReadiness } from './live-session';
 import { readWardrobe, saveProduct, removeProduct } from './wardrobe-store';
 import { categories, productFraming } from './product-image.mjs';
 import './room.css';
 
 type RtClient = Awaited<ReturnType<ReturnType<typeof createDecartClient>['realtime']['connect']>>;
-type Phase = 'idle' | 'connecting' | 'live';
+type Phase = 'idle' | 'connecting' | 'starting' | 'live';
 const readable = (e: unknown) => typeof e === 'object' && e !== null && 'message' in e && typeof e.message === 'string' ? e.message : 'Something went wrong. Please try again.';
 const timeLabel = (n: number) => `${Math.floor(n / 60).toString().padStart(2, '0')}:${(n % 60).toString().padStart(2, '0')}`;
 
@@ -62,6 +63,7 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
   const frameRef = useRef(0);
   const generationRef = useRef(0);
   const connectionBusyRef = useRef(false);
+  const liveCleanupRef = useRef<(() => void) | null>(null);
   const cameraGenerationRef = useRef(0);
   const queueRef = useRef<Garment | null>(null);
   const applyingRef = useRef(false);
@@ -88,6 +90,7 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
     return () => {
       cancelled = true;
       generationRef.current++; cameraGenerationRef.current++;
+      liveCleanupRef.current?.();
       cancelAnimationFrame(frameRef.current); handWorkerRef.current?.terminate();
       rtRef.current?.disconnect(); aiStreamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current?.getTracks().forEach(t => t.stop());
       customUrlsRef.current.forEach(URL.revokeObjectURL);
@@ -103,6 +106,7 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
 
   function stopAI(message = '') {
     generationRef.current++;
+    liveCleanupRef.current?.(); liveCleanupRef.current = null;
     rtRef.current?.disconnect(); rtRef.current = null;
     aiStreamRef.current?.getTracks().forEach(t => t.stop()); aiStreamRef.current = null;
     if (outputRef.current) outputRef.current.srcObject = null;
@@ -118,7 +122,7 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
   }
   useEffect(() => {
     const leave = () => { if (document.hidden) stopAI('AI stopped because you left this tab. Your camera preview stays local.'); };
-    const unload = () => { rtRef.current?.disconnect(); aiStreamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current?.getTracks().forEach(t => t.stop()); };
+    const unload = () => { generationRef.current++; liveCleanupRef.current?.(); rtRef.current?.disconnect(); aiStreamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current?.getTracks().forEach(t => t.stop()); };
     document.addEventListener('visibilitychange', leave); window.addEventListener('pagehide', unload);
     return () => { document.removeEventListener('visibilitychange', leave); window.removeEventListener('pagehide', unload); };
   }, []);
@@ -221,13 +225,13 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
         await rtRef.current.setImage(blob, { prompt: garment.prompt, enhance: Boolean(garment.custom) });
         if (generation === generationRef.current) { setApplied(garment.id); setNotice(`${garment.name} applied.`); }
       }
-    } catch (e) { if (generation === generationRef.current) setError(`Outfit could not be applied: ${readable(e)}`); }
+    } catch (e) { if (generation === generationRef.current) setError(`Outfit could not be applied: ${liveError(e)}`); }
     finally { applyingRef.current = false; setSwitching(false); if (queueRef.current && rtRef.current) void applyQueue(); }
   }
   function choose(garment: Garment) {
     if (selectedRef.current.id === garment.id && (applied === garment.id || !rtRef.current)) return;
     selectedRef.current = garment; setSelected(garment); setError('');
-    if (rtRef.current) { queueRef.current = garment; void applyQueue(); }
+    if (rtRef.current) { queueRef.current = garment; if (phase === 'live') void applyQueue(); }
     else if (mode === 'live') setNotice(`${garment.name} selected. Start AI try-on to wear it.`);
   }
   useEffect(() => { selectRef.current = choose; });
@@ -241,40 +245,80 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
     try {
       const { createDecartClient, models } = await import('@decartai/sdk');
       const initialGarment = selectedRef.current;
-      const blob = await garmentBlob(initialGarment);
-      const response = await fetch('/api/tokens', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ duration }) });
-      const token = await response.json(); if (!response.ok) throw new Error(token.error);
-      if (generation !== generationRef.current) return;
-      const client = createDecartClient({ apiKey: token.apiKey, telemetry: false });
+      const image = await encodeLiveGarment(await garmentBlob(initialGarment));
       const settings = liveOptions(resolution, fastMode);
       await streamRef.current!.getVideoTracks()[0].applyConstraints({ width: { ideal: settings.width }, height: { ideal: settings.height }, frameRate: settings.frameRate });
+      if (generation !== generationRef.current || document.hidden) return;
       // LiveKit stops published tracks on disconnect. Clone them so the local
       // mirror and hand tracker keep their own live camera track after AI stops.
       const aiStream = streamRef.current!.clone(); aiStreamRef.current = aiStream;
+      // Mint only after slow camera/image preparation, immediately before dialing.
+      const response = await fetch('/api/tokens', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ duration }) });
+      const token = await response.json(); if (!response.ok) throw new Error(token.error);
+      if (generation !== generationRef.current || document.hidden) return;
+      const client = createDecartClient({ apiKey: token.apiKey, telemetry: false });
+      const timers: { warmup?: ReturnType<typeof setTimeout> } = {};
+      let videoFrame: number | undefined;
+      let fallbackFrame: number | undefined;
+      const video = outputRef.current!;
+      const readiness = liveReadiness(() => {
+        if (generation !== generationRef.current) return;
+        clearTimeout(timers.warmup);
+        setApplied(current => current ?? initialGarment.id); setPhase('live'); setNotice('You’re live. Point at another outfit to change.');
+        if (queueRef.current) void applyQueue();
+      });
+      liveCleanupRef.current = () => { readiness.cancel(); clearTimeout(timers.warmup); if (videoFrame !== undefined) video.cancelVideoFrameCallback?.(videoFrame); if (fallbackFrame !== undefined) cancelAnimationFrame(fallbackFrame); };
       const rt = await client.realtime.connect(aiStream, {
         model: models.realtime('lucy-vton-latest'), mirror: false, ...settings.connect,
-        initialState: { image: blob, prompt: { text: initialGarment.prompt, enhance: Boolean(initialGarment.custom) } },
+        // Apply the garment after connect so its server acknowledgement can be
+        // awaited explicitly, rather than treating a connected camera as success.
+        initialState: { passthrough: false },
         retries: 1, capacityRetryBudgetMs: 15000,
-        onRemoteStream: stream => { if (generation === generationRef.current && outputRef.current) { outputRef.current.srcObject = stream; void outputRef.current.play().catch(() => {}); } },
+        onRemoteStream: stream => {
+          if (generation !== generationRef.current) return;
+          video.srcObject = stream;
+          void video.play().then(() => {
+            if (generation !== generationRef.current) return;
+            let lastFrameTime = -1;
+            const presented = () => {
+              if (generation !== generationRef.current || !readiness.isPending()) return;
+              if (video.readyState >= 2 && video.currentTime !== lastFrameTime) { lastFrameTime = video.currentTime; readiness.framePresented(); }
+              if (readiness.isPending()) {
+                if (typeof video.requestVideoFrameCallback === 'function') videoFrame = video.requestVideoFrameCallback(presented);
+                else fallbackFrame = requestAnimationFrame(presented);
+              }
+            };
+            if (typeof video.requestVideoFrameCallback === 'function') videoFrame = video.requestVideoFrameCallback(presented);
+            else fallbackFrame = requestAnimationFrame(presented);
+          }).catch(() => { if (generation === generationRef.current) { stopAI(); setError('Your browser could not play the AI video. Start the camera and try again.'); } });
+        },
+        onConnectionChange: state => { if (generation === generationRef.current && state === 'generating') readiness.generationStarted(); },
         onConnectionQuality: info => { if (generation === generationRef.current) setQuality(info.quality); }
       });
       if (generation !== generationRef.current || document.hidden) { rt.disconnect(); if (generation === generationRef.current) stopAI(); return; }
       rtRef.current = rt;
       rt.on('stats', stats => { if (generation === generationRef.current) setMetrics(streamMetrics(stats)); });
-      rt.on('error', e => { if (generation === generationRef.current) { stopAI(); setError(`AI connection stopped: ${readable(e)}`); } });
+      rt.on('error', e => { if (generation === generationRef.current) { stopAI(); setError(`AI connection stopped: ${liveError(e)}`); } });
       rt.on('connectionChange', state => { if (generation === generationRef.current && state === 'disconnected') stopAI('AI session disconnected. You can reconnect when ready.'); });
       rt.on('sessionEnded', info => { if (generation === generationRef.current) { stopAI(); setError(info.reason === 'insufficient_credits' ? 'The AI service has reached its allowance. Try again later.' : `Decart ended the session: ${info.reason.replace(/_/g, ' ')}.`); } });
-      setApplied(initialGarment.id); setPhase('live'); setRemaining(duration); setNotice('You’re live. Point at another outfit to change.'); setConsent(false);
-      if (selectedRef.current.id !== initialGarment.id) { queueRef.current = selectedRef.current; void applyQueue(); }
-    } catch (e) { if (generation === generationRef.current) { stopAI(); setError(readable(e)); } }
+      setPhase('starting'); setRemaining(duration); setNotice('Connected. Waiting for the first AI video frame…'); setConsent(false);
+      timers.warmup = setTimeout(() => { if (generation === generationRef.current) { stopAI(); setError('Decart connected but no AI video arrived. AI has stopped. Try 720p or another network before reconnecting.'); } }, 20000);
+      if (rt.getConnectionState() === 'generating') readiness.generationStarted();
+      readiness.connected();
+      await rt.setImage(image, { prompt: initialGarment.prompt, enhance: Boolean(initialGarment.custom), timeout: 15000 });
+      if (generation !== generationRef.current) return;
+      readiness.garmentAccepted();
+      if (selectedRef.current.id !== initialGarment.id) queueRef.current = selectedRef.current;
+    } catch (e) { if (generation === generationRef.current) { stopAI(); setError(liveError(e)); } }
     finally { connectionBusyRef.current = false; if (generation !== generationRef.current) setPhase('idle'); }
   }
+  const aiActive = phase === 'starting' || phase === 'live';
   useEffect(() => {
-    if (phase !== 'live') return;
+    if (!aiActive) return;
     const end = Date.now() + duration * 1000;
     const timer = window.setInterval(() => { const left = Math.max(0, Math.ceil((end - Date.now()) / 1000)); setRemaining(left); if (left === 0) stopAI('Session timer reached. AI is stopped; start a new session whenever you’re ready.'); }, 250);
     return () => clearInterval(timer);
-  }, [phase, duration]);
+  }, [aiActive, duration]);
 
   function openUpload() { setUploadOpen(true); }
   async function addUpload(value: ProductUpload) {
@@ -323,16 +367,16 @@ export default function FittingRoom({ initialMode = 'live' }: { initialMode?: 'l
       <div className="room-toolbar"><div className="room-title"><span className="small-dot green"/> LIVE MIRROR <span className="divider">/</span><span className="quiet">YOUR CAMERA, YOUR SPACE</span></div><div className="toolbar-actions">{!camera && <button className="primary" disabled={cameraBusy} onClick={() => void startCamera()}>Start camera ↗</button>}<button className="chip" onClick={() => setSetup(true)}>{resolution} · {fastMode ? "Fast tier" : "Standard tier"}</button><button className="chip upload-shortcut" onClick={openUpload}>＋ Upload product</button><button className={handsOn ? 'chip active' : 'chip'} aria-pressed={handsOn} onClick={() => setHandsOn(!handsOn)}>☝ Touchless {handsOn ? 'on' : 'off'}</button><button className="icon-button" onClick={fullscreen} aria-label="Fullscreen mirror" title="Fullscreen mirror">⛶</button></div></div>
       <div className={`mirror ${camera ? 'camera-on' : ''}`} ref={stageRef}>
         <video ref={inputRef} autoPlay playsInline muted className="camera-video"/>
-        <video ref={outputRef} autoPlay playsInline muted className={`camera-video output ${phase === 'live' && !compare ? 'visible' : ''}`}/>
+        <video ref={outputRef} autoPlay playsInline muted className={`camera-video output ${(phase === 'starting' || phase === 'live') && !compare ? 'visible' : ''}`}/>
         {!camera && <div className="empty-mirror"><div className="mirror-orbit"><svg viewBox="0 0 120 180" aria-hidden="true"><circle cx="60" cy="33" r="21"/><path d="M25 164V101C25 75 39 64 60 64S95 75 95 101V164M41 99V166M79 99V166M41 124H79"/></svg></div><p className="eyebrow">STEP INTO SOMETHING NEW</p><h2>Your mirror is ready.</h2><p>Start your camera. Find your next look.</p><button className="primary" disabled={cameraBusy} onClick={() => void startCamera()}>{cameraBusy ? 'Opening camera…' : 'Start camera'} <span>↗</span></button><small>Your camera stays local until you start AI try-on.</small></div>}
         <div className="mirror-top"><span className="mirror-badge"><span className={`small-dot ${phase === 'live' ? 'green' : ''}`}/>{phase === 'live' ? compare ? 'ORIGINAL VIEW' : 'AI TRY-ON LIVE' : camera ? 'LOCAL CAMERA' : 'CAMERA OFF'}</span>{phase === 'live' && <span className="timer">{timeLabel(remaining)} LEFT</span>}</div>
         <aside className="wardrobe"><div className="wardrobe-heading"><span>YOUR WARDROBE</span><span>{String(garments.length).padStart(2, '0')} LOOKS</span></div>{garments.map((g, i) => <button key={g.id} data-garment={g.id} className={`outfit ${selected.id === g.id ? 'selected' : ''} ${hover === g.id ? 'hovered' : ''}`} aria-pressed={selected.id === g.id} onClick={() => choose(g)} style={{ '--dwell': hover === g.id ? `${progress * 100}%` : '0%' } as CSSProperties}><span className="outfit-index">0{i + 1}</span><img src={g.thumbnail || g.image} alt={g.name}/><span className="outfit-copy"><strong>{g.name}</strong><small>{g.detail}</small></span><span className="outfit-check">{applied === g.id ? '✓' : selected.id === g.id ? '↗' : '+'}</span><span className="dwell-bar"/></button>)}<button className="add-outfit" onClick={openUpload}>＋ Upload product image</button><button className="library-button" onClick={() => setLibraryOpen(true)}>My wardrobe {savedWardrobe.length ? `(${savedWardrobe.length})` : ""} ↗</button></aside>
         <div className="mirror-bottom"><div className="tracking"><span className={`small-dot ${camera && handsOn ? 'green' : ''}`}/>{tracking}</div>{camera && <div className="framing-tip">{productFraming(selected.category || "top")}</div>}</div>
         <div className="finger-cursor" ref={pointerRef} hidden><div style={{ '--progress': `${progress * 360}deg` } as CSSProperties}/><span/></div>
-        {phase === 'connecting' && <div className="connection-overlay"><div className="spinner"/><h2>Making the connection.</h2><p>Preparing Lucy’s live AI stream…</p><button className="outline" onClick={() => stopAI('Connection cancelled.')}>Cancel connection</button></div>}
+        {(phase === 'connecting' || phase === 'starting') && <div className="connection-overlay"><div className="spinner"/><h2>{phase === 'starting' ? 'Waiting for your AI video.' : 'Making the connection.'}</h2><p>{phase === 'starting' ? 'Connected to Decart. Waiting for transformed frames…' : 'Preparing Lucy’s live AI stream…'}</p><button className="outline" onClick={() => stopAI('Connection cancelled.')}>Cancel connection</button></div>}
       </div>
       {phase === 'live' && <div className="stream-metrics" aria-label="Live video performance"><span>{metrics?.latencyMs != null ? `Video delay ${Math.round(metrics.latencyMs)} ms` : 'Video delay: measuring…'}</span><span>{metrics?.fps != null ? `${metrics.fps} fps` : 'FPS: measuring…'}</span><span>{metrics?.width && metrics.height ? `${metrics.width} × ${metrics.height}` : `${resolution} requested`}</span>{metrics?.networkRttMs != null && <span>Network round trip {metrics.networkRttMs} ms</span>}<span>{quality ? `Connection ${quality}` : 'Connection warming up'}</span></div>}
-      <div className="controlbar"><div className="current-look"><span className="eyebrow">{phase === 'live' && applied === selected.id ? 'NOW WEARING' : 'SELECTED LOOK'}</span><strong>{selected.name}</strong><span>{switching ? 'Applying your outfit…' : phase === 'live' ? quality ? `Connection: ${quality}` : 'Live AI mirror' : 'Ready when you are'}</span></div><div className="controls">{camera && <><button className="outline" onClick={snapshot} title="Save a snapshot to your device">↓ Save photo</button>{phase === 'live' && <button className="outline" aria-pressed={compare} onClick={() => setCompare(!compare)}>{compare ? 'Show try-on' : 'View original'}</button>}<button className="text-button" onClick={stopCamera}>Camera off</button></>}{phase === 'live' ? <button className="primary stop" onClick={() => stopAI('AI stopped. Your webcam preview stays local.')}>■ Stop AI</button> : phase === 'connecting' ? <button className="primary" onClick={() => stopAI('Connection cancelled.')}>Cancel</button> : camera ? <button className="primary" disabled={phase !== 'idle'} onClick={() => configured ? setConsent(true) : setSetup(true)}>Start AI try-on <span>↗</span></button> : <button className="primary" disabled={cameraBusy} onClick={() => void startCamera()}>{cameraBusy ? 'Opening camera…' : 'Start camera'} <span>↗</span></button>}</div></div>
+      <div className="controlbar"><div className="current-look"><span className="eyebrow">{phase === 'live' && applied === selected.id ? 'NOW WEARING' : 'SELECTED LOOK'}</span><strong>{selected.name}</strong><span>{switching ? 'Applying your outfit…' : phase === 'live' ? quality ? `Connection: ${quality}` : 'Live AI mirror' : 'Ready when you are'}</span></div><div className="controls">{camera && <><button className="outline" onClick={snapshot} title="Save a snapshot to your device">↓ Save photo</button>{phase === 'live' && <button className="outline" aria-pressed={compare} onClick={() => setCompare(!compare)}>{compare ? 'Show try-on' : 'View original'}</button>}<button className="text-button" onClick={stopCamera}>Camera off</button></>}{phase === 'live' ? <button className="primary stop" onClick={() => stopAI('AI stopped. Your webcam preview stays local.')}>■ Stop AI</button> : (phase === 'connecting' || phase === 'starting') ? <button className="primary" onClick={() => stopAI('Connection cancelled.')}>Cancel</button> : camera ? <button className="primary" disabled={phase !== 'idle'} onClick={() => configured ? setConsent(true) : setSetup(true)}>Start AI try-on <span>↗</span></button> : <button className="primary" disabled={cameraBusy} onClick={() => void startCamera()}>{cameraBusy ? 'Opening camera…' : 'Start camera'} <span>↗</span></button>}</div></div>
       </div>
       <div hidden={mode !== 'photo'}><PhotoTryOn active={mode === 'photo'} garments={photoGarments} selected={selected} configured={configured} freeAccess={account.freeAccess} photoCredits={account.photoCost ?? 2} onSelect={chooseFromLibrary} onUploadGarment={openUpload} onSetup={() => setSetup(true)}/></div>
       {(error || notice) && <div className={`message ${error ? 'error' : ''}`} role={error ? 'alert' : 'status'}>{error || notice}<button aria-label="Dismiss message" onClick={() => { setError(''); setNotice(''); }}>×</button></div>}
