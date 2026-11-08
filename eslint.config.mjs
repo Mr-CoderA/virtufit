@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored, minified MediaPipe bundle (Apache-2.0); not project source.
+    "public/vision/**",
   ]),
 ]);
 

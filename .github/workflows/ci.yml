@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Placeholders only: the build and tests never contact a database or Decart.
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:1/ci
+      JWT_SECRET: ci-placeholder-jwt-secret-0000000000000000000000000000000000000000
+      JWT_ADMIN_SECRET: ci-placeholder-admin-secret-00000000000000000000000000000000000000
+      DECART_API_KEY: ci-placeholder-not-a-real-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Type check
+        run: npx tsc --noEmit -p .
+      - name: Try-on tests (mocked providers, no billed calls)
+        run: npm run test:try-on
+      - name: Production build
+        run: npm run build
+      # ESLint is not enforced yet: 11 existing react-hooks errors in older account pages must be fixed first.
