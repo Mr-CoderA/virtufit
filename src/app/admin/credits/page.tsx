@@ -23,14 +23,15 @@ export default function AdminCreditsPage() {
   const [savingRate, setSavingRate] = useState(false);
 
   useEffect(() => {
-    adminFetch<typeof overview>('/credits/overview').then((r) => r.data && setOverview(r.data));
+    adminFetch<typeof overview>('/credits/overview').then((r) => {
+      if (r.data) {
+        setOverview(r.data);
+        setRateEdit(r.data.creditRatePerCredit);
+      }
+    });
     adminFetch<{ items: typeof lowBalance }>('/credits/low-balance').then((r) => r.data?.items && setLowBalance(r.data.items));
     adminFetch<{ items: typeof manualLog }>('/credits/manual-log').then((r) => r.data?.items && setManualLog(r.data.items));
   }, []);
-
-  useEffect(() => {
-    if (overview) setRateEdit(overview.creditRatePerCredit);
-  }, [overview?.creditRatePerCredit]);
 
   const saveRate = () => {
     const num = parseFloat(rateEdit);
@@ -42,7 +43,7 @@ export default function AdminCreditsPage() {
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: JSON.stringify({ rate: num }),
     })
-      .then((r) => (r.ok ? r.json().then(() => { if (overview) setOverview({ ...overview, creditRatePerCredit: num.toFixed(2) }); }) : Promise.reject(new Error('Failed'))))
+      .then((r) => (r.ok ? r.json().then(() => { if (overview) { setOverview({ ...overview, creditRatePerCredit: num.toFixed(2) }); setRateEdit(num.toFixed(2)); } }) : Promise.reject(new Error('Failed'))))
       .catch(() => { /* keep rateEdit as-is on failure */ })
       .finally(() => setSavingRate(false));
   };

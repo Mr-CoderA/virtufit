@@ -15,6 +15,18 @@ type ApiKeyRow = {
   lastUsedAt: string | null;
 };
 
+// Pure fetch: no React state.
+async function fetchApiKeys(): Promise<{ keys?: ApiKeyRow[]; failed?: true }> {
+  try {
+    const res = await brandFetch('/api/api-keys', { credentials: 'include' });
+    if (!res.ok) return {};
+    const data = await res.json();
+    return { keys: data.apiKeys ?? [] };
+  } catch {
+    return { failed: true };
+  }
+}
+
 export function ApiKeysManager() {
   const toast = useToast();
   const [keys, setKeys] = useState<ApiKeyRow[]>([]);
@@ -26,18 +38,16 @@ export function ApiKeysManager() {
   const [copiedKey, setCopiedKey] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    try {
-      const res = await brandFetch('/api/api-keys', { credentials: 'include' });
-      if (!res.ok) return;
-      const data = await res.json();
-      setKeys(data.apiKeys ?? []);
-    } catch {
-      toast.error('Failed to load API keys.');
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  // State is applied in the promise callback, never synchronously inside an effect.
+  const load = useCallback(
+    () =>
+      fetchApiKeys().then((result) => {
+        if (result.keys) setKeys(result.keys);
+        if (result.failed) toast.error('Failed to load API keys.');
+        setLoading(false);
+      }),
+    [toast],
+  );
 
   useEffect(() => {
     load();

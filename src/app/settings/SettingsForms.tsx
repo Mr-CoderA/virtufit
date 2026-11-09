@@ -21,9 +21,11 @@ export function SettingsForms({ initialResolution = '1K', userEmail = '' }: { in
   const [resolutionLoading, setResolutionLoading] = useState(false);
   const [resolutionDropdownOpen, setResolutionDropdownOpen] = useState(false);
 
-  useEffect(() => {
+  const [syncedResolution, setSyncedResolution] = useState(initialResolution);
+  if (syncedResolution !== initialResolution) {
+    setSyncedResolution(initialResolution);
     setResolution(initialResolution);
-  }, [initialResolution]);
+  }
 
   const [passwordCurrent, setPasswordCurrent] = useState('');
   const [passwordNew, setPasswordNew] = useState('');

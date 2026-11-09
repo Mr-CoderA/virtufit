@@ -14,12 +14,10 @@ export default function ConfirmDeletionPage() {
   const token = searchParams.get('token');
   const [status, setStatus] = useState<Status>('loading');
   const [name, setName] = useState<string | null>(null);
+  const shownStatus: Status = token ? status : 'error';
 
   useEffect(() => {
-    if (!token) {
-      setStatus('error');
-      return;
-    }
+    if (!token) return;
     fetch(`/api/auth/confirm-deletion?token=${encodeURIComponent(token)}`, { credentials: 'include' })
       .then(async (res) => {
         const data = await res.json();
@@ -33,7 +31,7 @@ export default function ConfirmDeletionPage() {
       .catch(() => setStatus('error'));
   }, [token]);
 
-  if (status === 'loading') {
+  if (shownStatus === 'loading') {
     return (
       <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
         <GlassCard className="p-10 text-center">
@@ -44,7 +42,7 @@ export default function ConfirmDeletionPage() {
     );
   }
 
-  if (status === 'success') {
+  if (shownStatus === 'success') {
     return (
       <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center bg-[var(--vf-page)] px-4 py-[64px]">
         <GlassCard className="p-10 text-center max-w-[420px]">

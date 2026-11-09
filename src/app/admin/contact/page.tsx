@@ -23,8 +23,8 @@ export default function AdminContactPage() {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
+  // Only runs on mount, where `loading` already starts as true.
   const load = () => {
-    setLoading(true);
     adminApi.contactList(1).then((r) => {
       if (r.data) {
         setSubmissions(r.data.submissions);

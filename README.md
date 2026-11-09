@@ -65,10 +65,13 @@ See [PRODUCTION.md](PRODUCTION.md) for deployment, limits, server configuration 
 ## Verify changes
 
 ```sh
+npx tsc --noEmit -p .
 npm run test:try-on
 npm run build
 npm audit --omit=dev
 ```
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the type check, ESLint, the try-on tests and a production build on every push to `main` and on pull requests, using placeholder environment values and no database or provider calls. ESLint reports 0 errors; 48 warnings remain and do not fail the build. `npm audit --omit=dev` reports moderate advisories that come through `archiver`; fixing them needs a major upgrade, which has not been done.
 
 Tests cover hand selection, truthful video metrics, photo resizing/metadata removal, invalid uploads, origin checks, anonymous allowance limits and payment-off defaults. Paid video and image generation are not part of automated checks. Garment fidelity, actual video latency and physical pointing accuracy depend on the real camera, network, provider and input.
 
