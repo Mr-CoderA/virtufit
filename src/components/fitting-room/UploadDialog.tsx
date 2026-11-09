@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useObjectUrl } from './use-object-url';
+import { PrivacyNotice } from '@/components/PrivacyNotice';
 import { categories, productPrompt, productFraming, validateProductFile } from './product-image.mjs';
 
 export type ProductUpload = { name: string; category: string; prompt: string; file: File; save: boolean };
@@ -50,6 +51,7 @@ export function UploadDialog({ live, onClose, onAdd }: Props) {
       <button className="modal-close" disabled={busy} aria-label="Close upload" onClick={onClose}>×</button>
       <p className="eyebrow">ANY PRODUCT. YOUR PERSONAL MIRROR.</p><h2 id="upload-title">Upload it. Try it on.</h2>
       <p>Add a product photo, a screenshot, or something from your wardrobe.</p>
+      <PrivacyNotice/>
       <form onSubmit={submit}>
         <button type="button" className={`upload-drop ${dragging ? 'dragging' : ''}`} onClick={() => inputRef.current?.click()}
           onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)}

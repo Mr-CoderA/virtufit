@@ -126,3 +126,6 @@ h1 {line-height:1.08} h2 {line-height:1.18}
 .studio-panel li{margin:8px 0;padding-left:3px;font-size:14px}
 .nav-sign-out{border:0;background:transparent;color:var(--vf-muted);font-size:12px;padding:0;cursor:pointer}
 .nav-sign-out:hover{color:var(--vf-accent)}
+.privacy-page ul{padding-left:20px;line-height:1.7}.privacy-page li+li{margin-top:8px}.privacy-page a{text-decoration:underline;text-underline-offset:2px}
+.privacy-page article+article{margin-top:18px}
+.privacy-page>p:last-child{margin-top:28px}

@@ -97,3 +97,4 @@ body:has(#virtufit-room) {background:var(--vf-page)}
 #virtufit-room .modal-backdrop{background:#152b4366}
 #virtufit-room .photo-garment select{background:var(--vf-page);color:var(--vf-ink);border-color:var(--vf-line)}
 #virtufit-room .library-product{background:var(--vf-page);border-color:var(--vf-line);color:var(--vf-ink)}
+.privacy-notice{font-size:12px;line-height:1.6;color:#4f5a43;margin:12px 0}.privacy-notice a{text-decoration:underline;text-underline-offset:2px}

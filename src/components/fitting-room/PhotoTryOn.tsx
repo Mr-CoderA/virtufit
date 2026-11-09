@@ -1,4 +1,5 @@
 import { useObjectUrl } from './use-object-url';
+import { PrivacyNotice } from '@/components/PrivacyNotice';
 import { prepareImage } from './prepare-image';
 import { useEffect, useRef, useState } from 'react';
 import type { Garment } from './catalog';
@@ -56,6 +57,7 @@ export function PhotoTryOn({ freeAccess, photoCredits, active, garments, selecte
     <div className="photo-intro"><div><p className="eyebrow">ONE PHOTO. A WHOLE NEW LOOK.</p><h2>Try it on. Keep the photo.</h2><p>Upload your photo, choose the clothes, and generate a finished image.</p></div><span className="photo-mode-badge">SINGLE IMAGE · NO LIVE STREAM</span></div>
     <div className="photo-workspace">
       <div className="photo-inputs"><div className="photo-step-heading"><span>01 / YOUR PHOTO</span>{person && <button className="text-button" disabled={busy} onClick={() => inputRef.current?.click()}>Change photo</button>}</div>
+        <PrivacyNotice/>
         <button className={`person-upload ${dragging ? 'dragging' : ''}`} disabled={busy} onClick={() => inputRef.current?.click()}
           onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); void load(e.dataTransfer.files[0]); }}
           onPaste={e => { const file = [...e.clipboardData.files].find(f => f.type.startsWith('image/')); if (file) { e.preventDefault(); void load(file); } }}>
