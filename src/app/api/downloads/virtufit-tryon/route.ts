@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import path from 'node:path';
 import fs from 'node:fs';
 import { PassThrough } from 'node:stream';
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 
 const PLUGIN_DIR = 'virtufit-tryon';
 const FILES = ['virtufit-tryon.php', 'readme.txt'] as const;
@@ -18,7 +18,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Plugin files not found' }, { status: 404 });
   }
 
-  const archive = archiver('zip', { zlib: { level: 9 } });
+  const archive = new ZipArchive({ zlib: { level: 9 } });
   const pass = new PassThrough();
   const chunks: Buffer[] = [];
   pass.on('data', (chunk: Buffer) => chunks.push(chunk));
