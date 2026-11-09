@@ -13,6 +13,30 @@ type NotificationItem = {
   createdAt: string;
 };
 
+type NavState = {
+  credits?: number;
+  notifications?: { items: NotificationItem[]; unreadCount: number };
+};
+
+// Pure fetch: no React state. Failures are ignored, as before.
+async function fetchNavState(): Promise<NavState> {
+  const result: NavState = {};
+  try {
+    const me = await brandFetch('/api/auth/me', { credentials: 'include' });
+    if (!me.ok) return result;
+    const u = await me.json();
+    if (u.user?.credits != null) result.credits = u.user.credits;
+
+    const res = await brandFetch('/api/notifications', { credentials: 'include' });
+    if (!res.ok) return result;
+    const data = await res.json();
+    result.notifications = { items: data.notifications ?? [], unreadCount: data.unreadCount ?? 0 };
+  } catch {
+    /* ignore */
+  }
+  return result;
+}
+
 export function NavBalanceNotifications({
   initialCredits,
 }: {
@@ -25,27 +49,19 @@ export function NavBalanceNotifications({
   const [loading, setLoading] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const load = useCallback(async () => {
-    try {
-      const me = await brandFetch('/api/auth/me', { credentials: 'include' });
-      if (!me.ok) {
+  // State is applied in the promise callback, never synchronously inside an effect.
+  const load = useCallback(
+    () =>
+      fetchNavState().then((state) => {
+        if (state.credits != null) setCredits(state.credits);
+        if (state.notifications) {
+          setNotifications(state.notifications.items);
+          setUnreadCount(state.notifications.unreadCount);
+        }
         setLoading(false);
-        return;
-      }
-      const u = await me.json();
-      if (u.user?.credits != null) setCredits(u.user.credits);
-
-      const res = await brandFetch('/api/notifications', { credentials: 'include' });
-      if (!res.ok) return;
-      const data = await res.json();
-      setNotifications(data.notifications ?? []);
-      setUnreadCount(data.unreadCount ?? 0);
-    } catch {
-      /* ignore */
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      }),
+    [],
+  );
 
   useEffect(() => {
     load();

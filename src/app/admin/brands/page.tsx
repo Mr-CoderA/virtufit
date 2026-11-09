@@ -34,8 +34,15 @@ export default function AdminBrandsPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  const fetchBrands = useCallback(() => {
+  // Show the loading state as soon as the query changes (adjusted during render, not in an effect).
+  const queryKey = `${page}|${debouncedSearch}|${status}|${sort}|${showDeleted}`;
+  const [loadingKey, setLoadingKey] = useState(queryKey);
+  if (loadingKey !== queryKey) {
+    setLoadingKey(queryKey);
     setLoading(true);
+  }
+
+  const loadBrands = useCallback(() => {
     const params = new URLSearchParams({ page: String(page), limit: '20', search: debouncedSearch, status, sort });
     if (showDeleted) params.set('showDeleted', 'true');
     adminFetch<{ items: Brand[]; total: number }>(`/brands?${params}`).then((r) => {
@@ -45,7 +52,12 @@ export default function AdminBrandsPage() {
     });
   }, [page, debouncedSearch, status, sort, showDeleted]);
 
-  useEffect(() => { fetchBrands(); }, [fetchBrands]);
+  const fetchBrands = () => {
+    setLoading(true);
+    loadBrands();
+  };
+
+  useEffect(() => { loadBrands(); }, [loadBrands]);
 
   const handleRestore = (brandId: string) => {
     setRestoringId(brandId);

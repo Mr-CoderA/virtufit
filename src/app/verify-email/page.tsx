@@ -18,9 +18,11 @@ export default function VerifyEmailPage() {
   const [resendSent, setResendSent] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
 
-  useEffect(() => {
+  const [syncedEmailParam, setSyncedEmailParam] = useState(emailParam);
+  if (syncedEmailParam !== emailParam) {
+    setSyncedEmailParam(emailParam);
     setEmail((e) => e || emailParam);
-  }, [emailParam]);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

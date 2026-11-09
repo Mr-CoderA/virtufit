@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -29,6 +29,8 @@ const SIDEBAR_LINKS_FIXED = [
   { section: 'ACCOUNT', items: [{ href: '/admin/profile', label: 'Admin profile', icon: User }] },
 ];
 
+const noopSubscribe = () => () => {};
+
 export function AdminLayout({
   children,
   pageTitle = 'Admin',
@@ -42,11 +44,8 @@ export function AdminLayout({
   const [admin, setAdmin] = useState<{ name: string; email: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [contactUnread, setContactUnread] = useState(0);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // false during SSR and hydration, true afterwards (same as the previous mount effect).
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
   useEffect(() => {
     if (!mounted) return;

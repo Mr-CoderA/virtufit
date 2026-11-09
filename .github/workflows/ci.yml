@@ -29,8 +29,9 @@ jobs:
       - run: npx prisma generate
       - name: Type check
         run: npx tsc --noEmit -p .
+      - name: Lint
+        run: npm run lint
       - name: Try-on tests (mocked providers, no billed calls)
         run: npm run test:try-on
       - name: Production build
         run: npm run build
-      # ESLint is not enforced yet: 11 existing react-hooks errors in older account pages must be fixed first.

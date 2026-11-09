@@ -24,12 +24,17 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (open) {
       setAmount('');
       setError(null);
-      inputRef.current?.focus();
     }
+  }
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
   }, [open]);
 
   useEffect(() => {

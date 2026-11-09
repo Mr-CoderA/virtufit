@@ -19,8 +19,19 @@ export default function AdminGenerationsPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
+  // Show the loading state as soon as the page changes (adjusted during render, not in an effect).
+  const [loadingPage, setLoadingPage] = useState(page);
+  if (loadingPage !== page) {
+    setLoadingPage(page);
+    setLoading(true);
+  }
+
   function fetchGenerations() {
     setLoading(true);
+    loadGenerations();
+  }
+
+  function loadGenerations() {
     adminFetch<{
       items: typeof items;
       queueStats: QueueStats;
@@ -34,7 +45,7 @@ export default function AdminGenerationsPage() {
   }
 
   useEffect(() => {
-    fetchGenerations();
+    loadGenerations();
   }, [page]);
 
   useEffect(() => {
